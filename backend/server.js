@@ -16,6 +16,13 @@ app.use(bodyParser.json());
 // to support URL-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 
+const db = require("./models");
+db.sequelize.sync()
+    .then(() => {
+        console.log("Models synchronized with DB!");
+    }).catch(err => {
+        console.error(err);
+    });
 
 // set port, listen for requests
 const PORT = 8765;
