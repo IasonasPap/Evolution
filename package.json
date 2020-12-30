@@ -9,10 +9,10 @@
   "name": "repository",
   "version": "1.0.0",
   "description": "A project for the class of software engineering 2020-2021",
-  "main": "index.js",
+  "main": "server.js",
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "server": "nodemon ./backend/server.js"
   },
   "author": "",
   "license": "ISC"
