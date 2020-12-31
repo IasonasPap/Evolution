@@ -11,8 +11,8 @@ module.exports = (sequelize, Sequelize) => {
         type: Sequelize.INTEGER,
         allowNull: false
       },
-      // energyProciderId: the energy provider of the station
-      energyProciderId: {
+      // energyProviderId: the energy provider of the station
+      energyProviderId: {
         type: Sequelize.INTEGER,
         allowNull: false
       }
