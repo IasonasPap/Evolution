@@ -25,6 +25,8 @@ db.sequelize.sync()
     });
 
 require('./routes/user.routes.js')(app);
+require('./routes/admin.routes.js')(app);
+require('./routes/chargingSession.routes.js')(app);
 
 // set port, listen for requests
 const PORT = 8765;
