@@ -24,6 +24,8 @@ db.sequelize.sync()
         console.error(err);
     });
 
+require('./routes/user.routes.js')(app);
+
 // set port, listen for requests
 const PORT = 8765;
 app.listen(PORT, () => {
