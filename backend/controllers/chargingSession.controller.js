@@ -9,10 +9,8 @@ const station = db.station;
 const energyProvider = db.energyProvider;
 const electricVehicle = db.electricVehicle;
 const user = db.user;
-<<<<<<< HEAD
 const charger = db.charger;
-=======
->>>>>>> sessions per charging point
+
 
 const dateFormat = require('dateformat');
 
