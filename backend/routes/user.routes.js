@@ -1,26 +1,29 @@
-module.exports = app => {
-    const users = require("../controllers/user.controller.js");
+const express = require('express');
+const router = express.Router({mergeParams: true});
 
-    const router = require("express").Router();
+const users = require('../controllers/user.controller');
 
-    // Create a new User
-    router.post("/", users.create);
+//const users = require("../controllers/user.controller.js");
 
-    // Retrieve all Users
-    router.get("/", users.findAll);
+//const router = require("express").Router();
+
+// Create a new User
+router.post("/", users.create);
+
+// Retrieve all Users
+router.get("/", users.findAll);
 
 
-    // Retrieve a single User with id
-    router.get("/:id", users.findOne);
+// Retrieve a single User with id
+router.get("/:id", users.findOne);
 
-    // Update a User with id
-    router.put("/:id", users.update);
+// Update a User with id
+router.put("/:id", users.update);
 
-    // Delete a User with id
-    router.delete("/:id", users.delete);
+// Delete a User with id
+router.delete("/:id", users.delete);
 
-    // Delete all Users
-    router.delete("/", users.deleteAll);
+// Delete all Users
+router.delete("/", users.deleteAll);
 
-    app.use('/api/users', router);
-};
+module.exports = router;
