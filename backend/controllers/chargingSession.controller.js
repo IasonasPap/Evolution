@@ -7,6 +7,8 @@ const provider = db.provider;
 const electricVehicle = db.electricVehicle;
 const user = db.user;
 
+const dateFormat = require('dateformat');
+
 
 // Create and Save a new Charging Event
 exports.create = (req, res) => {
@@ -66,13 +68,15 @@ exports.findAll = (req, res) => {
             ]
         })
             .then(data => {
+                datetimeFrom = datetimeFrom.substring(0,4) + '-' + datetimeFrom.substring(4,6) + '-' + datetimeFrom.substring(6,8);
+                datetimeTo = datetimeTo.substring(0,4) + '-' + datetimeTo.substring(4,6) + '-' + datetimeTo.substring(6,8);
                 let dataObjects = data.map((item, index) => {
                         let obj = JSON.parse(JSON.stringify(item));
                         return {
                             SessionIndex: index,
                             SessionId: obj.id,
-                            StartedOn: obj.startTime,
-                            FinishedOn: obj.endTime,
+                            StartedOn: dateFormat(obj.startTime, "yyyy-mm-dd HH:MM:ss"),
+                            FinishedOn: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
                             Protocol: 'Some dummy protocol',
                             EnergyDelivered: obj.energyDelivered,
                             Payment: obj.paymentType,
@@ -83,9 +87,9 @@ exports.findAll = (req, res) => {
                 let response = {
                     Point: req.params.pointId,
                     PointOperator: JSON.parse(JSON.stringify(data))[0].chargingPoint.station.user,
-                    RequestTimestamp: requestTimestamp,
-                    PeriodFrom: req.params.dateTimeFrom,
-                    PeriodTo: req.params.dateTimeTo,
+                    RequestTimestamp: dateFormat(requestTimestamp, "yyyy-mm-dd HH:MM:ss"),
+                    PeriodFrom: dateFormat(datetimeFrom, "yyyy-mm-dd HH:MM:ss"),
+                    PeriodTo: dateFormat(datetimeTo, "yyyy-mm-dd HH:MM:ss"),
                     NumberOfChargingSessions: dataObjects.length,
                     ChargingSessionsList: dataObjects
                 }
