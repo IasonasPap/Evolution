@@ -4,7 +4,7 @@ const cors = require("cors");
 
 const app = express();
 
-var corsOptions = {
+const corsOptions = {
 	origin: "http://localhost:8765"
 };
 
@@ -24,9 +24,8 @@ db.sequelize.sync()
         console.error(err);
     });
 
-require('./routes/user.routes.js')(app);
-require('./routes/admin.routes.js')(app);
-require('./routes/chargingSession.routes.js')(app);
+const routes = require('./routes/index.routes');
+app.use('/evcharge/api',routes);
 
 // set port, listen for requests
 const PORT = 8765;
