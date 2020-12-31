@@ -5,6 +5,7 @@ const chargingSession = db.chargingSession;
 const station = db.station;
 const provider = db.provider;
 const electricVehicle = db.electricVehicle;
+const user = db.user;
 
 
 // Create and Save a new Charging Event
@@ -34,8 +35,8 @@ exports.create = (req, res) => {
         })
         .catch(err => {
             res.status(500).send({
-                message: 
-                    err.messase || "Some error occurred while creating the charging event." 
+                message:
+                    err.messase || "Some error occurred while creating the charging event."
             });
         });
 };
@@ -44,15 +45,51 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
     if (req.params.pointId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {pointId, datetimeFrom, datetimeTo} = req.params;
-
+        let requestTimestamp = new Date();
         let condition = {
-            chargingPointId: pointId, 
-            startTime: { [Op.between]: [datetimeFrom, datetimeTo] }
-            }; 
-    
-        chargingSession.findAll({where: condition})
+            chargingPointId: pointId,
+            startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
+        };
+
+        chargingSession.findAll({
+            where: condition,
+            include: [
+                {
+                    model: chargingPoint, include: [
+                        {
+                            model: station,
+                            include: [user]
+                        }
+                    ]
+                },
+                electricVehicle
+            ]
+        })
             .then(data => {
-                res.status(200).send(data);
+                let dataObjects = data.map((item, index) => {
+                        let obj = JSON.parse(JSON.stringify(item));
+                        return {
+                            SessionIndex: index,
+                            SessionId: obj.id,
+                            StartedOn: obj.startTime,
+                            FinishedOn: obj.endTime,
+                            Protocol: 'Some dummy protocol',
+                            EnergyDelivered: obj.energyDelivered,
+                            Payment: obj.paymentType,
+                            VehicleType: obj.electricVehicle.vehicleType
+                        }
+                    }
+                );
+                let response = {
+                    Point: req.params.pointId,
+                    PointOperator: JSON.parse(JSON.stringify(data))[0].chargingPoint.station.user,
+                    RequestTimestamp: requestTimestamp,
+                    PeriodFrom: req.params.dateTimeFrom,
+                    PeriodTo: req.params.dateTimeTo,
+                    NumberOfChargingSessions: dataObjects.length,
+                    ChargingSessionsList: dataObjects
+                }
+                res.status(200).send(response);
             })
             .catch(err => {
                 res.status(500).send({
@@ -60,15 +97,14 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the point"
                 });
             });
-    }
-    else if (req.params.vehicleId && req.params.datetimeTo && req.params.datetimeFrom ) {
+    } else if (req.params.vehicleId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {vehicleId, datetimeFrom, datetimeTo} = req.params;
 
         let condition = {
-            electricVehicleId: vehicleId, 
-            startTime: { [Op.between]: [datetimeFrom, datetimeTo] }
-            }; 
-    
+            electricVehicleId: vehicleId,
+            startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
+        };
+
         chargingSession.findAll({where: condition})
             .then(data => {
                 res.status(200).send(data);
@@ -79,32 +115,33 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the vehicle"
                 });
             });
-    }
-    else if (req.params.stationId && req.params.datetimeTo && req.params.datetimeFrom) {
+    } else if (req.params.stationId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {stationId, datetimeFrom, datetimeTo} = req.params;
 
-        chargingSession.findAll({ where: {
-            '$chargingPoint.stationId$': stationId,
-            startTime: {
-                [Op.between] : [datetimeFrom, datetimeTo]
-            }},
-            include: {model: chargingPoint} 
+        chargingSession.findAll({
+            where: {
+                '$chargingPoint.stationId$': stationId,
+                startTime: {
+                    [Op.between]: [datetimeFrom, datetimeTo]
+                }
+            },
+            include: {model: chargingPoint}
         })
-        /* ***Alternative way of expressing the query in raw SQL***
-        
-        db.sequelize.query(
-        "SELECT * FROM chargingSession e NATURAL JOIN chargingPoint p " +
-        "WHERE (p.stationId = :stationId) AND (e.startTime > :datetimeFrom) " + 
-        "AND (e.startTime < :datetimeTo)", 
-        { 
-            type: db.sequelize.QueryTypes.SELECT 
-        ,
-            replacements: {
-                stationId: stationId,
-                datetimeFrom: datetimeFrom,
-                datetimeTo: datetimeTo
-        }}) 
-        */
+            /* ***Alternative way of expressing the query in raw SQL***
+
+            db.sequelize.query(
+            "SELECT * FROM chargingSession e NATURAL JOIN chargingPoint p " +
+            "WHERE (p.stationId = :stationId) AND (e.startTime > :datetimeFrom) " +
+            "AND (e.startTime < :datetimeTo)",
+            {
+                type: db.sequelize.QueryTypes.SELECT
+            ,
+                replacements: {
+                    stationId: stationId,
+                    datetimeFrom: datetimeFrom,
+                    datetimeTo: datetimeTo
+            }})
+            */
             .then(data => {
                 res.status(200).send(data);
             })
@@ -113,17 +150,18 @@ exports.findAll = (req, res) => {
                     message:
                         err.message || "Error while retrieving the charging sessions of the station"
                 })
-            });     
-    }
-    else if (req.params.providerId && req.params.datetimeTo && req.params.datetimeFrom) {
+            });
+    } else if (req.params.providerId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {providerId, datetimeFrom, datetimeTo} = req.params;
 
-        chargingSession.findAll({ where: {
-            '$station.energyProviderId$': providerId,
-            startTime: {
-                [Op.between] : [datetimeFrom, datetimeTo]
-            }},
-            include: {model: chargingPoint, station} 
+        chargingSession.findAll({
+            where: {
+                '$station.energyProviderId$': providerId,
+                startTime: {
+                    [Op.between]: [datetimeFrom, datetimeTo]
+                }
+            },
+            include: {model: chargingPoint, station}
         })
             .then(data => {
                 res.status(200).send(data);
@@ -133,15 +171,14 @@ exports.findAll = (req, res) => {
                     message:
                         err.message || "Error while retrieving the charging sessions of the provider"
                 })
-            });     
-    }
-    else {
+            });
+    } else {
         res.status(400).send({
             message: "Invalid use of parameters"
         })
         return;
     }
-    
+
 };
 
 
