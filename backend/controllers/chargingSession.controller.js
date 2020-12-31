@@ -9,7 +9,10 @@ const station = db.station;
 const energyProvider = db.energyProvider;
 const electricVehicle = db.electricVehicle;
 const user = db.user;
+<<<<<<< HEAD
 const charger = db.charger;
+=======
+>>>>>>> sessions per charging point
 
 const dateFormat = require('dateformat');
 
@@ -135,9 +138,6 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the point"
                 });
             });
-
-
-
     } else if (req.params.vehicleId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {vehicleId, datetimeFrom, datetimeTo} = req.params;
 
@@ -145,7 +145,6 @@ exports.findAll = (req, res) => {
             electricVehicleId: vehicleId,
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
         };
-
         chargingSession.findAll({
             where: condition,
             include: {
@@ -211,8 +210,6 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the vehicle"
                 });
             });
-
-
     } else if (req.params.stationId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {stationId, datetimeFrom, datetimeTo} = req.params;
 
@@ -234,7 +231,6 @@ exports.findAll = (req, res) => {
                     ]
                 }
             ]
-
         })
             /* ***Alternative way of expressing the query in raw SQL***
 
@@ -293,12 +289,9 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the station"
                 })
             });
-
-
     } else if (req.params.providerId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {providerId, datetimeFrom, datetimeTo} = req.params;
         let requestTimestamp = new Date();
-
 
         chargingSession.findAll({
             include: [
@@ -358,7 +351,6 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the provider"
                 })
             });
-
     } else if (req.params.userId) {
         let {userId} = req.params;
         let datetimeTo = moment(req.query.datetimeTo).add(1, 'day').format('YYYYMMDD');
@@ -408,14 +400,11 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions for user"
                 })
             });
-
-
     } else {
         res.status(400).send({
             message: "Invalid use of parameters"
         })
     }
-
 }
 
 exports.findSessionsPerMultipleStations = (req, res) => {
