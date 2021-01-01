@@ -143,6 +143,7 @@ exports.findAll = (req, res) => {
             electricVehicleId: vehicleId,
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
         };
+
         chargingSession.findAll({
             where: condition,
             include: {
