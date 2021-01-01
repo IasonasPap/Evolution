@@ -8,6 +8,7 @@ const station = db.station;
 const energyProvider = db.energyProvider;
 const electricVehicle = db.electricVehicle;
 const user = db.user;
+const charger = db.charger;
 
 const dateFormat = require('dateformat');
 
@@ -47,10 +48,9 @@ exports.create = (req, res) => {
 
 // Retrieve chargingSession with a condition
 exports.findAll = (req, res) => {
+    let requestTimestamp = new Date();
     if (req.params.pointId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {pointId, datetimeFrom, datetimeTo} = req.params;
-        let requestTimestamp = new Date();
-        let format = req.query.format;
         let condition = {
             chargingPointId: pointId,
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
@@ -63,40 +63,39 @@ exports.findAll = (req, res) => {
                     model: chargingPoint, include: [
                         {
                             model: station,
-                            include: [user]
-                        },{
-                            model: charger
-                        }
+                            include: [{model:user, attributes: {exclude:['password']}}]
+                        },
+                        charger
                     ]
                 },
                 electricVehicle
             ]
         })
             .then(data => {
-                datetimeFrom = datetimeFrom.substring(0,4) + '-' + datetimeFrom.substring(4,6) + '-' + datetimeFrom.substring(6,8);
-                datetimeTo = datetimeTo.substring(0,4) + '-' + datetimeTo.substring(4,6) + '-' + datetimeTo.substring(6,8);
-                let dataObjects = data.map((item, index) => {
+                datetimeFrom = datetimeFrom.substring(0, 4) + '-' + datetimeFrom.substring(4, 6) + '-' + datetimeFrom.substring(6, 8);
+                datetimeTo = datetimeTo.substring(0, 4) + '-' + datetimeTo.substring(4, 6) + '-' + datetimeTo.substring(6, 8);
+                let dataJson = data.map((item, index) => {
                         let obj = JSON.parse(JSON.stringify(item));
                         return {
-                            SessionIndex: index,
-                            SessionId: obj.id,
-                            StartedOn: dateFormat(obj.startTime, "yyyy-mm-dd HH:MM:ss"),
-                            FinishedOn: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
-                            Protocol: obj.chargingPoint.charger.protocol,
-                            EnergyDelivered: obj.energyDelivered,
-                            Payment: obj.paymentType,
-                            VehicleType: obj.electricVehicle.vehicleType
+                            sessionIndex: index,
+                            sessionId: obj.id,
+                            startedOn: dateFormat(obj.startTime, "yyyy-mm-dd HH:MM:ss"),
+                            finishedOn: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
+                            protocol: obj.chargingPoint.charger.protocol,
+                            energyDelivered: obj.energyDelivered,
+                            payment: obj.paymentType,
+                            vehicleType: obj.electricVehicle.vehicleType
                         }
                     }
                 );
                 let response = {
-                    Point: req.params.pointId,
-                    PointOperator: JSON.parse(JSON.stringify(data))[0].chargingPoint.station.user.fullName,
-                    RequestTimestamp: dateFormat(requestTimestamp, "yyyy-mm-dd HH:MM:ss"),
-                    PeriodFrom: dateFormat(datetimeFrom, "yyyy-mm-dd HH:MM:ss"),
-                    PeriodTo: dateFormat(datetimeTo, "yyyy-mm-dd HH:MM:ss"),
-                    NumberOfChargingSessions: dataObjects.length,
-                    ChargingSessionsList: dataObjects
+                    point: parseInt(req.params.pointId),
+                    pointOperator: JSON.parse(JSON.stringify(data))[0].chargingPoint.station.user,
+                    requestTimestamp: dateFormat(requestTimestamp, "yyyy-mm-dd HH:MM:ss"),
+                    periodFrom: dateFormat(datetimeFrom, "yyyy-mm-dd HH:MM:ss"),
+                    periodTo: dateFormat(datetimeTo, "yyyy-mm-dd HH:MM:ss"),
+                    numberOfChargingSessions: dataJson.length,
+                    chargingSessionsList: dataJson
                 }
                 // send csv response, if explicitly mentioned
                 if (format === 'csv') {
@@ -124,9 +123,53 @@ exports.findAll = (req, res) => {
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
         };
 
-        chargingSession.findAll({where: condition})
+        chargingSession.findAll({
+            where: condition,
+            include: {
+                model: chargingPoint, include: [
+                    {
+                        model: station,
+                        include: [{model:energyProvider, attributes: ['enterpriseTitle']}]
+                    }
+                ]
+            },
+            electricVehicle
+        })
             .then(data => {
-                res.status(200).send(data);
+                datetimeFrom = datetimeFrom.substring(0, 4) + '-' + datetimeFrom.substring(4, 6) + '-' + datetimeFrom.substring(6, 8);
+                datetimeTo = datetimeTo.substring(0, 4) + '-' + datetimeTo.substring(4, 6) + '-' + datetimeTo.substring(6, 8);
+                let totalEnergyConsumed = 0;
+                let pointsVisited = [];
+                let dataJson = data.map((item, index) => {
+                        let obj = JSON.parse(JSON.stringify(item));
+                        totalEnergyConsumed += item.energyDelivered;
+                        if (pointsVisited.indexOf(item.chargingPointId) < 0){
+                            pointsVisited.push(item.chargingPointId);
+                        }
+                        return {
+                            sessionIndex: index,
+                            sessionId: obj.id,
+                            energyProvider: obj.chargingPoint.station.energyProvider.enterpriseTitle,
+                            startedOn: dateFormat(obj.startTime, "yyyy-mm-dd HH:MM:ss"),
+                            finishedOn: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
+                            energyDelivered: obj.energyDelivered,
+                            pricePolicyRef: 'Some price policy ref',
+                            costPerKwh: parseFloat((obj.totalCost/obj.energyDelivered).toFixed(4)),
+                            sessionCost: obj.totalCost
+                        }
+                    }
+                );
+                let response = {
+                    vehicleId: parseInt(req.params.vehicleId),
+                    requestTimestamp: dateFormat(requestTimestamp, "yyyy-mm-dd HH:MM:ss"),
+                    periodFrom: dateFormat(datetimeFrom, "yyyy-mm-dd HH:MM:ss"),
+                    periodTo: dateFormat(datetimeTo, "yyyy-mm-dd HH:MM:ss"),
+                    totalEnergyConsumed: totalEnergyConsumed,
+                    numberOfVisitedPoints: pointsVisited.length,
+                    numberOfVehicleChargingSessions: dataJson.length,
+                    vehicleChargingSessionsList: dataJson
+                }
+                res.status(200).send(response);
             })
             .catch(err => {
                 res.status(500).send({
@@ -138,13 +181,24 @@ exports.findAll = (req, res) => {
         let {stationId, datetimeFrom, datetimeTo} = req.params;
 
         chargingSession.findAll({
+            attributes: {exclude: ['id']},
             where: {
                 '$chargingPoint.stationId$': stationId,
                 startTime: {
                     [Op.between]: [datetimeFrom, datetimeTo]
                 }
             },
-            include: {model: chargingPoint}
+            include: [
+                {
+                    model: chargingPoint, include: [
+                        {
+                            model: station,
+                            include: [{model:user, attributes: {exclude:['password']}}]
+                        }
+                    ]
+                }
+            ]
+
         })
             /* ***Alternative way of expressing the query in raw SQL***
 
@@ -162,7 +216,30 @@ exports.findAll = (req, res) => {
             }})
             */
             .then(data => {
-                res.status(200).send(data);
+                datetimeFrom = datetimeFrom.substring(0, 4) + '-' + datetimeFrom.substring(4, 6) + '-' + datetimeFrom.substring(6, 8);
+                datetimeTo = datetimeTo.substring(0, 4) + '-' + datetimeTo.substring(4, 6) + '-' + datetimeTo.substring(6, 8);
+                let dataJson = JSON.parse(JSON.stringify(data));
+                let groupByCpId = dataJson.reduce((acc, item) => {
+                    acc.data[item.chargingPointId] = acc.data[item.chargingPointId] || {energyDelivered: 0, pointSessions: 0};
+                    acc.data[item.chargingPointId].energyDelivered += item.energyDelivered;
+                    acc.data[item.chargingPointId].energyDelivered = parseFloat(acc.data[item.chargingPointId].energyDelivered.toFixed(2));
+                    acc.data[item.chargingPointId].pointId = item.chargingPointId;
+                    acc.data[item.chargingPointId].pointSessions += 1;
+                    acc.totalEnergyDelivered += item.energyDelivered;
+                    return acc;
+                }, {totalEnergyDelivered:0, data:{}});
+                let response = {
+                    stationId: dataJson[0].chargingPoint.stationId,
+                    operator: dataJson[0].chargingPoint.station.user,
+                    requestTimestamp: dateFormat(requestTimestamp, "yyyy-mm-dd HH:MM:ss"),
+                    periodFrom: dateFormat(datetimeFrom, "yyyy-mm-dd HH:MM:ss"),
+                    periodTo: dateFormat(datetimeTo, "yyyy-mm-dd HH:MM:ss"),
+                    totalEnergyDelivered: parseFloat(groupByCpId.totalEnergyDelivered.toFixed(2)),
+                    numberOfChargingSessions: dataJson.length,
+                    numberOfActivePoints: Object.entries(groupByCpId.data).length,
+                    sessionSummaryList: Object.values(groupByCpId.data)
+                }
+                res.status(200).send(response);
             })
             .catch(err => {
                 res.status(500).send({
@@ -176,26 +253,46 @@ exports.findAll = (req, res) => {
 
 
         chargingSession.findAll({
+            include: [
+                {
+                    model: chargingPoint, required:true, include: [
+                        {
+                            model: station,
+                            attributes: ['energyProviderId'],
+                            where: {
+                                energyProviderId: providerId,
+                            },
+                            required: true,
+                            include: [{model:energyProvider,required:true}]
+                        }
+                    ],
+                },
+            ],
             where: {
-                '$chargingPoint.station.energyProviderId$': providerId,
                 startTime: {
                     [Op.between]: [datetimeFrom, datetimeTo]
                 }
-            },
-            include: [
-                {
-                    model: chargingPoint, include: [
-                        {
-                            model: station,
-                            include: [user,energyProvider]
-                        }
-                    ]
-                },
-                electricVehicle
-            ]
+            }
         })
             .then(data => {
-                res.status(200).send(data);
+                let dataJson = data.map((item, index) => {
+                        let obj = JSON.parse(JSON.stringify(item));
+                        return {
+                            providerId: parseInt(obj.chargingPoint.station.energyProviderId),
+                            providerName: obj.chargingPoint.station.energyProvider.enterpriseTitle,
+                            stationId: parseInt(obj.chargingPoint.stationId),
+                            sessionId: parseInt(obj.id),
+                            vehicleId: parseInt(obj.electricVehicleId),
+                            startedOn: dateFormat(obj.startTime, "yyyy-mm-dd HH:MM:ss"),
+                            finishedOn: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
+                            energyDelivered: obj.energyDelivered,
+                            pricePolicyRef: 'Some price policy ref',
+                            costPerKwh: parseFloat((obj.totalCost/obj.energyDelivered).toFixed(4)),
+                            totalCost: parseFloat(obj.totalCost)
+                        }
+                    }
+                )
+                res.status(200).send(dataJson);
             })
             .catch(err => {
                 res.status(500).send({
@@ -207,7 +304,6 @@ exports.findAll = (req, res) => {
         res.status(400).send({
             message: "Invalid use of parameters"
         })
-        return;
     }
 
 };
