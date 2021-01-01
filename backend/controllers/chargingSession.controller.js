@@ -2,8 +2,9 @@ const db = require("../models");
 const {Op} = require("sequelize");
 const chargingPoint = db.chargingPoint;
 const chargingSession = db.chargingSession;
+const charger = db.charger;
 const station = db.station;
-const provider = db.provider;
+const energyProvider = db.energyProvider;
 const electricVehicle = db.electricVehicle;
 const user = db.user;
 
@@ -61,6 +62,8 @@ exports.findAll = (req, res) => {
                         {
                             model: station,
                             include: [user]
+                        },{
+                            model: charger
                         }
                     ]
                 },
@@ -77,7 +80,7 @@ exports.findAll = (req, res) => {
                             SessionId: obj.id,
                             StartedOn: dateFormat(obj.startTime, "yyyy-mm-dd HH:MM:ss"),
                             FinishedOn: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
-                            Protocol: 'Some dummy protocol',
+                            Protocol: obj.chargingPoint.charger.protocol,
                             EnergyDelivered: obj.energyDelivered,
                             Payment: obj.paymentType,
                             VehicleType: obj.electricVehicle.vehicleType
@@ -157,15 +160,27 @@ exports.findAll = (req, res) => {
             });
     } else if (req.params.providerId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {providerId, datetimeFrom, datetimeTo} = req.params;
+        let requestTimestamp = new Date();
+
 
         chargingSession.findAll({
             where: {
-                '$station.energyProviderId$': providerId,
+                '$chargingPoint.station.energyProviderId$': providerId,
                 startTime: {
                     [Op.between]: [datetimeFrom, datetimeTo]
                 }
             },
-            include: {model: chargingPoint, station}
+            include: [
+                {
+                    model: chargingPoint, include: [
+                        {
+                            model: station,
+                            include: [user,energyProvider]
+                        }
+                    ]
+                },
+                electricVehicle
+            ]
         })
             .then(data => {
                 res.status(200).send(data);
