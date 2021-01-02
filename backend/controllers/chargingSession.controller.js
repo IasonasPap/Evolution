@@ -48,9 +48,13 @@ exports.create = (req, res) => {
 // Retrieve chargingSession with a condition
 exports.findAll = (req, res) => {
     let requestTimestamp = new Date();
+    let {format} = req.query;
+
+
+
+
     if (req.params.pointId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {pointId, datetimeFrom, datetimeTo} = req.params;
-        let {format} = req.query;
         let condition = {
             chargingPointId: pointId,
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
@@ -90,7 +94,7 @@ exports.findAll = (req, res) => {
                 );
                 let response = {
                     point: parseInt(req.params.pointId),
-                    pointOperator: JSON.parse(JSON.stringify(data))[0].chargingPoint.station.userId,
+                    pointOperator: JSON.parse(JSON.stringify(data))[0].chargingPoint.station.user.fullName,
                     requestTimestamp: dateFormat(requestTimestamp, "yyyy-mm-dd HH:MM:ss"),
                     periodFrom: dateFormat(datetimeFrom, "yyyy-mm-dd HH:MM:ss"),
                     periodTo: dateFormat(datetimeTo, "yyyy-mm-dd HH:MM:ss"),
@@ -115,6 +119,9 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the point"
                 });
             });
+
+
+
     } else if (req.params.vehicleId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {vehicleId, datetimeFrom, datetimeTo} = req.params;
 
@@ -129,7 +136,7 @@ exports.findAll = (req, res) => {
                 model: chargingPoint, include: [
                     {
                         model: station,
-                        include: [{model:energyProvider, attributes: ['enterpriseTitle']}]
+                        include: [{model:energyProvider, attributes: ['enterpriseTitle','costPerKw','costPerKwh']}]
                     }
                 ]
             },
@@ -153,7 +160,8 @@ exports.findAll = (req, res) => {
                             startedOn: dateFormat(obj.startTime, "yyyy-mm-dd HH:MM:ss"),
                             finishedOn: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
                             energyDelivered: obj.energyDelivered,
-                            pricePolicyRef: 'Some price policy ref',
+                            pricePolicyRef: `Cost per kW:  €${obj.chargingPoint.station.energyProvider.costPerKw} | ` + 
+                                            `Cost per kWh: €${obj.chargingPoint.station.energyProvider.costPerKwh}`,
                             costPerKwh: parseFloat((obj.totalCost/obj.energyDelivered).toFixed(4)),
                             sessionCost: obj.totalCost
                         }
@@ -169,7 +177,17 @@ exports.findAll = (req, res) => {
                     numberOfVehicleChargingSessions: dataJson.length,
                     vehicleChargingSessionsList: dataJson
                 }
-                res.status(200).send(response);
+                // send csv response, if explicitly mentioned
+                if (format === 'csv') {
+                    const fieldsFirst = ["vehicleId", "requestTimestamp", "periodFrom", "periodTo", "totalEnergyConsumed", "numberOfVisitedPoints", "numberOfVehicleChargingSessions"];
+                    delete response.vehicleChargingSessionsList;
+                    const csvFirst = parse(response, {fieldsFirst});
+                    const fieldsSecond = ["sessionIndex", "sessionId", "energyProvider", "startedOn", "finishedOn", "energyDelivered", "pricePolicyRef", "costPerKwh", "sessionCost"];
+                    const csvSecond = parse(dataJson, {fieldsSecond});
+                    return res.type('text/csv').status(200).send(csvFirst + '\n\n' + csvSecond);
+                }
+                // otherwise, send json response
+                return res.type('application/json').status(200).send(response);
             })
             .catch(err => {
                 res.status(500).send({
@@ -177,6 +195,10 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the vehicle"
                 });
             });
+
+
+
+
     } else if (req.params.stationId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {stationId, datetimeFrom, datetimeTo} = req.params;
 
@@ -230,7 +252,7 @@ exports.findAll = (req, res) => {
                 }, {totalEnergyDelivered:0, data:{}});
                 let response = {
                     stationId: dataJson[0].chargingPoint.stationId,
-                    operator: dataJson[0].chargingPoint.station.user,
+                    operator: dataJson[0].chargingPoint.station.user.fullName,
                     requestTimestamp: dateFormat(requestTimestamp, "yyyy-mm-dd HH:MM:ss"),
                     periodFrom: dateFormat(datetimeFrom, "yyyy-mm-dd HH:MM:ss"),
                     periodTo: dateFormat(datetimeTo, "yyyy-mm-dd HH:MM:ss"),
@@ -239,7 +261,17 @@ exports.findAll = (req, res) => {
                     numberOfActivePoints: Object.entries(groupByCpId.data).length,
                     sessionSummaryList: Object.values(groupByCpId.data)
                 }
-                res.status(200).send(response);
+                // send csv response, if explicitly mentioned
+                if (format === 'csv') {
+                    const fieldsFirst = ["stationId", "operator", "requestTimestamp", "periodFrom", "periodTo", "totalEnergyDelivered", "numberOfChargingSessions", "numberOfActivePoints"];
+                    delete response.sessionSummaryList;
+                    const csvFirst = parse(response, {fieldsFirst});
+                    const fieldsSecond = ["pointId", "pointSessions", "energyDelivered"];
+                    const csvSecond = parse(Object.values(groupByCpId.data), {fieldsSecond});
+                    return res.type('text/csv').status(200).send(csvFirst + '\n\n' + csvSecond);
+                }
+                // otherwise, send json response
+                return res.type('application/json').status(200).send(response);
             })
             .catch(err => {
                 res.status(500).send({
@@ -247,6 +279,10 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the station"
                 })
             });
+
+
+
+
     } else if (req.params.providerId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {providerId, datetimeFrom, datetimeTo} = req.params;
 
@@ -284,13 +320,21 @@ exports.findAll = (req, res) => {
                             startedOn: dateFormat(obj.startTime, "yyyy-mm-dd HH:MM:ss"),
                             finishedOn: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
                             energyDelivered: obj.energyDelivered,
-                            pricePolicyRef: 'Some price policy ref',
+                            pricePolicyRef: `Cost per kW:  €${obj.chargingPoint.station.energyProvider.costPerKw} | ` + 
+                                            `Cost per kWh: €${obj.chargingPoint.station.energyProvider.costPerKwh}`,
                             costPerKwh: parseFloat((obj.totalCost/obj.energyDelivered).toFixed(4)),
                             totalCost: parseFloat(obj.totalCost)
                         }
                     }
                 )
-                res.status(200).send(dataJson);
+                // send csv response, if explicitly mentioned
+                if (format === 'csv') {
+                    const fields = ["providerId", "providerName", "stationId", "sessionId", "vehicleId", "startedOn", "energyDelivered", "pricePolicyRef", "costPerKwh", "totalCost"];
+                    const csv = parse(dataJson, {fields});
+                    return res.type('text/csv').status(200).send(csv);
+                }
+                // otherwise, send json response
+                return res.type('application/json').status(200).send(response);
             })
             .catch(err => {
                 res.status(500).send({
@@ -298,6 +342,10 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the provider"
                 })
             });
+
+
+
+
     } else {
         res.status(400).send({
             message: "Invalid use of parameters"
