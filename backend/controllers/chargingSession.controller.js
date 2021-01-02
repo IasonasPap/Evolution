@@ -1,5 +1,6 @@
 const db = require("../models");
 const {Op} = require("sequelize");
+const { parse } = require('json2csv');
 const chargingPoint = db.chargingPoint;
 const chargingSession = db.chargingSession;
 const charger = db.charger;
@@ -49,6 +50,7 @@ exports.findAll = (req, res) => {
     if (req.params.pointId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {pointId, datetimeFrom, datetimeTo} = req.params;
         let requestTimestamp = new Date();
+        let format = req.query.format;
         let condition = {
             chargingPointId: pointId,
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
@@ -89,14 +91,24 @@ exports.findAll = (req, res) => {
                 );
                 let response = {
                     Point: req.params.pointId,
-                    PointOperator: JSON.parse(JSON.stringify(data))[0].chargingPoint.station.user,
+                    PointOperator: JSON.parse(JSON.stringify(data))[0].chargingPoint.station.user.fullName,
                     RequestTimestamp: dateFormat(requestTimestamp, "yyyy-mm-dd HH:MM:ss"),
                     PeriodFrom: dateFormat(datetimeFrom, "yyyy-mm-dd HH:MM:ss"),
                     PeriodTo: dateFormat(datetimeTo, "yyyy-mm-dd HH:MM:ss"),
                     NumberOfChargingSessions: dataObjects.length,
                     ChargingSessionsList: dataObjects
                 }
-                res.status(200).send(response);
+                // send csv response, if explicitly mentioned
+                if (format === 'csv') {
+                    const fieldsFirst = ["Point", "PointOperator", "RequestTimestamp", "PeriodFrom", "PeriodTo", "NumberOfChargingSessions"];
+                    delete response.ChargingSessionsList;
+                    const csvFirst = parse(response, {fieldsFirst});
+                    const fieldsSecond = ["SessionIndex", "SessionId", "StartedOn", "FinishedOn", "Protocol", "EnergyDelivered", "Payment", "VehicleType"];
+                    const csvSecond = parse(dataObjects, {fieldsSecond});
+                    return res.type('text/csv').status(200).send(csvFirst + '\n\n' + csvSecond);
+                }
+                // otherwise, send json response
+                return res.type('application/json').status(200).send(response);
             })
             .catch(err => {
                 res.status(500).send({
