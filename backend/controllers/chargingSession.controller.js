@@ -136,6 +136,9 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the point"
                 });
             });
+
+
+
     } else if (req.params.vehicleId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {vehicleId, datetimeFrom, datetimeTo} = req.params;
 
@@ -209,6 +212,10 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the vehicle"
                 });
             });
+
+
+
+
     } else if (req.params.stationId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {stationId, datetimeFrom, datetimeTo} = req.params;
 
@@ -288,6 +295,10 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the station"
                 })
             });
+
+
+
+
     } else if (req.params.providerId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {providerId, datetimeFrom, datetimeTo} = req.params;
         let requestTimestamp = new Date();
