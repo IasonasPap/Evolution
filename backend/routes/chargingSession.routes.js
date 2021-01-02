@@ -1,4 +1,5 @@
 const chargingSession = require('../controllers/chargingSession.controller.js');
+const auth = require('../middleware/auth');
 
 var router = require("express").Router();
 
