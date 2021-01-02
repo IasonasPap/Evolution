@@ -334,7 +334,7 @@ exports.findAll = (req, res) => {
                     return res.type('text/csv').status(200).send(csv);
                 }
                 // otherwise, send json response
-                return res.type('application/json').status(200).send(response);
+                return res.type('application/json').status(200).send(dataJson);
             })
             .catch(err => {
                 res.status(500).send({
