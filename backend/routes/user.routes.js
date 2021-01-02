@@ -3,10 +3,6 @@ const router = express.Router({mergeParams: true});
 
 const users = require('../controllers/user.controller');
 
-//const users = require("../controllers/user.controller.js");
-
-//const router = require("express").Router();
-
 // Create a new User
 router.post("/", users.create);
 

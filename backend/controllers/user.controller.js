@@ -20,10 +20,10 @@ exports.create = (req, res, next) => {
     let newUser = {
         username: req.body.username,
         password: req.body.password,
-        fullName: req.body.fullName ? req.body.fullName : undefined,
-        email: req.body.email ? req.body.email : undefined,
-        isAdmin: req.body.isAdmin ? req.body.isAdmin : undefined,
-        isStationManager: req.body.isStationManager ? req.body.isStationManager : undefined
+        fullName: req.body.fullName || undefined,
+        email: req.body.email || undefined,
+        isAdmin: req.body.isAdmin || false,
+        isStationManager: req.body.isStationManager || false
     };
 
     // Insert the newUser into the users table
