@@ -29,4 +29,7 @@ router.use('/posts', (req, res) => {
 router.post('/login', authController.login);
 router.post('/logout', authController.logout);
 
+router.post('/login', authController.login);
+router.post('/logout', authController.logout);
+
 module.exports = router;
