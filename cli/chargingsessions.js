@@ -74,7 +74,7 @@ module.exports = (val, datetimeFrom, datetimeTo, flag, format) => {
             console.log(response)
             process.exit()
         }).catch(err => {
-            console.log({message: "Error while retrieving the charging sessions of the point"});
+            console.log({error: "Error while retrieving the charging sessions of the point"});
             process.exit()
         });
     }
@@ -146,7 +146,7 @@ module.exports = (val, datetimeFrom, datetimeTo, flag, format) => {
             console.log(response)
             process.exit()
         }).catch(err => {
-            console.log({message: "Error while retrieving the charging sessions of the vehicle"});
+            console.log({error: "Error while retrieving the charging sessions of the vehicle"});
             process.exit()
         });
     }
@@ -211,7 +211,7 @@ module.exports = (val, datetimeFrom, datetimeTo, flag, format) => {
             console.log(response)
             process.exit()
         }).catch(err => {
-            console.log({message: "Error while retrieving the charging sessions of the station"});
+            console.log({error: "Error while retrieving the charging sessions of the station"});
             process.exit()
         });
     }
@@ -272,7 +272,7 @@ module.exports = (val, datetimeFrom, datetimeTo, flag, format) => {
             process.exit()
         }).catch(err => {
             console.error(err)
-            console.log({message: "Error while retrieving the charging sessions of the provider"});
+            console.log({error: "Error while retrieving the charging sessions of the provider"});
             process.exit()
         });
     }

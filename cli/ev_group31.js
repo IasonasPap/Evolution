@@ -5,11 +5,12 @@ const check_authentication = require('./common/checkauthentication.js')
 const charging_sessions = require('./chargingsessions.js')
 const usermod = require('./usermod.js')
 const checkapikey = require('./common/checkapikey.js')
+const sessionsupd = require('./sessionsupd.js')
 
 argv = process.argv
 
 if (argv.length < 7){
-	console.log("You need to provide at least 5 arguments!\n")
+	console.log({error: "You need to provide at least 5 arguments!\n"})
 	process.exit()
 }
 else{
@@ -23,7 +24,7 @@ for (var i = 0, j = argv.length; i < j; i++){
 			checkapikey(key) // check if key has the correct format
 		}
 		else {
-			console.log("You need to provide", argv[i], "value!\n")
+			console.log({error: `You need to provide ${argv[i]} value!`})
 			process.exit()
 		}
 	}
@@ -31,12 +32,12 @@ for (var i = 0, j = argv.length; i < j; i++){
 		if ((i+1) < argv.length){
 			format = argv[i+1] 
 			if (format != 'csv' && format != 'json'){
-				console.log("Please provide a valid format (json or csv)!\n")
+				console.log({error: "Please provide a valid format (json or csv)!\n"})
 				process.exit()
 			}
 		}
 		else {
-			console.log("You need to provide", argv[i], "value!\n")
+			console.log({error: `You need to provide ${argv[i]} value!`})
 			process.exit()
 		}
 	}
@@ -73,7 +74,7 @@ else if (scope == 'login'){
 		}
 	}
 	if (params < 2){
-		console.log({error : "You need to provide 2 parameters (--username, --passw)!"})
+		console.log({error: "You need to provide 2 parameters (--username, --passw)!"})
 		process.exit()
 	}
 	authenticate.login(username, password)
@@ -227,6 +228,7 @@ else if (scope == 'Admin'){
 					console.log({error: "You need to provide source filename (--source)!"})
 					process.exit()
 				}
+				sessionsupd(source)
 				// edw exeis parei to sourcefile
 			}
 			
@@ -237,6 +239,8 @@ else if (scope == 'Admin'){
 			else if(argv[i] == '--resetsessions'){
 				resetsessions()
 			}
-		}		
+		}
+		//console.log({error: "You need to provide one of the supported parameters (--usermod, --users, --sessionsupd, --healthcheck, --resetsessions)!"})
+		//process.exit()		
 	})
 }

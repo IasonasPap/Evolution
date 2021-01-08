@@ -12,7 +12,7 @@ module.exports.login = (username, password) => {
     User.findOne({where: {username: username}}).then(user => {
         return bcrypt.compare(password, user.password).then((valid) => {
             if (!valid) {
-                console.log({error: "Invalid username or password"})
+                console.log({error: "Invalid username or password!"})
                 process.exit()
             }
             else {
