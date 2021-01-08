@@ -13,6 +13,7 @@ module.exports.login = (username, password) => {
         return bcrypt.compare(password, user.password).then((valid) => {
             if (!valid) {
                 console.log({error: "Invalid username or password"})
+                process.exit()
             }
             else {
                 let user_ = JSON.parse(JSON.stringify(user));
@@ -29,7 +30,7 @@ module.exports.login = (username, password) => {
         return fileWrite("./softeng20bAPI.token", token)
     }).then(() => {
         console.log({message: "Login was successful!"})
-    }).catch(() => { 
+    }).catch((err) => {
         console.log({error: "Something went wrong with authentication!"})
     }).finally(() => {
         process.exit()
