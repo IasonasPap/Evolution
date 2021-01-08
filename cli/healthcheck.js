@@ -6,7 +6,6 @@ module.exports = () => {
     .then((err) => {
         if (err) {
             console.log("status: failed")
-            console.error(err);
         }
         else {
             console.log("Connection to DB established!")
