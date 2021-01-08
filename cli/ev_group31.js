@@ -4,6 +4,7 @@ const authenticate = require('./authenticate.js')
 const check_authentication = require('./common/checkauthentication.js')
 const charging_sessions = require('./chargingsessions.js')
 const usermod = require('./usermod.js')
+const checkapikey = require('./common/checkapikey.js')
 
 argv = process.argv
 
@@ -19,6 +20,7 @@ for (var i = 0, j = argv.length; i < j; i++){
 	if ((argv[i] == '--apikey')){
 		if ((i+1) < argv.length){
 			key = argv[i+1]
+			checkapikey(key) // check if key has the correct format
 		}
 		else {
 			console.log("You need to provide", argv[i], "value!\n")
