@@ -5,10 +5,10 @@ module.exports = () => {
     sequelize.authenticate()
     .then((err) => {
         if (err) {
-            console.log("status: failed")
+            console.log({error: "Connection to DB failed!"})
         }
         else {
-            console.log("Connection to DB established!")
+            console.log({message: "Connection to DB established!"})
         }
 	})
 	.then(() => {

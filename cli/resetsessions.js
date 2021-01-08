@@ -16,19 +16,19 @@ module.exports = () => {
                 isStationManager: 0
             }
         });
-        console.log(`admin user was ${newlyCreated?'created':'reset'}!`);
+        console.log({message: `Admin user was ${newlyCreated?'created':'reset'}!`});
     }
     catch (err) {
-        console.log("status: failed");
+        console.log({error: "Something went wrong!"});
     }
 
     // Reset chanrgingSession table, that is, delete every row in the entity
     chargingSession.destroy({
         truncate: true
     }).then(() => {
-        console.log("ChargingSessions table was reset!");
+        console.log({message: "ChargingSessions table was reset!"});
     }).catch((err) => {
-        console.log("status: failed");
+        console.log({error: "Something went wrong!"});
     })
     .then(() => {
         process.exit()
