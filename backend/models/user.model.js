@@ -26,12 +26,12 @@ module.exports = (sequelize, Sequelize) => {
         // fullName: the name and surname of the system user
         fullName: {
             type: Sequelize.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         // email: the email of the system user
         email: {
             type: Sequelize.STRING,
-            allowNull: false,
+            allowNull: true,
             unique: true,
             validate: {
                 isEmail: true
