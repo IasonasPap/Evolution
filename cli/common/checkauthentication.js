@@ -14,18 +14,19 @@ module.exports = (isAdmin=false) => {
 		return User.findOne({where: {id: user.id}})
 	}).then((user) => {
 		if (!user) {
-			console.error({error : "User not found!"})
+			console.log({error : "User not found!"})
 			process.exit()
 		}
 		else {
-			if (isAdmin) {
-				//tsekarei kai oti thelw epipedo diapisteushs isAdmin kai oti einai admin
+			if (isAdmin && !user.isAdmin) {
+				console.log({error: `User ${user.username} does not have admin permissions!`})
+				process.exit()
 			}
 			console.log({message: `User ${user.username} is authenticated!`})
 			return user
 		}
 	}).catch(() => {
-		console.error({error : "User not found!"})
+		console.log({error : "User not found!"})
 		process.exit()
 	})
 }
