@@ -2,13 +2,6 @@ const db = require('../backend/models');
 const {user, chargingSession, sequelize} = db;
 
 module.exports = () => {
-    /* 
-    This fuction checks if a user named <admin> exist in the users table. If 
-    not, it creates this user and reset its field to default.
-    Afterwards, it resets the chargingSessions table, clearing every row.
-    */
-
-    // Create or reset <admin> user with <petrol4ever> as its default password
     try {
         const [_, newlyCreated] = user.findOrCreate({
             where: {
@@ -26,7 +19,6 @@ module.exports = () => {
         console.log(`admin user was ${newlyCreated?'created':'reset'}!`);
     }
     catch (err) {
-        console.error(err);
         console.log("status: failed");
     }
 
@@ -37,7 +29,6 @@ module.exports = () => {
         console.log("ChargingSessions table was reset!");
     }).catch((err) => {
         console.log("status: failed");
-        console.error(err);
     })
     .then(() => {
         process.exit()
