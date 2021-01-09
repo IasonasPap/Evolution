@@ -239,8 +239,6 @@ else if (scope == 'Admin'){
 			else if(argv[i] == '--resetsessions'){
 				resetsessions()
 			}
-		}
-		//console.log({error: "You need to provide one of the supported parameters (--usermod, --users, --sessionsupd, --healthcheck, --resetsessions)!"})
-		//process.exit()		
+		}	
 	})
 }
