@@ -6,6 +6,7 @@ const charging_sessions = require('./chargingsessions.js')
 const usermod = require('./usermod.js')
 const checkapikey = require('./common/checkapikey.js')
 const sessionsupd = require('./sessionsupd.js')
+const users = require('./users.js')
 
 argv = process.argv
 
@@ -242,7 +243,9 @@ else if (scope == 'Admin'){
 					console.log({error: `You need to provide ${argv[k]} value!`})
 					process.exit()
 				}
-				//edw exeis to xrhsth
+				users(username).then(() => {
+					process.exit()
+				})
 			}
 			
 			else if (argv[i] == '--sessionsupd'){
