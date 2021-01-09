@@ -155,6 +155,9 @@ else if (scope == 'Admin'){
 		for (var i = 0, j = argv.length; i < j; i++){
 
 			if (argv[i] == '--usermod'){
+
+				isStationManager = false
+				isAdmin = false
 			
 				let params = 0
 				for (var k = 0, l = argv.length; k < l; k++){
@@ -186,13 +189,46 @@ else if (scope == 'Admin'){
 							process.exit()							
 						}
 					}
+					else if(argv[k] == '--isStationManager') {
+						isStationManager = true
+					}
+					else if(argv[k] == '--isAdmin') {
+						isAdmin = true
+					}
+					else if(argv[k] == '--email') {
+						if ((k+1) < argv.length){
+							email = argv[k+1]
+							if (email == ' '){
+								console.log({error: "Empty email is not valid!"})
+								process.exit()
+							}
+							params += 1
+						}
+						else {
+							console.log({error: `You need to provide ${argv[k]} value!`})
+							process.exit()							
+						}
+					}
+					else if(argv[k] == '--fullName') {
+						if ((k+1) < argv.length){
+							fullName = argv[k+1]
+							if (fullName == ' '){
+								console.log({error: "Empty full name is not valid!"})
+								process.exit()
+							}
+							params += 1
+						}
+						else {
+							console.log({error: `You need to provide ${argv[k]} value!`})
+							process.exit()							
+						}
+					}
 				}
-				if (params < 2){
-					console.log({error: "You need to provide username and password (--username, --passw)!"})
+				if (params < 4){
+					console.log({error: "You need to provide username, password, full name and email (--username, --passw, --fullName, --email)!"})
 					process.exit()
 				}
-				usermod(username, password).then(() => {
-					console.log(username, password)
+				usermod(username, password, fullName, email, isAdmin, isStationManager).then(() => {
 					process.exit()
 				})
 			}
