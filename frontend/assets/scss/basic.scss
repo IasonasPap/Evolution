@@ -1,0 +1,191 @@
+.flip-x {
+    transform: rotateY(180deg);
+}
+
+.flip-y {
+    transform: rotateX(180deg);
+}
+
+.rotate-90 {
+    transform: rotate(90deg);
+}
+
+.rotate-270 {
+    transform: rotate(-90deg);
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.capitalize {
+    text-transform: capitalize;
+}
+
+.italic {
+    font-style: italic;
+}
+
+.text-align-center {
+    text-align: center;
+}
+
+.text-align-left {
+    text-align: left;
+}
+
+.text-align-right {
+    text-align: right;
+}
+
+.text-align-justify {
+    text-align: justify;
+}
+
+.white-space-nowrap {
+    white-space: nowrap;
+}
+
+.white-space-pre-line {
+    white-space: pre-line;
+}
+
+.font-size-xxs, .font-xxs {
+    font-size: 0.5rem;
+}
+
+.font-size-xs, .font-xs {
+    font-size: 0.7rem;
+}
+
+.font-size-smaller, .font-smr {
+    font-size: 0.8rem;
+}
+
+.font-size-normal, .font-nr {
+    font-size: 1rem;
+}
+
+.font-size-small, .font-sm {
+    font-size: 0.9rem;
+}
+
+.font-size-large, .font-lg {
+    font-size: 1.1rem;
+}
+
+.font-size-larger, .font-lgr {
+    font-size: 1.2rem;
+}
+
+.font-size-xl, .font-xl {
+    font-size: 1.5rem;
+}
+
+.font-size-xxl, .font-xxl {
+    font-size: 2rem;
+}
+
+.font-size-xxxl, .font-xxxl {
+    font-size: 3rem;
+}
+
+.semi-bold, .font-semi-bold {
+    font-weight: 600;
+}
+
+.bold, .font-bold {
+    font-weight: 800;
+}
+
+@for $i from 1 through 9 {
+    $weight: $i * 100;
+    .font-weight-#{$weight} {
+        font-weight: $weight;
+    }
+}
+
+.font-normal {
+    font-weight: normal;
+}
+
+.inline-block {
+    display: inline-block;
+}
+
+.flex {
+    display: flex;
+}
+
+.inline-flex {
+    display: inline-flex;
+}
+
+.flex-1 {
+    flex: 1;
+    min-width: 0;
+}
+
+.flex-1-1-auto {
+    flex: 1 1 auto;
+}
+
+.flex-direction-column {
+    flex-direction: column;
+}
+
+.flex-wrap-wrap {
+    flex-wrap: wrap;
+}
+
+.justify-content-center {
+    justify-content: center;
+}
+
+.justify-content-space-between {
+    justify-content: space-between;
+}
+
+.justify-content-space-around {
+    justify-content: space-around;
+}
+
+.justify-content-space-evenly {
+    justify-content: space-evenly;
+}
+
+.justify-content-flex-start {
+    justify-content: flex-start;
+}
+
+.justify-content-flex-end {
+    justify-content: flex-end;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.align-items-baseline {
+    align-items: baseline;
+}
+
+.align-items-flex-start {
+    align-items: flex-start;
+}
+
+.align-items-flex-end {
+    align-items: flex-end;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.position-absolute {
+    position: absolute;
+}
+
+.overflow-auto {
+    overflow: auto;
+}

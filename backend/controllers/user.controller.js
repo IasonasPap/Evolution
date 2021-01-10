@@ -59,15 +59,27 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
-    user.findByPk(id)
-        .then(data => {
-            res.send(data);
-        })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error retrieving User with id=" + id
+    if(isFinite(id)) {
+        user.findByPk(id,{  attributes: { exclude: ['password'] } })
+            .then(data => {
+                res.send(data);
+            })
+            .catch(err => {
+                res.status(402).send({
+                    message: "User with id " + id +" not found"
+                });
             });
-        });
+    } else {
+        user.findOne({where: {username: id}}, {  attributes: { exclude: ['password'] } })
+            .then(data => {
+                res.send(data);
+            })
+            .catch(err => {
+                res.status(402).send({
+                    message: "User with id " + id +" not found"
+                });
+            });
+    }
 };
 
 // Update a User by the id in the request

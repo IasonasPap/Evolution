@@ -1,0 +1,114 @@
+@mixin placeholder-mixin($color, $opacity: 1, $font-family: inherit, $font-size: 1rem, $font-weight: normal) {
+    ::-webkit-input-placeholder {
+        color: $color;
+        opacity: $opacity;
+        font-family: #{$font-family};
+        font-size: $font-size;
+        font-weight: $font-weight;
+    }
+
+    ::-moz-placeholder {
+        color: $color;
+        opacity: $opacity;
+        font-family: #{$font-family};
+        font-size: $font-size;
+        font-weight: $font-weight;
+    }
+
+    :-ms-input-placeholder {
+        color: $color;
+        opacity: $opacity;
+        font-family: #{$font-family};
+        font-size: $font-size;
+        font-weight: $font-weight;
+    }
+
+    :-moz-placeholder {
+        color: $color;
+        opacity: $opacity;
+        font-family: #{$font-family};
+        font-size: $font-size;
+        font-weight: $font-weight;
+    }
+
+    ::placeholder {
+        color: $color;
+        opacity: $opacity;
+        font-family: #{$font-family};
+        font-size: $font-size;
+        font-weight: $font-weight;
+    }
+}
+
+@mixin button-mixin($bg, $color) {
+    font-family: inherit;
+    border: none;
+    padding: 0.5em 1.5em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    background-color: $bg;
+    color: $color;
+    border-radius: 3px;
+}
+
+@mixin box-shadow-mixin() {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+}
+
+@mixin font-awesome($content, $size: inherit) {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    font-size: 14px;
+    font-size: $size;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: $content;
+}
+
+@mixin sp-icon($content, $size: inherit) {
+    font-family: 'sp-icons' !important;
+    font-size: $size;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    content: $content;
+}
+
+@mixin expand-y($flex: 1) {
+    flex: $flex;
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin linear-activity($lightColor, $darkColor) {
+    .linear-activity {
+        background-color: $lightColor;
+    }
+
+    .determinate {
+        background-color: $darkColor;
+    }
+
+    .indeterminate:before {
+        background-color: $darkColor;
+    }
+
+    .indeterminate:after {
+        background-color: $lightColor;
+    }
+}
+
+@mixin side-menu-container() {
+    display: flex;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    transition: all 0.4s ease-in-out;
+    z-index: 10;
+    width: 100%;
+}

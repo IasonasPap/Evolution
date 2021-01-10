@@ -1,0 +1,141 @@
+.ngdialog.ngdialog-theme-default, .ngdialog.mc-modal {
+    font-size: 1rem;
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .ngdialog-content {
+        border-radius: 0;
+        text-align: left;
+        max-width: 100%;
+        width: auto;
+        padding: 2rem;
+        font-family: Poppins, sans-serif;
+        font-size: inherit;
+        line-height: inherit;
+        margin: auto;
+        z-index: 1;
+
+        .file-viewer-content {
+            &.img {
+                max-width: 100%;
+                max-height: 100%;
+            }
+
+            &.pdf {
+                width: calc(100vw - 6em);
+                height: calc(100vh - 4em);
+            }
+        }
+    }
+
+    &.sp-angular-js-file-viewer {
+        padding: 0;
+
+        .ngdialog-content {
+            max-height: 100%;
+            max-width: 100%;
+
+            .pdf {
+                width: calc(100vw - 6rem);
+                height: calc(100vh - 6rem);
+            }
+        }
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+    color: #444;
+    font-size: 1em;
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.2s linear;
+    padding: 0.25em;
+    justify-content: center;
+    display: flex !important;
+    align-items: center;
+
+    &:hover {
+        opacity: 1;
+    }
+
+    &.fa.fa-times:before {
+        @include sp-icon("\e98b");
+    }
+}
+
+.modal-title {
+    font-size: 1.4em;
+    margin-bottom: 1.2em;
+}
+
+.modal-buttons {
+    margin-top: 3em;
+    display: flex;
+    justify-content: center;
+
+    > * {
+        margin-left: 0.25em;
+        margin-right: 0.25em;
+    }
+}
+
+.alert .modal-content {
+    text-align: center;
+
+    .modal-icon {
+        font-size: 4rem;
+
+        &.success {
+            color: $green;
+        }
+
+        &.fail {
+            color: $dark-red;
+        }
+
+        &.confirm {
+            color: $blue;
+        }
+
+        &.delete {
+            color: $dark-red;
+        }
+
+        &.warn {
+            color: $yellow;
+        }
+    }
+}
+
+.modal-label {
+    text-align: left;
+    margin-bottom: 0.25em;
+}
+
+.alert .modal-buttons {
+    display: flex;
+    justify-content: space-around;
+
+    .button:not(:last-child) {
+        margin-right: 0.5rem;
+    }
+}
+
+.modal-message {
+    font-size: 1rem;
+    margin-top: 1rem;
+    padding: 0 2rem;
+
+    &.loading, &.success, &.fail {
+        font-weight: 600;
+    }
+}
+
+.modal-content .message.success, .modal-content .message.fail {
+    font-size: 1.2rem;
+}
