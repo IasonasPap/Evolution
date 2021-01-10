@@ -14,4 +14,5 @@ router.get("/SessionsPerProvider/:providerId/:datetimeFrom/:datetimeTo", auth, c
 router.get("/SessionsPerUser/:userId", auth, chargingSession.findAll);
 router.get("/SessionsPerMultipleStations", auth, chargingSession.findSessionsPerMultipleStations);
 
+
 module.exports = router;

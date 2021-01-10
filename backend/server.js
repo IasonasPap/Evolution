@@ -7,7 +7,14 @@ const fs = require('fs');
 
 const app = express();
 
-app.use(cors());
+
+global.__basedir = __dirname + '/..';
+
+const corsOptions = {
+	origin: "http://localhost:8765"
+};
+
+app.use(cors(corsOptions));
 
 // to support JSON-encoded bodies
 app.use(bodyParser.json());
