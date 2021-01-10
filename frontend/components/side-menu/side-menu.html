@@ -1,0 +1,23 @@
+<div class="side-menu-container">
+    <div class="side-menu-contents">
+        <div class="user">
+            <div class="user-image">
+                <img src="frontend/assets/images/user.svg"/>
+            </div>
+            <div class="username">
+                {{$ctrl.user.username}}
+            </div>
+        </div>
+        <div class="main-menu">
+            <div class="menu-item">
+                <a ui-sref="app.dashboard" ui-sref-active="active">Dashboard</a>
+            </div>
+            <div class="menu-item">
+                <a ui-sref="app.chargeHistory" ui-sref-active="active">Charge History</a>
+            </div>
+            <div class="menu-item" ng-if="$ctrl.user.isStationManager">
+                <a ui-sref="app.chargingPointsSummary" ui-sref-active="active">Charging Points Summary</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,15 @@
+/*
+ * SpeCtre
+ * aprev
+ * 07-Απρ-20
+ *
+ * The contents of this file are included also in `style.scss`. We are generating a separate .css file that includes
+ * only the `mc-header` styles, to allow adding the header styles without having to include all the styles of the
+ * mega-commons.
+ */
+
+@import "variables";
+@import "mixins";
+@import "animations";
+@import "header";
+@import "notifications";
