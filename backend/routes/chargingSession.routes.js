@@ -12,4 +12,5 @@ router.get("/SessionsPerStation/:stationId/:datetimeFrom/:datetimeTo", chargingS
 router.get("/SessionsPerEV/:vehicleId/:datetimeFrom/:datetimeTo", chargingSession.findAll);
 router.get("/SessionsPerProvider/:providerId/:datetimeFrom/:datetimeTo", chargingSession.findAll);
 
+
 module.exports = router;
