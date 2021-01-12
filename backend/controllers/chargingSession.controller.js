@@ -346,7 +346,47 @@ exports.findAll = (req, res) => {
                 })
             });
 
+    } else if (req.params.userId) {
+        let {userId} = req.params;
 
+        chargingSession.findAll({
+            include: [
+                {model: electricVehicle, required:true, where: {userId: userId},},
+                {model: chargingPoint, include: [{model: station},{model: charger}]}
+            ]
+        })
+            .then(data => {
+                let dataJson = data.map((item, index) => {
+                        let obj = JSON.parse(JSON.stringify(item));
+                        return {
+                            userId: parseInt(obj.electricVehicle.userId),
+                            station: obj.chargingPoint.station,
+                            charger: obj.chargingPoint.charger,
+                            sessionId: parseInt(obj.id),
+                            vehicle: obj.electricVehicle,
+                            startedOn: dateFormat(obj.startTime, "yyyy-mm-dd HH:MM:ss"),
+                            finishedOn: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
+                            energyDelivered: obj.energyDelivered,
+                            costPerKwh: parseFloat((obj.totalCost/obj.energyDelivered).toFixed(4)),
+                            totalCost: parseFloat(obj.totalCost)
+                        }
+                    }
+                )
+                // send csv response, if explicitly mentioned
+                // if (format === 'csv') {
+                //     const fields = ["providerId", "providerName", "stationId", "sessionId", "vehicleId", "startedOn", "energyDelivered", "pricePolicyRef", "costPerKwh", "totalCost"];
+                //     const csv = parse(dataJson, {fields});
+                //     return res.type('text/csv').status(200).send(csv);
+                // }
+                // otherwise, send json response
+                return res.type('application/json').status(200).send(dataJson);
+            })
+            .catch(err => {
+                res.status(500).send({
+                    message:
+                        err.message || "Error while retrieving the charging sessions of the provider"
+                })
+            });
 
 
     } else {

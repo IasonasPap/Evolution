@@ -20,19 +20,29 @@
                 abstract: true,
                 resolve: {
                     user: ['UserFactory', 'Utils', function (UserFactory, Utils) {
-                        return Utils.getUser() || UserFactory.getOne(localStorage.getItem('userId')).then(res => res.data);
+                        return Utils.getUser();
+                    }],
+                    userSessions: ['ChargingSessionFactory', 'user', function (ChargingSessionFactory, user) {
+                        return ChargingSessionFactory.getChargingSessionsPerUser(user.id)
+                            .then(res => res.data);
+                    }],
+                    userVehicles: ['Utils', 'UserFactory', 'user', function (Utils, UserFactory, user) {
+                        return UserFactory.getVehicles(user.id)
+                            .then(res => {
+                                Utils.setUserVehicles(res.data);
+                                return res.data;
+                            });
                     }]
                 }
             })
             .state('app.dashboard', {
                 url: '/dashboard',
-                component: 'dashboard'
-                //abstract: true
+                component: 'dashboard',
+                config: {title: 'Dashboard'},
             })
-            .state('app.test', {
-                url: '/test',
+            .state('app.chargeHistory', {
+                url: '/charge-history',
                 template: '<div><a ui-sref="app.dashboard">Click here!</a></div>',
-                //abstract: true
             });
     }
 

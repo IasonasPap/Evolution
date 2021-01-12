@@ -16,7 +16,7 @@
         //////// Public
 
         function getToken() {
-            return service.token || localStorage.getItem('token');
+            return localStorage.getItem('token');
         }
 
         function setToken(token) {

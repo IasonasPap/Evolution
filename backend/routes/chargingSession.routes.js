@@ -11,5 +11,6 @@ router.get("/SessionsPerPoint/:pointId/:datetimeFrom/:datetimeTo", chargingSessi
 router.get("/SessionsPerStation/:stationId/:datetimeFrom/:datetimeTo", chargingSession.findAll);
 router.get("/SessionsPerEV/:vehicleId/:datetimeFrom/:datetimeTo", chargingSession.findAll);
 router.get("/SessionsPerProvider/:providerId/:datetimeFrom/:datetimeTo", chargingSession.findAll);
+router.get("/SessionsPerUser/:userId", chargingSession.findAll);
 
 module.exports = router;

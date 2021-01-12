@@ -1,5 +1,6 @@
 const db = require("../models");
 const user = db.user;
+const vehicle = db.electricVehicle;
 const bcrypt = require('bcrypt');
 
 exports.create = (req, res, next) => {
@@ -143,6 +144,22 @@ exports.deleteAll = (req, res) => {
             res.status(500).send({
                 message:
                     err.message || "Some error occurred while removing all users."
+            });
+        });
+};
+
+//get user's vehicles
+exports.findVehicles = (req, res) => {
+    const id = req.params.id;
+    vehicle.findAll({
+        where: {userId: id}
+    })
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(402).send({
+                message: "No vehicles found for user with id " + id
             });
         });
 };

@@ -13,6 +13,9 @@ router.get("/", users.findAll);
 // Retrieve a single User with id
 router.get("/:id", users.findOne);
 
+// Retrieve vehicles for user with id
+router.get("/:id/electricVehicles", users.findVehicles);
+
 // Update a User with id
 router.put("/:id", users.update);
 

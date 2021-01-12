@@ -1,0 +1,88 @@
+<div class="manage-task-modal">
+    <div class="modal-close sp-icons sp-icons-cancel" ng-click="closeThisDialog()"></div>
+    <div class="modal-title">Set Session Attributes</div>
+
+    <form name="vm.form" ng-submit="vm.submit()" novalidate>
+        <div class="modal-content">
+            <div class="row row-items-3 row-items-space-1 align-items-flex-end">
+                <div>
+                    <div class="label">Vehicle:<span class="red">*</span></div>
+                    <input  ng-model="vm.data.vehicle.licensePlate"
+                            type="text"
+                            required
+                            disabled/>
+                </div>
+                <div>
+                    <div class="label">Station:<span class="red">*</span></div>
+                    <input  ng-model="vm.data.station.address"
+                            type="text"
+                            required
+                            disabled/>
+                </div>
+                <div>
+                    <div class="label">Charger:<span class="red">*</span></div>
+                    <input  ng-model="vm.data.charger.protocol"
+                            type="text"
+                            required
+                            disabled/>
+                </div>
+            </div>
+            <div class="row row-items-3 row-items-space-1 align-items-flex-end">
+                <div>
+                    <div class="label">Cost calculation:<span class="red">*</span></div>
+                    <select name="pricePolicyRef" ng-model="vm.data.pricePolicyRef">
+                        <option value=""></option>
+                        <option value="time">Charging Time</option> <!-- not selected / blank option -->
+                        <option value="cost">Total Cost</option> <!-- interpolation -->
+                        <option value="energy">Total Energy</option>
+                    </select>
+                </div>
+                <div ng-if="vm.data.pricePolicyRef === 'time'">
+                    <div class="label">Hours:<span class="red">*</span></div>
+                    <input  ng-model="vm.data.chargingSession.hours"
+                            type="number"
+                            required/>
+                </div>
+                <div ng-if="vm.data.pricePolicyRef === 'time'">
+                    <div class="label">Minutes:<span class="red">*</span></div>
+                    <input  ng-model="vm.data.chargingSession.minutes"
+                            type="number"
+                            required/>
+                </div>
+                <div ng-if="vm.data.pricePolicyRef === 'cost'">
+                    <div class="label">Total cost ($):<span class="red">*</span></div>
+                    <input  ng-model="vm.data.chargingSession.cost"
+                            type="number"
+                            required/>
+                </div>
+                <div ng-if="vm.data.pricePolicyRef === 'energy'">
+                    <div class="label">Total energy (kw):<span class="red">*</span></div>
+                    <input  ng-model="vm.data.chargingSession.energy"
+                            type="number"
+                            required/>
+                </div>
+            </div>
+            <div class="row row-items-3 align-items-flex-end" ng-if="vm.data.pricePolicyRef.length">
+                <div ng-if="vm.data.pricePolicyRef !== 'energy'">
+                    <div class="label">Calculated energy:</div>
+                    <input  type="text"
+                            disabled>{{}}</input>
+                </div>
+                <div ng-if="vm.data.pricePolicyRef !== 'time'">
+                    <div class="label">Calculated time:</div>
+                    <input  type="text"
+                            disabled>{{}}</input>
+                </div>
+                <div ng-if="vm.data.pricePolicyRef !== 'cost'">
+                    <div class="label">Calculated cost:</div>
+                    <input  type="text"
+                            disabled>{{}}</input>
+                </div>
+            </div>
+        </div>
+        <div class="modal-buttons">
+            <button class="cancel" ng-click="closeThisDialog()" type="button">Cancel</button>
+            <button class="green" type="submit">Start Charging</button>
+        </div>
+    </form>
+</div>
