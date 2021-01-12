@@ -1,9 +1,3 @@
-/*
- * SpeCtre
- * aprev
- * 17-Nov-17
- */
-
 (function () {
     'use strict';
 

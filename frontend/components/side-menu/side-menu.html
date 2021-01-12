@@ -9,15 +9,30 @@
             </div>
         </div>
         <div class="main-menu">
-            <div class="menu-item">
-                <a ui-sref="app.dashboard" ui-sref-active="active">Dashboard</a>
+            <div class="flex-1">
+                <div class="menu-item">
+                    <a ui-sref="app.dashboard" ui-sref-active="active">
+                        <img class="menu-icon" ng-src="frontend/assets/images/dashboard-white.svg"/>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="menu-item">
+                    <a ui-sref="app.chargeHistory" ui-sref-active="active">
+                        <img class="menu-icon" ng-src="frontend/assets/images/charger.svg"/>
+                        Charge History
+                    </a>
+                </div>
+                <div class="menu-item" ng-if="$ctrl.user.isStationManager">
+                    <a ui-sref="app.chargingPointsSummary" ui-sref-active="active">Charging Points Summary</a>
+                </div>
             </div>
-            <div class="menu-item">
-                <a ui-sref="app.chargeHistory" ui-sref-active="active">Charge History</a>
-            </div>
-            <div class="menu-item" ng-if="$ctrl.user.isStationManager">
-                <a ui-sref="app.chargingPointsSummary" ui-sref-active="active">Charging Points Summary</a>
-            </div>
+            <new-session-button></new-session-button>
+        </div>
+        <div class="footer">
+            <a ui-sref="app.dashboard">
+                <img src="frontend/assets/images/logo.png"/>
+            </a>
+            <div class="copyright">Evolution &copy; 2021</div>
         </div>
     </div>
 </div>
