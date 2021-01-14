@@ -27,8 +27,8 @@ const routes = require('./routes/index.routes');
 app.use('/evcharge/api',routes);
 
 const options = {
-    key: fs.readFileSync('server.key'),
-    cert: fs.readFileSync('server.crt')
+    key: fs.readFileSync('backend/server.key'),
+    cert: fs.readFileSync('backend/server.crt')
 };
 
 // set port, listen for requests
