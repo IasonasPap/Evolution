@@ -3,6 +3,7 @@
 
     angular.module('evolution', [
         'angularMoment',
+        'ngSanitize',
         'ngDialog',
         'ui.router'
     ]);

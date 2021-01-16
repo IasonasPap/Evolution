@@ -277,7 +277,7 @@
                                         <loader></loader>\
                                     </div>\
                                     <div ng-if="!isLoading && success">\
-                                        <div class="modal-icon success"><i class="sp-icons sp-icons-checked-1"></i></div>\
+                                        <img width="80" src="frontend/assets/images/check.svg"\>\
                                         <div class="modal-message success" ng-bind-html="successMessage"></div>\
                                         <div class="modal-buttons">\
                                             <button class="button grey-light-bg" ng-click="closeThisDialog()">OK</button>\
@@ -287,7 +287,7 @@
                                         <div class="modal-icon fail"><i class="sp-icons sp-icons-exclamation-circle"></i></div>\
                                         <div class="modal-message fail" ng-bind-html="failMessage"></div>\
                                         <div class="modal-buttons">\
-                                            <button class="button cancel" ng-click="closeThisDialog()">OK</button>\
+                                            <button class="cancel" ng-click="closeThisDialog()">OK</button>\
                                         </div>\
                                     </div>\
                                 </div>\

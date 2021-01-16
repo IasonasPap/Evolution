@@ -27,6 +27,7 @@
 <!-- build:js app.js -->
 <script src="bower_components/moment/min/moment.min.js"></script>
 <script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
 <script src="bower_components/angular-moment/angular-moment.min.js"></script>
 <script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
 <script src="bower_components/ng-dialog/js/ngDialog.min.js"></script>
@@ -39,11 +40,11 @@
 <script src="frontend/app.http-interceptor.js"></script>
 <!-- Controllers -->
 <script src="frontend/views/content/content.controller.js"></script>
-<script src="frontend/modals/add-session/add-session.controller.js"></script>
 <!-- Components -->
 <script src="frontend/components/side-menu/side-menu.component.js"></script>
 <script src="frontend/components/page-title/page-title.component.js"></script>
 <script src="frontend/components/new-session-button/new-session-button.component.js"></script>
+<script src="frontend/components/progress-bar/progress-bar.component.js"></script>
 <!-- Directives -->
 
 <!-- Services -->
@@ -55,12 +56,14 @@
 <script src="frontend/factories/auth.factory.js"></script>
 <script src="frontend/factories/user.factory.js"></script>
 <script src="frontend/factories/charging-session.factory.js"></script>
+<script src="frontend/factories/use-case.factory.js"></script>
 <!-- Views -->
 <script src="frontend/views/content/content.controller.js"></script>
 <script src="frontend/views/login/login.component.js"></script>
 <script src="frontend/views/dashboard/dashboard.component.js"></script>
 <!-- Modals -->
-
+<script src="frontend/modals/session-progress/session-progress.controller.js"></script>
+<script src="frontend/modals/add-session/add-session.controller.js"></script>
 <!-- endbuild -->
 
 </body>
