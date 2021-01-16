@@ -24,7 +24,7 @@
 
         //////// Public
         function getDuration(item) {
-            return moment(moment(item.finishedOn, 'YYYY-MM-DD HH:mm:ss').diff(moment(item.startedOn, 'YYYY-MM-DD HH:mm:ss'))).format('HH:mm:ss');
+            return moment.utc(moment(item.finishedOn).diff(moment(item.startedOn))).format('HH:mm:ss');
         }
 
         //////// Private

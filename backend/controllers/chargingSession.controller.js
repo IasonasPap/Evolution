@@ -27,21 +27,24 @@ exports.create = (req, res) => {
     const newChargingSession = {
         electricVehicleId: req.body.electricVehicleId,
         chargingPointId: req.body.chargingPointId,
-        cost: (req.body.cost ? req.body.cost : null),
-        energyRequested: req.body.energyRequested,
-        pointsAwarded: req.body.pointsAwarded,
+        totalCost: (req.body.cost ? req.body.cost : null),
+        paymentType: 'Credit card',
+        energyDelivered: req.body.energyRequested,
+        pointsAwarded: (Math.floor(req.body.cost) * 0.1).toFixed(2),
         startTime: req.body.startTime,
         endTime: req.body.endTime
     };
 
     chargingSession.create(newChargingSession)
         .then(data => {
+            data.startTime = dateFormat(data.startTime, "yyyy-mm-dd HH:MM:ss");
+            data.endTime = dateFormat(data.endTime, "yyyy-mm-dd HH:MM:ss");
             res.send(data)
         })
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.messase || "Some error occurred while creating the charging event."
+                    err.message || "Some error occurred while creating the charging event."
             });
         });
 };

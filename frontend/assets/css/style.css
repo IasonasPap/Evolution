@@ -4658,4 +4658,64 @@ button {
   padding: 1em 2em;
 }
 
+.modal-info {
+  border: 1px dashed #ccc;
+  margin-bottom: 2em;
+}
+
+.charging-duration {
+  display: flex;
+  align-items: baseline;
+}
+.charging-duration input {
+  width: 5em;
+}
+
+.radio-container {
+  display: flex;
+}
+.radio-container div {
+  padding: 0.75em 1em;
+  min-width: 4em;
+  background-color: #cccccc;
+  margin: 0 0.05em;
+  text-align: center;
+}
+.radio-container div.selected {
+  background-color: #0eb059;
+  color: white;
+}
+
+input.ng-invalid {
+  border: 1px solid red;
+}
+
+.sp-no-results.red {
+  color: #c91f34;
+  font-size: 1.4em;
+}
+
+.progress-bar {
+  flex: 1;
+  position: relative;
+  background-color: #ccc;
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.25em 0;
+  text-shadow: 0 0 3px rgba(120, 120, 120, 0.5);
+  border-radius: 1em;
+  overflow: hidden;
+}
+
+.progress-bar-bar {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.progress-bar-label {
+  text-align: center;
+  position: relative;
+}
+
 /*# sourceMappingURL=style.css.map */

@@ -1,0 +1,40 @@
+<div class="new-session-modal">
+    <div class="modal-close sp-icons sp-icons-cancel" ng-click="closeThisDialog()"></div>
+    <div class="modal-title">Session Progress</div>
+
+    <div class="modal-content">
+        <table class="modal-info">
+            <tr>
+                <td class="label">Vehicle:</td>
+                <td>{{vm.data.vehicle.licensePlate}}</td>
+            </tr>
+            <tr>
+                <td class="label">Station:</td>
+                <td>{{vm.data.station.address}}</td>
+            </tr>
+            <tr>
+                <td class="label">Charger:</td>
+                <td>{{vm.data.charger.protocol}}</td>
+            </tr>
+            <tr>
+                <td class="label">Energy requested:</td>
+                <td>{{vm.data.energyRequested}} kWh</td>
+            </tr>
+            <tr>
+                <td class="label">Energy delivered:</td>
+                <td>{{vm.data.energyDelivered}} kWh</td>
+            </tr>
+            <tr>
+                <td class="label">Progress:</td>
+                <td><progress-bar class="flex-1"
+                                  cur-val="{{vm.data.progress}}"
+                                  max-val="100"
+                                  bg="#0eb059"></progress-bar></td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal-buttons">
+        <button class="cancel" ng-click="closeThisDialog()" type="button">Close</button>
+        <button class="red" ng-click="closeThisDialog(vm.data)">Stop Session</button>
+    </div>
+</div>

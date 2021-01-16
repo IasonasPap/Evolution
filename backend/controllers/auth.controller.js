@@ -22,7 +22,7 @@ exports.login = (req, res) => {
                         let user = JSON.parse(JSON.stringify(data));
                         delete user.password;
                         const token = jwt.sign(
-                            {user: user},
+                            {userId: user.id, isAdmin: user.isAdmin},
                             'RANDOM_TOKEN_SECRET',
                             {expiresIn: '24h'});
                         res.status(200).json({

@@ -51,7 +51,7 @@
                         <th class="label">Duration</th>
                         <th class="label">Energy delivered</th>
                         <th class="label">Cost</th>
-                        <th class="label">Cost/KWH</th>
+                        <th class="label">Cost/kWh</th>
                         <th class="label border-radius-right-1">Station</th>
                     </tr>
                 </thead>
@@ -60,7 +60,7 @@
                         <td class="table-cell">{{s.vehicle.licensePlate}}</td>
                         <td class="table-cell">{{s.startedOn | amParse: 'YYYY-MM-DD' | amDateFormat: 'MM/DD/YYYY'}}</td>
                         <td class="table-cell">{{$ctrl.getDuration(s)}}</td>
-                        <td class="table-cell">{{s.energyDelivered}} KW</td>
+                        <td class="table-cell">{{s.energyDelivered}} kWh</td>
                         <td class="table-cell">{{s.totalCost | currency}}</td>
                         <td class="table-cell">{{s.costPerKwh}}</td>
                         <td class="table-cell">{{s.station.address}}</td>
