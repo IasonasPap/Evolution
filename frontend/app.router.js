@@ -42,7 +42,8 @@
             })
             .state('app.chargeHistory', {
                 url: '/charge-history',
-                template: '<div><a ui-sref="app.dashboard">Click here!</a></div>',
+                component: 'chargeHistory',
+                config: {title: 'Charge History'}
             });
     }
 

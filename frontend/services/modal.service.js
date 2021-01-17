@@ -31,6 +31,7 @@
                 controllerAs: config.controllerAs || 'vm',
                 onOpenCallback: config.onOpenCallback,
                 resolve: config.resolve,
+                showClose: config.showClose !== false,
                 data: config.data
             };
 

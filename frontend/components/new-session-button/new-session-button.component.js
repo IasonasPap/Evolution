@@ -16,7 +16,6 @@
 
     function controller($rootScope, $scope, $timeout, Modal, Utils, ChargingSessionFactory) {
         const $ctrl = this;
-        let sessionStopped;
         $ctrl.startSession = startSession;
         $ctrl.showSessionData = showSessionData;
 
@@ -38,23 +37,26 @@
             })
                 .then(data => {
                     $ctrl.session = angular.copy(data);
-                    $rootScope.$broadcast('start-charging');
-                    $timeout(() => {
+                    $rootScope.$broadcast('start-charging', {session: $ctrl.session});
+                    $ctrl.timeoutFun = $timeout(() => {
                         $rootScope.$broadcast('end-charging');
-                    },1000)
+                    },25000)
                         .then(() => {
-                            if (sessionStopped) {
+                            if ($ctrl.session.sessionStopped) {
                                 return;
                             }
-                            Modal.load(
-                                ChargingSessionFactory.create(data),
-                                '',
-                                'Session completed',
-                                ''
-                            )
-                                .then(() => {
-
+                            ChargingSessionFactory.create(data).then((res) => {
+                                $rootScope.$broadcast('reload-sessions');
+                                Modal.open({
+                                    template: 'frontend/modals/session-progress/session-progress.html',
+                                    controller: 'sessionProgressController',
+                                    showClose: false,
+                                    data: {
+                                        item: data,
+                                        isCompleted: true
+                                    }
                                 });
+                            })
                         });
                 })
         }
@@ -66,7 +68,7 @@
                 data: {
                     item: $ctrl.session
                 }
-            })
+            });
         }
 
         //////// Private
@@ -75,7 +77,17 @@
             $ctrl.vehicle = Utils.getRandomVehicle();
         }
 
-        $scope.$on('start-charging', () => $ctrl.isCharging = true);
+        $scope.$on('start-charging', (ev, data) => {
+            $ctrl.isCharging = true;
+            $ctrl.session = $ctrl.session || data.session;
+        });
         $scope.$on('end-charging', () => $ctrl.isCharging = false);
+
+        $scope.$watch('$ctrl.session.sessionStopped', (newVal) => {
+            if (newVal) {
+                $ctrl.isCharging = false;
+                clearTimeout($ctrl.timeoutFun);
+            }
+        });
     }
 })();

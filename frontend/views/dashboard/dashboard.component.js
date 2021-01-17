@@ -14,9 +14,9 @@
     angular.module('evolution')
         .component('dashboard', component);
 
-    controller.$inject = [];
+    controller.$inject = ['$scope', 'ChargingSessionFactory'];
 
-    function controller() {
+    function controller($scope, ChargingSessionFactory) {
         const $ctrl = this;
         $ctrl.getDuration = getDuration;
 
@@ -41,5 +41,13 @@
             });
 
         }
+
+        $scope.$on('reload-sessions', () => {
+            ChargingSessionFactory.getChargingSessionsPerUser($ctrl.user.id)
+                .then(res => {
+                    $ctrl.userSessions = res.data;
+                    onInit();
+                });
+        });
     }
 })();

@@ -58,12 +58,15 @@
                 <tbody>
                     <tr ng-repeat="s in $ctrl.userSessions | orderBy:'-startedOn' | limitTo: 5">
                         <td class="table-cell">{{s.vehicle.licensePlate}}</td>
-                        <td class="table-cell">{{s.startedOn | amParse: 'YYYY-MM-DD' | amDateFormat: 'MM/DD/YYYY'}}</td>
+                        <td class="table-cell">{{s.startedOn | amParse: 'YYYY-MM-DD HH:mm' | amDateFormat: 'MM/DD/YYYY HH:mm'}}</td>
                         <td class="table-cell">{{$ctrl.getDuration(s)}}</td>
                         <td class="table-cell">{{s.energyDelivered}} kWh</td>
                         <td class="table-cell">{{s.totalCost | currency}}</td>
                         <td class="table-cell">{{s.costPerKwh}}</td>
                         <td class="table-cell">{{s.station.address}}</td>
+                    </tr>
+                    <tr ng-if="!$ctrl.userSessions.length">
+                        <td colspan="7"><div class="sp-no-results">No results</div></td>
                     </tr>
                 </tbody>
             </table>

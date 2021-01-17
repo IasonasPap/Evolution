@@ -40,7 +40,7 @@
             service.userVehicles = arr;
             //randomly select a vehicle to be plugged in a random compatible chargerPoint
             service.randomVehicle = service.userVehicles[Math.floor(Math.random() * service.userVehicles.length)];
-            UseCaseFactory.getRandomChargingPoint(service.randomVehicle.chargerId).then(res => service.chargingPoint = res.data);
+            service.randomVehicle && UseCaseFactory.getRandomChargingPoint(service.randomVehicle.chargerId).then(res => service.chargingPoint = res.data);
         }
 
         function getUserVehicles() {
