@@ -4718,4 +4718,27 @@ input.ng-invalid {
   position: relative;
 }
 
+.card-type {
+  padding: 1em;
+  border: 1px solid #ccc;
+  border-radius: 0.5em;
+  text-align: center;
+}
+.card-type img {
+  width: 2.5em;
+}
+
+.payment-modal {
+  /* Chrome, Safari, Edge, Opera */
+  /* Firefox */
+}
+.payment-modal input::-webkit-outer-spin-button,
+.payment-modal input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.payment-modal input[type=number] {
+  -moz-appearance: textfield;
+}
+
 /*# sourceMappingURL=style.css.map */

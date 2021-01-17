@@ -22,6 +22,12 @@ exports.create = (req, res) => {
         return;
     }
 
+    if (req.body.startTime > req.body.endTime) {
+        res.status(400).send({
+            message: "Session end time should be after session start time!"
+        })
+    }
+
     // Create a new charging event
     const newChargingSession = {
         electricVehicleId: req.body.electricVehicleId,
@@ -36,9 +42,10 @@ exports.create = (req, res) => {
 
     chargingSession.create(newChargingSession)
         .then(data => {
-            data.startTime = dateFormat(data.startTime, "yyyy-mm-dd HH:MM:ss");
-            data.endTime = dateFormat(data.endTime, "yyyy-mm-dd HH:MM:ss");
-            res.send(data)
+            let dataJson = JSON.parse(JSON.stringify(data));
+            dataJson.startTime = dateFormat(data.startTime, "yyyy-mm-dd HH:MM:ss");
+            dataJson.endTime = dateFormat(data.endTime, "yyyy-mm-dd HH:MM:ss");
+            res.send(dataJson)
         })
         .catch(err => {
             res.status(500).send({
@@ -348,12 +355,19 @@ exports.findAll = (req, res) => {
 
     } else if (req.params.userId) {
         let {userId} = req.params;
+        let datetimeTo = req.query.datetimeTo;
+        let datetimeFrom = req.query.datetimeFrom;
 
         chargingSession.findAll({
             include: [
                 {model: electricVehicle, required:true, where: {userId: userId},},
                 {model: chargingPoint, include: [{model: station},{model: charger}]}
-            ]
+            ],
+            where: (!!datetimeFrom && !!datetimeTo) && {
+                startTime: {
+                    [Op.between]: [datetimeFrom, datetimeTo]
+                }
+            }
         })
             .then(data => {
                 let dataJson = data.map((item, index) => {
@@ -384,7 +398,7 @@ exports.findAll = (req, res) => {
             .catch(err => {
                 res.status(500).send({
                     message:
-                        err.message || "Error while retrieving the charging sessions of the provider"
+                        err.message || "Error while retrieving the charging sessions for user"
                 })
             });
 
