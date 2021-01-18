@@ -4038,10 +4038,6 @@ body.ie {
   background-color: #e9e9e9;
 }
 
-tr:nth-child(2n) {
-  background-color: #e9e9e9;
-}
-
 .mc-content {
   padding-bottom: 1em;
 }
@@ -4049,6 +4045,7 @@ tr:nth-child(2n) {
 .page {
   padding: 1rem;
   flex: 1 0 auto;
+  font-size: 0.9em;
 }
 
 .page-title {
@@ -4365,7 +4362,7 @@ sp-input-list-popup .sp-select-popup {
   font-size: 1.6em;
 }
 
-content, dashboard {
+content, dashboard, charging-history {
   display: flex;
   flex-direction: column;
   flex: 1 0 auto;
@@ -4397,7 +4394,7 @@ mc-search-input .mc-search-input input:hover, mc-search-input .mc-search-input i
 }
 
 .content {
-  background-color: #e2e1e1;
+  background-color: #f3f3f3;
   width: 0;
 }
 
@@ -4483,29 +4480,29 @@ side-menu .side-menu-container .side-menu-contents .footer .copyright {
   font-size: 0.6em;
 }
 
-.dashboard {
+.dashboard, .history {
   height: 100%;
   display: flex;
   flex-direction: column;
 }
-.dashboard .dashboard-content {
+.dashboard .dashboard-content, .history .dashboard-content {
   width: 100%;
   padding: 1em;
   display: grid;
   grid-template-columns: auto auto auto auto;
   column-gap: 5em;
 }
-.dashboard .dashboard-section {
+.dashboard .dashboard-section, .history .dashboard-section {
   background-color: #ffffff;
   border-radius: 1em;
   min-height: 15em;
   border: 1px solid #ccc;
 }
-.dashboard .dashboard-session-list {
+.dashboard .dashboard-session-list, .dashboard .history-list, .history .dashboard-session-list, .history .history-list {
   padding: 1em;
   margin-top: 3em;
 }
-.dashboard .dashboard-session-list .session-list-description {
+.dashboard .dashboard-session-list .session-list-description, .dashboard .history-list .session-list-description, .history .dashboard-session-list .session-list-description, .history .history-list .session-list-description {
   font-size: 1.3em;
   padding: 0 1em;
   font-weight: 500;
@@ -4739,6 +4736,60 @@ input.ng-invalid {
 }
 .payment-modal input[type=number] {
   -moz-appearance: textfield;
+}
+
+.history .history-options {
+  padding: 0 1em;
+}
+.history .options {
+  display: flex;
+  align-items: baseline;
+  padding: 1em;
+}
+.history .options input {
+  background-color: #ffffff;
+}
+
+.table-cell {
+  text-align: center;
+}
+
+.totals {
+  margin: 2em 1em;
+}
+.totals .header {
+  font-size: 1.3em;
+  padding: 0 1em;
+  font-weight: 500;
+  margin-bottom: 0.3em;
+}
+.totals .totals-table {
+  margin: 1em;
+  background-color: #fff;
+  border: 1px dashed #949494;
+}
+
+table .label {
+  color: #222222;
+  font-weight: bold;
+  font-size: 1em;
+}
+
+.totals-row td {
+  border-top: 1px dashed #ccc;
+}
+
+.table-pagination {
+  padding: 0 1.5em;
+  display: flex;
+  justify-content: space-between;
+  font-size: small;
+}
+.table-pagination img {
+  width: 0.8em;
+}
+.table-pagination .active-page {
+  background-color: #ccc;
 }
 
 /*# sourceMappingURL=style.css.map */

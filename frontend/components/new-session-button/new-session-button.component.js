@@ -12,9 +12,9 @@
     angular.module('evolution')
         .component('newSessionButton', component);
 
-    controller.$inject = ['$rootScope', '$scope', '$timeout', 'Modal', 'Utils', 'ChargingSessionFactory'];
+    controller.$inject = ['$rootScope', '$scope', '$timeout', 'Modal', 'ngDialog', 'Utils', 'ChargingSessionFactory'];
 
-    function controller($rootScope, $scope, $timeout, Modal, Utils, ChargingSessionFactory) {
+    function controller($rootScope, $scope, $timeout, Modal, ngDialog, Utils, ChargingSessionFactory) {
         const $ctrl = this;
         $ctrl.startSession = startSession;
         $ctrl.showSessionData = showSessionData;
@@ -45,6 +45,7 @@
                             if ($ctrl.session.sessionStopped) {
                                 return;
                             }
+                            ngDialog.closeAll();
                             ChargingSessionFactory.create(data).then((res) => {
                                 $rootScope.$broadcast('reload-sessions');
                                 Modal.open({

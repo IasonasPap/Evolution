@@ -4,9 +4,9 @@
     angular.module('evolution')
         .controller('sessionProgressController', controller);
 
-    controller.$inject = ['$rootScope', '$scope', 'Utils', 'ChargingSessionFactory'];
+    controller.$inject = ['$rootScope', '$scope', '$interval', 'Utils', 'ChargingSessionFactory'];
 
-    function controller($rootScope, $scope, Utils, ChargingSessionFactory) {
+    function controller($rootScope, $scope, $interval, Utils, ChargingSessionFactory) {
         const vm = this;
         vm.endPayment = endPayment;
         vm.stopSession = stopSession;
@@ -24,6 +24,7 @@
         }
 
         function stopSession() {
+            $interval.cancel(vm.intervalFun);
             vm.session.endTime = moment(vm.session.startTime).add((moment(vm.session.endTime)
                 .diff(moment(vm.session.startTime)) * (vm.data.progress / 100)),'milliseconds')
                 .format('YYYY-MM-DD HH:mm:ss');
@@ -44,7 +45,11 @@
             vm.session = $scope.ngDialogData.item;
             vm.isCompleted = $scope.ngDialogData.isCompleted;
             vm.data.progress = moment().diff(moment(vm.data.startTime), 'seconds') * 4 > 100 ? 100 : moment().diff(moment(vm.data.startTime), 'seconds') * 4;
-            vm.data.energyDelivered = vm.isCompleted ? vm.data.energyRequested :  (vm.data.energyRequested * parseFloat(vm.data.progress / 100)).toFixed(2);
+            vm.data.energyDelivered = vm.isCompleted ? vm.data.energyRequested : (vm.data.energyRequested * parseFloat(vm.data.progress / 100)).toFixed(2);
+            vm.intervalFun = $interval(() => {
+                vm.data.progress = moment().diff(moment(vm.data.startTime), 'seconds') * 4 > 100 ? 100 : moment().diff(moment(vm.data.startTime), 'seconds') * 4;
+                vm.data.energyDelivered = vm.isCompleted ? vm.data.energyRequested : (vm.data.energyRequested * parseFloat(vm.data.progress / 100)).toFixed(2);
+            },1000);
             vm.page = 1;
         }
     }

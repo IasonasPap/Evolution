@@ -40,10 +40,10 @@
                 component: 'dashboard',
                 config: {title: 'Dashboard'},
             })
-            .state('app.chargeHistory', {
-                url: '/charge-history',
-                component: 'chargeHistory',
-                config: {title: 'Charge History'}
+            .state('app.chargingHistory', {
+                url: '/charging-history',
+                component: 'chargingHistory',
+                config: {title: 'Charging History'}
             });
     }
 
