@@ -20,8 +20,8 @@
             return $http.post(api, data);
         }
 
-        function getChargingSessionsPerUser(userId) {
-            return $http.get(api + '/SessionsPerUser/' + userId);
+        function getChargingSessionsPerUser(userId, options) {
+            return $http.get(api + '/SessionsPerUser/' + userId + (options ? '?datetimeFrom=' + options.dateFrom + '&datetimeTo=' + options.dateTo : ''));
         }
 
 

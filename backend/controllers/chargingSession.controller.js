@@ -382,7 +382,8 @@ exports.findAll = (req, res) => {
                             finishedOn: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
                             energyDelivered: obj.energyDelivered,
                             costPerKwh: parseFloat((obj.totalCost/obj.energyDelivered).toFixed(4)),
-                            totalCost: parseFloat(obj.totalCost)
+                            totalCost: parseFloat(obj.totalCost),
+                            points: parseFloat(obj.pointsAwarded)
                         }
                     }
                 )
