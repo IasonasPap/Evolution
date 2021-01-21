@@ -1,6 +1,9 @@
 const db = require("../models");
 const user = db.user;
 const vehicle = db.electricVehicle;
+const station = db.station;
+const chargingPoint = db.chargingPoint;
+const charger = db.charger;
 const bcrypt = require('bcrypt');
 
 exports.create = (req, res, next) => {
@@ -60,24 +63,24 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
-    if(isFinite(id)) {
-        user.findByPk(id,{  attributes: { exclude: ['password'] } })
+    if (isFinite(id)) {
+        user.findByPk(id, {attributes: {exclude: ['password']}})
             .then(data => {
                 res.send(data);
             })
             .catch(err => {
                 res.status(402).send({
-                    message: "User with id " + id +" not found"
+                    message: "User with id " + id + " not found"
                 });
             });
     } else {
-        user.findOne({where: {username: id}}, {  attributes: { exclude: ['password'] } })
+        user.findOne({where: {username: id}}, {attributes: {exclude: ['password']}})
             .then(data => {
                 res.send(data);
             })
             .catch(err => {
                 res.status(402).send({
-                    message: "User with id " + id +" not found"
+                    message: "User with id " + id + " not found"
                 });
             });
     }
@@ -158,8 +161,34 @@ exports.findVehicles = (req, res) => {
             res.send(data);
         })
         .catch(err => {
-            res.status(402).send({
-                message: "No vehicles found for user with id " + id
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving user's vehicles."
+            });
+        });
+};
+
+//get user's stations with their charging points
+exports.findStations = (req, res) => {
+    const id = req.params.id;
+    chargingPoint.findAll({
+        include: [{model:station, required: true,  where: {userId: id}}, charger]
+    })
+        .then( data => {
+            let dataJson = JSON.parse(JSON.stringify(data));
+            let response = new Map();
+            dataJson.map(cp => {
+                let station = cp.station;
+                delete cp.station;
+                response.get(station.id) && response.get(station.id).chargingPoints.push(cp) || response.set(station.id, {...station, chargingPoints:[cp]});
+            });
+            response = Array.from(response.values());
+            res.send(JSON.parse(JSON.stringify(response)));
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving user's stations."
             });
         });
 };

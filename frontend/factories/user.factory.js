@@ -12,7 +12,8 @@
 
         return {
             getOne: getOne,
-            getVehicles: getVehicles
+            getVehicles: getVehicles,
+            getStations: getStations
         };
 
         //////// Public
@@ -21,7 +22,11 @@
         }
 
         function getVehicles(id) {
-            return $http.get(api + '/' + id + '/electricVehicles')
+            return $http.get(api + '/' + id + '/electricVehicles');
+        }
+
+        function getStations(id) {
+            return $http.get(api + '/' + id + '/stations');
         }
 
 

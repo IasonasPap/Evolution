@@ -12,7 +12,8 @@
 
         return {
             create: create,
-            getChargingSessionsPerUser: getChargingSessionsPerUser
+            getChargingSessionsPerUser: getChargingSessionsPerUser,
+            getChargingSessionsPerStations: getChargingSessionsPerStations
         };
 
         //////// Public
@@ -22,6 +23,11 @@
 
         function getChargingSessionsPerUser(userId, options) {
             return $http.get(api + '/SessionsPerUser/' + userId + (options ? '?datetimeFrom=' + options.dateFrom + '&datetimeTo=' + options.dateTo : ''));
+        }
+
+        function getChargingSessionsPerStations(filters) {
+            return $http.get(api + '/SessionsPerMultipleStations?stationId=' + filters.stationId
+                + (filters.datetimeFrom && filters.datetimeTo ? ('&datetimeFrom=' + filters.datetimeFrom + '&datetimeTo=' + filters.datetimeTo) : ''));
         }
 
 

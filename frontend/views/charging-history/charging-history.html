@@ -65,9 +65,9 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="s in $ctrl.items | limitTo: 10">
-                        <td class="table-cell">{{s.vehicle.licensePlate}}</td>
+                        <td class="table-cell">{{s.electricVehicle.licensePlate}}</td>
                         <td class="table-cell">
-                            {{s.startedOn | amParse: 'YYYY-MM-DD HH:mm' | amDateFormat: 'MM/DD/YYYY HH:mm'}}
+                            {{s.startTime | amParse: 'YYYY-MM-DD HH:mm' | amDateFormat: 'MM/DD/YYYY HH:mm'}}
                         </td>
                         <td class="table-cell">{{$ctrl.getDuration(s)}}</td>
                         <td class="table-cell">{{s.energyDelivered}} kWh</td>
@@ -117,6 +117,7 @@
                 </div>
             </div>
         </div>
-        <div class="sp-no-results" ng-if="$ctrl.filters.dateFrom && $ctrl.filters.dateTo && !$ctrl.userSessions.length">No Results</div>
+        <loader ng-if="$ctrl.filters.dateFrom && $ctrl.filters.dateTo && $ctrl.isLoading"></loader>
+        <div class="sp-no-results" ng-if="$ctrl.filters.dateFrom && $ctrl.filters.dateTo && !$ctrl.userSessions.length && !$ctrl.isLoading">No Results</div>
     </div>
 </div>

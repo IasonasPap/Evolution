@@ -32,6 +32,16 @@
                                 Utils.setUserVehicles(res.data);
                                 return res.data;
                             });
+                    }],
+                    userStations: ['UserFactory', 'user' ,function (UserFactory, user) {
+                        return UserFactory.getStations(user.id)
+                            .then(res => {
+                                return res.data;
+                            });
+                    }],
+                    stationSessions: ['userStations', 'ChargingSessionFactory', function (userStations, ChargingSessionFactory) {
+                        let stationIds = userStations.reduce((ids, s, index) => s.id + (index < userStations.length - 1 ? ',' : ''), '');
+                        return ChargingSessionFactory.getChargingSessionsPerStations({stationId: stationIds}).then(res => res.data);
                     }]
                 }
             })
