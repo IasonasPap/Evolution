@@ -28,7 +28,7 @@
                 template: 'frontend/modals/add-session/add-session.html',
                 controller: 'addSessionController',
                 data: {
-                    vehicle: $ctrl.vehicle,
+                    electricVehicle: $ctrl.vehicle,
                     chargingPoint: $ctrl.chargingPoint,
                     station: $ctrl.chargingPoint.station,
                     provider: $ctrl.chargingPoint.station.energyProvider,

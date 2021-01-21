@@ -1,6 +1,7 @@
 const db = require("../models");
 const {Op} = require("sequelize");
 const { parse } = require('json2csv');
+const moment = require('moment');
 const chargingPoint = db.chargingPoint;
 const chargingSession = db.chargingSession;
 const charger = db.charger;
@@ -358,7 +359,7 @@ exports.findAll = (req, res) => {
 
     } else if (req.params.userId) {
         let {userId} = req.params;
-        let datetimeTo = req.query.datetimeTo;
+        let datetimeTo = moment(req.query.datetimeTo).add(1, 'day').format('YYYYMMDD');
         let datetimeFrom = req.query.datetimeFrom;
 
         chargingSession.findAll({
@@ -380,9 +381,9 @@ exports.findAll = (req, res) => {
                             station: obj.chargingPoint.station,
                             charger: obj.chargingPoint.charger,
                             sessionId: parseInt(obj.id),
-                            vehicle: obj.electricVehicle,
-                            startedOn: dateFormat(obj.startTime, "yyyy-mm-dd HH:MM:ss"),
-                            finishedOn: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
+                            electricVehicle: obj.electricVehicle,
+                            startTime: dateFormat(obj.startTime, "yyyy-mm-dd HH:MM:ss"),
+                            endTime: dateFormat(obj.endTime, "yyyy-mm-dd HH:MM:ss"),
                             energyDelivered: obj.energyDelivered,
                             costPerKwh: parseFloat((obj.totalCost/obj.energyDelivered).toFixed(4)),
                             totalCost: parseFloat(obj.totalCost),
@@ -413,7 +414,51 @@ exports.findAll = (req, res) => {
         })
     }
 
-};
+}
+
+exports.findSessionsPerMultipleStations = (req, res) => {
+    let stationId = req.query.stationId.split(',');
+    let datetimeFrom = req.query.datetimeFrom;
+    let datetimeTo = moment(req.query.datetimeTo).add(1, 'day').format('YYYYMMDD');
+    let condition = {
+        '$chargingPoint.stationId$': [stationId],
+    };
+    if (datetimeFrom && datetimeTo) {
+        condition.startTime = {
+            [Op.between]: [datetimeFrom, datetimeTo]
+        };
+    }
+
+    chargingSession.findAll({
+        attributes: {exclude: ['id']},
+        where: condition,
+        include: [
+            {
+                model: chargingPoint, include: [
+                    {
+                        model: station,
+                        include: [{model: user, attributes: {exclude: ['password']}}]
+                    }
+                ]
+            },
+            {model: electricVehicle, include: [user]}
+        ]
+    }).then(data => {
+        let dataJson = JSON.parse(JSON.stringify(data));
+        dataJson.map(item => {
+            item.costPerKwh = parseFloat((item.totalCost/item.energyDelivered).toFixed(4));
+            item.station = item.chargingPoint.station;
+            delete item.chargingPoint.station;
+        });
+        return res.type('application/json').status(200).send(dataJson);
+    })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Error while retrieving the charging sessions"
+            })
+        });
+}
 
 
 exports.reset = (req, res, next) => {
@@ -425,4 +470,4 @@ exports.reset = (req, res, next) => {
     }).catch(() => {
         res.send({status: "failed"});
     })
-};
+}

@@ -24,7 +24,7 @@
         //////// Public
 
         function getDuration(item) {
-            return moment.utc(moment(item.finishedOn).diff(moment(item.startedOn))).format('HH:mm:ss');
+            return moment.utc(moment(item.endTime).diff(moment(item.startTime))).format('HH:mm:ss');
         }
 
         //////// Private
@@ -49,18 +49,18 @@
                 points: 0
             };
             $ctrl.userSessions.forEach(s => {
-                if(!$ctrl.vehicleTotals.hasOwnProperty(s.vehicle.licensePlate)) {
-                    $ctrl.vehicleTotals[s.vehicle.licensePlate] = {
+                if(!$ctrl.vehicleTotals.hasOwnProperty(s.electricVehicle.licensePlate)) {
+                    $ctrl.vehicleTotals[s.electricVehicle.licensePlate] = {
                         sessionsCount: 1,
                         totalEnergyDelivered: s.energyDelivered,
                         totalCost: s.totalCost,
                         points: s.points
                     }
                 } else {
-                    $ctrl.vehicleTotals[s.vehicle.licensePlate].sessionsCount++;
-                    $ctrl.vehicleTotals[s.vehicle.licensePlate].totalEnergyDelivered += s.energyDelivered;
-                    $ctrl.vehicleTotals[s.vehicle.licensePlate].totalCost += s.totalCost;
-                    $ctrl.vehicleTotals[s.vehicle.licensePlate].points += s.points;
+                    $ctrl.vehicleTotals[s.electricVehicle.licensePlate].sessionsCount++;
+                    $ctrl.vehicleTotals[s.electricVehicle.licensePlate].totalEnergyDelivered += s.energyDelivered;
+                    $ctrl.vehicleTotals[s.electricVehicle.licensePlate].totalCost += s.totalCost;
+                    $ctrl.vehicleTotals[s.electricVehicle.licensePlate].points += s.points;
                 }
 
                 $ctrl.totals.sessionsCount++;
@@ -87,7 +87,7 @@
                 $location.search('dateTo', filters.dateTo);
                 $ctrl.showPage = 0;
                 ChargingSessionFactory.getChargingSessionsPerUser($ctrl.user.id, filters).then(res => {
-                    $ctrl.userSessions = res.data.sort((a,b) => a.startedOn > b.startedOn ? -1 : 1);
+                    $ctrl.userSessions = res.data.sort((a,b) => a.startTime > b.startTime ? -1 : 1);
                     $ctrl.items = $ctrl.userSessions.slice($ctrl.showPage*10, $ctrl.showPage*10 + 10);
                     if($ctrl.userSessions.length) {
                         $ctrl.pageArray = [...Array(Math.floor($ctrl.userSessions.length / 10)).keys()].map(i => i + 2);
@@ -112,7 +112,7 @@
                 dateTo: moment($ctrl.filters.dateTo).format('YYYYMMDD'),
             }
             ChargingSessionFactory.getChargingSessionsPerUser($ctrl.user.id, filters).then(res => {
-                $ctrl.userSessions = res.data.sort((a,b) => a.startedOn > b.startedOn ? -1 : 1);
+                $ctrl.userSessions = res.data.sort((a,b) => a.startTime > b.startTime ? -1 : 1);
                 $ctrl.items = $ctrl.userSessions.slice($ctrl.showPage*10, $ctrl.showPage*10 + 10);
                 if($ctrl.userSessions.length) {
                     $ctrl.pageArray = [...Array(Math.floor($ctrl.userSessions.length / 10 - 1)).keys()].map(i => i + 2);

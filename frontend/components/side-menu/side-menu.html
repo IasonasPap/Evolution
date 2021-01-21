@@ -16,14 +16,17 @@
                         Dashboard
                     </a>
                 </div>
-                <div class="menu-item">
+                <div class="menu-item" ng-if="!$ctrl.user.isStationManager">
                     <a ui-sref="app.chargingHistory" ui-sref-active="active">
                         <img class="menu-icon" ng-src="frontend/assets/images/charger.svg"/>
                         Charging History
                     </a>
                 </div>
                 <div class="menu-item" ng-if="$ctrl.user.isStationManager">
-                    <a ui-sref="app.chargingPointsSummary" ui-sref-active="active">Charging Points Summary</a>
+                    <a ui-sref="app.chargingPointsSummary" ui-sref-active="active">
+                        <img class="menu-icon" ng-src="frontend/assets/images/chart.svg"/>
+                        Statistics
+                    </a>
                 </div>
             </div>
             <new-session-button></new-session-button>
