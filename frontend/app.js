@@ -5,6 +5,7 @@
         'angularMoment',
         'ngSanitize',
         'ngDialog',
-        'ui.router'
+        'ui.router',
+        'chart.js'
     ]);
 })();

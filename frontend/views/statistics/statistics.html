@@ -1,0 +1,121 @@
+<div class="page history">
+    <page-title page-title="'Statistics'"></page-title>
+    <div class="subheader">
+        <div class="label">
+            Station{{$ctrl.userStations.length !== 1 ? 's' : ''}}:
+        </div>
+        <span ng-repeat="s in $ctrl.userStations">{{s.address + ($index < $ctrl.userStations.length - 1 ? ', ' : '')}}</span>
+    </div>
+    <div class="statistics-content">
+        <!--<div class="statistics-options">
+            <div class="options">
+                <div class="space-right-2">
+                    <div class="label">Date From:</div>
+                    <input type="date"
+                           ng-model="$ctrl.filters.dateFrom"/>
+                </div>
+                <div>
+                    <div class="label">Date To:</div>
+                    <input type="date"
+                           ng-model="$ctrl.filters.dateTo"/>
+                </div>
+            </div>
+        </div>-->
+        <div class="flex align-items-center">
+            <div class="going-up">
+                <img src="frontend/assets/images/arrow-up.svg"/>
+            </div>
+            <div class="best-of">
+                <div class="best-item space-right-1">
+                    <div class="best-title">Most Used Charger</div>
+                    <div class="best-content flex align-items-center">
+                        <div class="space-inner-1 flex-1 text-align-center">{{$ctrl.bestCharger.protocol || '-'}}</div>
+                        <div class="space-inner-1 flex-1 text-align-center">{{$ctrl.bestCharger.sessions || 0}} Sessions
+                        </div>
+                    </div>
+                </div>
+                <div class="best-item space-right-1">
+                    <div class="best-title">Most Profitable Charger</div>
+                    <div class="best-content flex align-items-center">
+                        <div class="space-inner-1 flex-1 text-align-center">{{$ctrl.mostProfitable.protocol || '-'}}
+                        </div>
+                        <div class="space-inner-1 flex-1 text-align-center">
+                            {{($ctrl.mostProfitable.profit || 0) | currency}}
+                        </div>
+                    </div>
+                </div>
+                <div class="best-item">
+                    <div class="best-title">Most Busy Month</div>
+                    <div class="best-content flex align-items-center">
+                        <div class="space-inner-1 flex-1 text-align-center">{{$ctrl.bestMonth.month}}</div>
+                        <div class="space-inner-1 flex-1 text-align-center">{{$ctrl.bestMonth.sessions}} Sessions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex align-items-center">
+            <div class="going-up">
+                <img src="frontend/assets/images/arrow-down.svg"/>
+            </div>
+            <div class="best-of">
+                <div class="best-item space-right-1">
+                    <div class="best-title">Least Used Charger</div>
+                    <div class="best-content flex align-items-center">
+                        <div class="space-inner-1 flex-1 text-align-center">{{$ctrl.worstCharger.protocol || '-'}}</div>
+                        <div class="space-inner-1 flex-1 text-align-center">{{$ctrl.worstCharger.sessions || 0}}
+                            Sessions
+                        </div>
+                    </div>
+                </div>
+                <div class="best-item space-right-1">
+                    <div class="best-title">Least Profitable Charger</div>
+                    <div class="best-content flex align-items-center">
+                        <div class="space-inner-1 flex-1 text-align-center">{{$ctrl.leastProfitable.protocol || '-'}}
+                        </div>
+                        <div class="space-inner-1 flex-1 text-align-center">
+                            {{($ctrl.leastProfitable.profit || 0) | currency}}
+                        </div>
+                    </div>
+                </div>
+                <div class="best-item">
+                    <div class="best-title">Least Busy Month</div>
+                    <div class="best-content flex align-items-center">
+                        <div class="space-inner-1 flex-1 text-align-center">{{$ctrl.worstMonth.month}}</div>
+                        <div class="space-inner-1 flex-1 text-align-center">{{$ctrl.worstMonth.sessions}} Sessions</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="charts">
+        <div class="chart-row">
+            <div class="chart">
+                <div class="chart-selector">
+                    <label for="chartType"> Selected chart type: </label>
+                    <select name="chartType" ng-model="$ctrl.chartTypes[0]">
+                        <option class="capitalize" ng-repeat="o in $ctrl.chartTypeOptions" ng-value="o">{{o}}</option>
+                    </select>
+                </div>
+                <canvas id="chart-1" class="chart-base"
+                        chart-type="$ctrl.chartTypes[0].toLowerCase()"
+                        chart-data="$ctrl.chargerSessions"
+                        chart-labels="$ctrl.chargers"
+                        chart-options="$ctrl.chartOptions(0, 'Sessions per charger')"></canvas>
+            </div>
+            <div class="chart">
+                <div class="chart-selector">
+                    <label for="chartType"> Selected chart type: </label>
+                    <select name="chartType" ng-model="$ctrl.chartTypes[1]">
+                        <option class="capitalize" ng-repeat="o in $ctrl.chartTypeOptions" ng-value="o">{{o}}</option>
+                    </select>
+                </div>
+                <canvas id="chart-2" class="chart-base"
+                        chart-type="$ctrl.chartTypes[1].toLowerCase()"
+                        chart-data="$ctrl.chargerProfits"
+                        chart-labels="$ctrl.chargers"
+                        chart-options="$ctrl.chartOptions(1, 'Income per charger')"></canvas>
+            </div>
+        </div>
+    </div>
+</div>

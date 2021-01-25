@@ -27,7 +27,7 @@
 
         function getChargingSessionsPerStations(filters) {
             return $http.get(api + '/SessionsPerMultipleStations?stationId=' + filters.stationId
-                + (filters.datetimeFrom && filters.datetimeTo ? ('&datetimeFrom=' + filters.datetimeFrom + '&datetimeTo=' + filters.datetimeTo) : ''));
+                + (filters.dateFrom && filters.dateTo ? ('&datetimeFrom=' + filters.dateFrom + '&datetimeTo=' + filters.dateTo) : ''));
         }
 
 

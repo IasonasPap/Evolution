@@ -52,7 +52,7 @@ h1 {
 }
 
 h2 {
-    font-size: 1.2em;
+    font-size: 1.4em;
 }
 
 h1, h2 {
@@ -131,6 +131,15 @@ input, select, textarea {
         -webkit-filter: none;
         filter: none;
     }
+}
+
+select {
+    padding: .5em;
+    border: 1px solid transparent;
+    height: 2rem;
+    background-color: #e0e0e0;
+    color: #222222;
+    font-family: Poppins, sans-serif;
 }
 
 loader {
@@ -1265,3 +1274,85 @@ table .label {
     }
 }
 
+.subheader {
+    display: flex;
+    align-items: baseline;
+    margin-top: -.7em;
+    padding: 0 2em;
+
+    .label {
+        color: $black;
+        font-size: 1em;
+        margin-right: .5em;
+    }
+}
+
+.statistics-content {
+    padding: 2em;
+    margin-top: 1em;
+
+    .statistics-options {
+        .options{
+            padding: 0;
+            margin-bottom: 2em;
+        }
+    }
+
+    .best-of {
+        display: flex;
+        margin-bottom: 2em;
+        justify-content: space-between;
+        align-items: flex-end;
+        flex: 1;
+    }
+
+    .best-item {
+        background-color: $white;
+        border: 1px solid #ccc;
+        width: 25em;
+        border-radius: .5em;
+        box-shadow: .2em .4em #ccc;
+    }
+
+    .best-title {
+        text-align: center;
+        font-weight: 600;
+        border-bottom: 1px solid #ccc;
+        padding: 1em;
+    }
+
+    .best-content {
+        div:first-of-type {
+            border-right: 1px solid #ccc;
+        }
+    }
+}
+
+.going-up {
+    margin-right: 3em;
+    width: 10em;
+    justify-content: center;
+    display: flex;
+
+    img {
+        width: 6em;
+    }
+}
+
+.charts {
+    padding: 2em;
+
+    .chart-row {
+        margin-bottom: 1em;
+        display: flex;
+
+        .chart {
+            flex: 1;
+
+            &:not(first-of-type) {
+                margin-left: 2em;
+            }
+        }
+    }
+
+}

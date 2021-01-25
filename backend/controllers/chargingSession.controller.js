@@ -438,7 +438,8 @@ exports.findSessionsPerMultipleStations = (req, res) => {
                     {
                         model: station,
                         include: [{model: user, attributes: {exclude: ['password']}}]
-                    }
+                    },
+                    charger
                 ]
             },
             {model: electricVehicle, include: [user]}
