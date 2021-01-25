@@ -27,21 +27,21 @@
                             .then(res => res.data);
                     }],
                     userVehicles: ['Utils', 'UserFactory', 'user', function (Utils, UserFactory, user) {
-                        return UserFactory.getVehicles(user.id)
+                        return !user.isStationManager && UserFactory.getVehicles(user.id)
                             .then(res => {
                                 Utils.setUserVehicles(res.data);
                                 return res.data;
                             });
                     }],
                     userStations: ['UserFactory', 'user' ,function (UserFactory, user) {
-                        return UserFactory.getStations(user.id)
+                        return user.isStationManager && UserFactory.getStations(user.id)
                             .then(res => {
                                 return res.data;
                             });
                     }],
-                    stationSessions: ['userStations', 'ChargingSessionFactory', function (userStations, ChargingSessionFactory) {
-                        let stationIds = userStations.reduce((ids, s, index) => s.id + (index < userStations.length - 1 ? ',' : ''), '');
-                        return ChargingSessionFactory.getChargingSessionsPerStations({stationId: stationIds}).then(res => res.data);
+                    stationSessions: ['userStations', 'ChargingSessionFactory', 'user', function (userStations, ChargingSessionFactory, user) {
+                        let stationIds = userStations && userStations.reduce((ids, s, index) => s.id + (index < userStations.length - 1 ? ',' : ''), '');
+                        return user.isStationManager && ChargingSessionFactory.getChargingSessionsPerStations({stationId: stationIds}).then(res => res.data);
                     }]
                 }
             })
@@ -54,6 +54,11 @@
                 url: '/charging-history',
                 component: 'chargingHistory',
                 config: {title: 'Charging History'}
+            })
+            .state('app.statistics', {
+                url: '/statistics',
+                component: 'statistics',
+                config: {title: 'Statistics'}
             });
     }
 
