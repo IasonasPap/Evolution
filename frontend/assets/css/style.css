@@ -3803,9 +3803,9 @@ input[ng-click]:not([disabled]):hover, select[ng-click]:not([disabled]):hover, t
 
 select {
   padding: 0.5em;
-  border: 1px solid transparent;
+  border: 1px solid #ccc;
   height: 2rem;
-  background-color: #e0e0e0;
+  background-color: #ffffff;
   color: #222222;
   font-family: Poppins, sans-serif;
 }
@@ -4872,8 +4872,17 @@ table .label {
 .charts {
   padding: 2em;
 }
-.charts .chart-row {
+.charts .chart-header {
+  font-size: 1.3em;
+  padding: 0 1em;
+  font-weight: 500;
+  margin-bottom: 1.5em;
+}
+.charts .chart-selector {
   margin-bottom: 1em;
+}
+.charts .chart-row {
+  margin-bottom: 3em;
   display: flex;
 }
 .charts .chart-row .chart {
@@ -4881,6 +4890,18 @@ table .label {
 }
 .charts .chart-row .chart:not(first-of-type) {
   margin-left: 2em;
+}
+
+.selections {
+  margin-left: 2em;
+  display: flex;
+  margin-bottom: 1em;
+}
+
+canvas {
+  background: white;
+  padding: 1em;
+  border-radius: 0.5em;
 }
 
 /*# sourceMappingURL=style.css.map */

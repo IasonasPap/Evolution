@@ -25,6 +25,7 @@
             scales: {
                 yAxes: [{
                     ticks: {
+                        precision: 0,
                         beginAtZero: true
                     }
                 }]
@@ -47,6 +48,10 @@
         function onInit() {
             findBestCharger();
             $ctrl.chartTypes = ['Bar', 'Pie'];
+            $ctrl.chartYears = Array(3).fill(0).map((i, index) => moment().format('YYYY') - index);
+            $ctrl.chartYear = moment().year();
+            $ctrl.months = moment.months();
+            $ctrl.chartMonth = moment().format('MMMM');
         }
 
         function findBestCharger() {
@@ -119,6 +124,23 @@
                 }).finally(() => $ctrl.isLoading = false);
             }
         }, true);
+
+        $scope.$watchGroup(['$ctrl.chartYear', '$ctrl.chartMonth'], () => {
+            let monthDays = moment($ctrl.chartMonth + ' ' + $ctrl.chartYear, 'MMMM YYYY').daysInMonth();
+            let data = $ctrl.stationSessions.filter(s => moment(s.startTime).year() === $ctrl.chartYear);
+            $ctrl.monthSessions = new Array(12).fill(0);
+            data.forEach(item => {
+                $ctrl.monthSessions[moment(item.startTime).month()]++;
+            });
+            let dayData = data.filter(s => moment(s.startTime).format('MMMM') === $ctrl.chartMonth);
+            $ctrl.daySessions = [];
+            $ctrl.daySessions.length = monthDays;
+            $ctrl.daySessions.fill(0);
+            $ctrl.days = new Array(monthDays).fill(0).map((item, index) => index + 1);
+            dayData.forEach(item => {
+                $ctrl.daySessions[moment(item.startTime).date() - 1]++;
+            });
+        });
 
         function updateFilters(params) {
             $ctrl.filters = {

@@ -135,9 +135,9 @@ input, select, textarea {
 
 select {
     padding: .5em;
-    border: 1px solid transparent;
+    border: 1px solid #ccc;
     height: 2rem;
-    background-color: #e0e0e0;
+    background-color: $white;
     color: #222222;
     font-family: Poppins, sans-serif;
 }
@@ -1342,8 +1342,19 @@ table .label {
 .charts {
     padding: 2em;
 
-    .chart-row {
+    .chart-header {
+        font-size: 1.3em;
+        padding: 0 1em;
+        font-weight: 500;
+        margin-bottom: 1.5em;
+    }
+
+    .chart-selector {
         margin-bottom: 1em;
+    }
+
+    .chart-row {
+        margin-bottom: 3em;
         display: flex;
 
         .chart {
@@ -1355,4 +1366,16 @@ table .label {
         }
     }
 
+}
+
+.selections {
+    margin-left: 2em;
+    display: flex;
+    margin-bottom: 1em;
+}
+
+canvas {
+    background: white;
+    padding: 1em;
+    border-radius: .5em;
 }
