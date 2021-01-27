@@ -88,11 +88,15 @@
             </div>
         </div>
     </div>
+
     <div class="charts">
+        <div class="chart-header">
+            Charger stats
+        </div>
         <div class="chart-row">
             <div class="chart">
                 <div class="chart-selector">
-                    <label for="chartType"> Selected chart type: </label>
+                    <label for="chartType"> Select chart type: </label>
                     <select name="chartType" ng-model="$ctrl.chartTypes[0]">
                         <option class="capitalize" ng-repeat="o in $ctrl.chartTypeOptions" ng-value="o">{{o}}</option>
                     </select>
@@ -105,7 +109,7 @@
             </div>
             <div class="chart">
                 <div class="chart-selector">
-                    <label for="chartType"> Selected chart type: </label>
+                    <label for="chartType"> Select chart type: </label>
                     <select name="chartType" ng-model="$ctrl.chartTypes[1]">
                         <option class="capitalize" ng-repeat="o in $ctrl.chartTypeOptions" ng-value="o">{{o}}</option>
                     </select>
@@ -115,6 +119,36 @@
                         chart-data="$ctrl.chargerProfits"
                         chart-labels="$ctrl.chargers"
                         chart-options="$ctrl.chartOptions(1, 'Income per charger')"></canvas>
+            </div>
+        </div>
+
+        <div class="chart-header">
+            Date stats
+        </div>
+        <div class="chart-row">
+            <div class="chart">
+                <div class="chart-selector">
+                    <label for="chartYear"> Select year: </label>
+                    <select name="chartYear" ng-model="$ctrl.chartYear">
+                        <option ng-repeat="o in $ctrl.chartYears" ng-value="o">{{o}}</option>
+                    </select>
+                </div>
+                <canvas id="chart-3" class="chart-line"
+                        chart-data="$ctrl.monthSessions"
+                        chart-labels="$ctrl.months"
+                        chart-options="$ctrl.chartOptions(2, 'Sessions per month')"></canvas>
+            </div>
+            <div class="chart">
+                <div class="chart-selector">
+                    <label for="chartMonth"> Select month: </label>
+                    <select name="chartMonth" ng-model="$ctrl.chartMonth">
+                        <option ng-repeat="o in $ctrl.months" ng-value="o">{{o}}</option>
+                    </select>
+                </div>
+                <canvas id="chart-4" class="chart-line"
+                        chart-data="$ctrl.daySessions"
+                        chart-labels="$ctrl.days"
+                        chart-options="$ctrl.chartOptions(3, 'Sessions per date')"></canvas>
             </div>
         </div>
     </div>
