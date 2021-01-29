@@ -40,7 +40,7 @@
                             });
                     }],
                     stationSessions: ['userStations', 'ChargingSessionFactory', 'user', function (userStations, ChargingSessionFactory, user) {
-                        let stationIds = userStations && userStations.reduce((ids, s, index) => s.id + (index < userStations.length - 1 ? ',' : ''), '');
+                        let stationIds = userStations && userStations.reduce((ids, s, index) => ids + s.id + (index < userStations.length - 1 ? ',' : ''), '');
                         return user.isStationManager && ChargingSessionFactory.getChargingSessionsPerStations({stationId: stationIds}).then(res => res.data);
                     }]
                 }
