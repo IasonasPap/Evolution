@@ -29,6 +29,19 @@ router.use('/posts', (req, res) => {
 router.post('/login', authController.login);
 router.post('/logout', authController.logout);
 
+router.use('/posts', (req, res) => {
+    chargingSession.findAll()
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving users."
+            });
+        });
+})
+
 router.post('/login', authController.login);
 router.post('/logout', authController.logout);
 

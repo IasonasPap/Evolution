@@ -45,6 +45,7 @@ exports.resetSession = async (req,res) => {
     })
 }
 
+
 exports.healthCheck = (req,res) => {
      /* 
     This fuction checks the connect to the database by
@@ -134,8 +135,6 @@ exports.createOrChange = (req, res, next) => {
                             message: "Error updating User with id=" + id
                         });
                     });
-                    
-					
 			} else {
 				// Create a newUser object
 				let newUser = {

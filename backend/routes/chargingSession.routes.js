@@ -19,4 +19,5 @@ router.get("/SessionsPerMultipleStations", auth, chargingSession.findSessionsPer
 router.get("/sessions", chargingSession.getAll);
 
 
+
 module.exports = router;
