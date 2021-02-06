@@ -526,13 +526,14 @@ else if (scope == 'Admin'){
 				process.exit()
 			}
 			const form_data = new FormData();
-			form_data.append("file", fs.createReadStream("./sessions.csv"));
+			form_data.append("file", fs.createReadStream(source));
 			axios({
 				"url": 'http://localhost:8765/evcharge/api/admin/system/sessionsupd',
 				"method": "post",
 				"headers": {
 					'x-observatory-auth': key,
-					'content-type': 'multipart/form-data; charset=utf-8; boundary= Content-Disposition: form-data; name="file"'
+					'Content-Type': 'multipart/form-data',
+					...form_data.getHeaders()
 				},
 				"data": form_data
 			}).then ((response) => {
@@ -543,7 +544,6 @@ else if (scope == 'Admin'){
 				console.error(err.request)
 			})
 		}
-		
 		else if(argv[i] == '--healthcheck'){
 			axios({
 				"url": "http://localhost:8765/evcharge/api/admin/healthcheck",
