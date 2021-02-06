@@ -19,3 +19,7 @@ A project for Software Enginnering course at NTUA, ECE, academic year 2020-2021.
 ### Install packages
 
 ```npm install```
+
+### Fire up
+
+```npm start```
