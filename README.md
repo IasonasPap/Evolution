@@ -26,4 +26,4 @@ A project for Software Enginnering course at NTUA, ECE, academic year 2020-2021.
 
 ### CLI
 
-```ev_group31 Scope --param1 value1 [--param2 value2 ...]
+```ev_group31 Scope --param1 value1 [--param2 value2 ...]```
