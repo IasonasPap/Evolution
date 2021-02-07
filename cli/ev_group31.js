@@ -1,3 +1,5 @@
+#! /usr/bin/env node
+
 const FormData = require('form-data');
 const axios = require("axios")
 const fs = require('fs');
@@ -10,27 +12,6 @@ argv = process.argv
 
 if (argv.length > 1){
 	scope = argv[2]	
-}
-
-for (var i = 0, j = argv.length; i < j; i++){
-	if ((argv[i] == '--apikey')){
-		if ((i+1) < argv.length){
-			key = argv[i+1]
-		}
-		else {
-			console.log({error: `You need to provide ${argv[i]} value!`})
-			process.exit()
-		}
-	}
-	else if ((argv[i] == '--format')){
-		if ((i+1) < argv.length){
-			format = argv[i+1] 
-			if (format != 'csv' && format != 'json'){
-				console.log({error: "Please provide a valid format (json or csv)!\n"})
-				process.exit()
-			}
-		}
-	}
 }
 
 
@@ -110,9 +91,10 @@ else if (scope == 'logout'){
 				process.exit()
 			}
 		}
-		if (params < 1){
-			console.log({error : "You need to provide --apikey parameter!"})
-		}
+	}
+
+	if (params < 1){
+		console.log({error : "You need to provide --apikey parameter!"})
 	}
 
 	axios({
@@ -511,9 +493,9 @@ else if (scope == 'Admin'){
 						process.exit()							
 					}
 				}
-				else if ((argv[i] == '--apikey')){
-					if ((i+1) < argv.length){
-						key = argv[i+1]
+				else if ((argv[k] == '--apikey')){
+					if ((k+1) < argv.length){
+						key = argv[k+1]
 						params += 1
 					}
 					else {
@@ -522,6 +504,7 @@ else if (scope == 'Admin'){
 					}
 				}
 			}
+
 			if (params < 5){
 				console.log({error: "You need to provide username, password, full name and email (--username, --passw, --fullName, --email, --apikey)!"})
 				process.exit()
@@ -564,10 +547,10 @@ else if (scope == 'Admin'){
 			}
 
 			let params = 0
-			for (var i = 0, j = argv.length; i < j; i++){
-				if ((argv[i] == '--apikey')){
-					if ((i+1) < argv.length){
-						key = argv[i+1]
+			for (var k = 0, j = argv.length; k < j; k++){
+				if ((argv[k] == '--apikey')){
+					if ((k+1) < argv.length){
+						key = argv[k+1]
 						params += 1
 					}
 					else {
@@ -575,9 +558,10 @@ else if (scope == 'Admin'){
 						process.exit()
 					}
 				}
-				if (params < 1){
-					console.log({error : "You need to provide --apikey parameter!"})
-				}
+			}
+
+			if (params < 1){
+				console.log({error : "You need to provide --apikey parameter!"})
 			}
 
 			axios({
@@ -608,9 +592,9 @@ else if (scope == 'Admin'){
 						process.exit()	
 					}
 				}
-				else if ((argv[i] == '--apikey')){
-					if ((i+1) < argv.length){
-						key = argv[i+1]
+				else if ((argv[k] == '--apikey')){
+					if ((k+1) < argv.length){
+						key = argv[k+1]
 						params += 1
 					}
 					else {
