@@ -4,6 +4,7 @@ const adminRoutes = require('./admin.routes');
 const chargingSessionRoutes = require('./chargingSession.routes');
 const authController = require('../controllers/auth.controller');
 const { chargingSession } = require('../models');
+const auth = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -25,6 +26,6 @@ router.use('/posts', (req, res) => {
 })
 
 router.post('/login', authController.login);
-router.post('/logout', authController.logout);
+router.post('/logout', auth, authController.logout);
 
 module.exports = router;

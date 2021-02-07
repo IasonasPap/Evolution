@@ -99,7 +99,6 @@ exports.createOrChange = (req, res, next) => {
     
 	user.findOne({where: {username} } )
         .then(data => {
-            console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
             console.log(data)
             if(data){
                 console.log(data);

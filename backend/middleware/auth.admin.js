@@ -15,12 +15,18 @@ module.exports = (req, res, next) => {
             res.status(401).json({
                 message: "Invalid token!"
             });
-        } else {
+        } 
+        else if (!user.isAdmin) {
+            res.status(401).json({
+                message: "This user is not an admin!"
+            });
+        }
+        else {
             next();
         }
     } catch(error){
         res.status(401).json({
-            message: "Please login to continue"
+            message: "Please login to continue!"
         });
         
         next(error);

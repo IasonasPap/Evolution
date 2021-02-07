@@ -107,7 +107,7 @@ else if (scope == 'logout'){
 	}).then(() => {
 		console.log({ message: "User logout successfully!"})
 	}).catch( (err) => {
-		console.error(err)
+		console.error(err.response.data)
 	})
 }
 
@@ -186,6 +186,8 @@ else if (scope == 'SessionsPerPoint'){
 	}).then ((response) => {
 		console.log(response.data)
 		process.exit()
+	}).catch( (err) => {
+		console.error(err.response.data)
 	})
 }
 
@@ -263,6 +265,8 @@ else if (scope == 'SessionsPerEV'){
 	}).then ((response) => {
 		console.log(response.data)
 		process.exit()
+	}).catch( (err) => {
+		console.error(err.response.data)
 	})
 }
 else if (scope == 'SessionsPerStation'){
@@ -340,6 +344,8 @@ else if (scope == 'SessionsPerStation'){
 	}).then ((response) => {
 		console.log(response.data)
 		process.exit()
+	}).catch( (err) => {
+		console.error(err.response.data)
 	})
 }
 else if (scope == 'SessionsPerProvider'){
@@ -417,6 +423,8 @@ else if (scope == 'SessionsPerProvider'){
 	}).then ((response) => {
 		console.log(response.data)
 		process.exit()
+	}).catch( (err) => {
+		console.error(err.response.data)
 	})
 }
 
@@ -531,7 +539,7 @@ else if (scope == 'Admin'){
 					console.log(response.data.token)
 				})
 			}).catch( (err) => {
-				console.error(err)
+				console.error(err.response.data)
 			})
 		}
 		
@@ -574,7 +582,7 @@ else if (scope == 'Admin'){
 				process.exit()
 			})
 			.catch((err) => {
-				console.error(err.message)
+				console.error(err.response.data)
 			})
 		}
 
@@ -623,7 +631,7 @@ else if (scope == 'Admin'){
 				process.exit()
 			})
 			.catch((err) => {
-				console.error(err.request)
+				console.error(err.response.data)
 			})
 		}
 		else if(argv[i] == '--healthcheck'){

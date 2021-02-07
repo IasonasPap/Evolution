@@ -50,9 +50,6 @@ exports.findAll = (req, res) => {
     let requestTimestamp = new Date();
     let {format} = req.query;
 
-
-
-
     if (req.params.pointId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {pointId, datetimeFrom, datetimeTo} = req.params;
         let condition = {
