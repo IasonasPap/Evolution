@@ -8,7 +8,9 @@ const fileUnlink = Promise.promisify(fs.unlink);
 
 argv = process.argv
 
-scope = argv[2]
+if (argv.length > 1){
+	scope = argv[2]	
+}
 
 for (var i = 0, j = argv.length; i < j; i++){
 	if ((argv[i] == '--apikey')){
@@ -96,6 +98,23 @@ else if (scope == 'login'){
 }
 
 else if (scope == 'logout'){
+	let params = 0
+	for (var i = 0, j = argv.length; i < j; i++){
+		if ((argv[i] == '--apikey')){
+			if ((i+1) < argv.length){
+				key = argv[i+1]
+				params += 1
+			}
+			else {
+				console.log({error: `You need to provide ${argv[i]} value!`})
+				process.exit()
+			}
+		}
+		if (params < 1){
+			console.log({error : "You need to provide --apikey parameter!"})
+		}
+	}
+
 	axios({
 		"url": "http://localhost:8765/evcharge/api/logout",
 		"method": "post",
@@ -161,10 +180,20 @@ else if (scope == 'SessionsPerPoint'){
 				process.exit()
 			}
 		}
+		else if ((argv[i] == '--apikey')){
+			if ((i+1) < argv.length){
+				key = argv[i+1]
+				params += 1
+			}
+			else {
+				console.log({error: `You need to provide ${argv[i]} value!`})
+				process.exit()
+			}
+		}
 	}
 
-	if (params < 4){
-		console.log({error: "You need to provide 4 parameters."})
+	if (params < 5){
+		console.log({error: "You need to provide 5 parameters (--apikey ---format --point --datefrom --dateto)."})
 		process.exit()
 	}
 
@@ -217,7 +246,7 @@ else if (scope == 'SessionsPerEV'){
 		}
 		else if ((argv[i] == '--format')){
 			if ((i+1) < argv.length){
-				format = argv[i+1] 
+				format = argv[i+1]
 				params += 1
 				if (format != 'csv' && format != 'json'){
 					console.log({error: "Please provide a valid format (json or csv)!\n"})
@@ -229,10 +258,20 @@ else if (scope == 'SessionsPerEV'){
 				process.exit()
 			}
 		}
+		else if ((argv[i] == '--apikey')){
+			if ((i+1) < argv.length){
+				key = argv[i+1]
+				params += 1
+			}
+			else {
+				console.log({error: `You need to provide ${argv[i]} value!`})
+				process.exit()
+			}
+		}
 	}
 
-	if (params < 4){
-		console.log({error: "You need to provide 4 parameters."})
+	if (params < 5){
+		console.log({error: "You need to provide 5 parameters (--apikey ---format --ev --datefrom --dateto)."})
 		process.exit()
 	}
 	axios({
@@ -283,7 +322,7 @@ else if (scope == 'SessionsPerStation'){
 		}
 		else if ((argv[i] == '--format')){
 			if ((i+1) < argv.length){
-				format = argv[i+1] 
+				format = argv[i+1]
 				params += 1
 				if (format != 'csv' && format != 'json'){
 					console.log({error: "Please provide a valid format (json or csv)!\n"})
@@ -295,10 +334,20 @@ else if (scope == 'SessionsPerStation'){
 				process.exit()
 			}
 		}
+		else if ((argv[i] == '--apikey')){
+			if ((i+1) < argv.length){
+				key = argv[i+1]
+				params += 1
+			}
+			else {
+				console.log({error: `You need to provide ${argv[i]} value!`})
+				process.exit()
+			}
+		}
 	}
 
-	if (params < 4){
-		console.log({error: "You need to provide 4 parameters."})
+	if (params < 5){
+		console.log({error: "You need to provide 5 parameters (--apikey ---format --station --datefrom --dateto)."})
 		process.exit()
 	}
 
@@ -350,7 +399,7 @@ else if (scope == 'SessionsPerProvider'){
 		}
 		else if ((argv[i] == '--format')){
 			if ((i+1) < argv.length){
-				format = argv[i+1] 
+				format = argv[i+1]
 				params += 1
 				if (format != 'csv' && format != 'json'){
 					console.log({error: "Please provide a valid format (json or csv)!\n"})
@@ -362,10 +411,20 @@ else if (scope == 'SessionsPerProvider'){
 				process.exit()
 			}
 		}
+		else if ((argv[i] == '--apikey')){
+			if ((i+1) < argv.length){
+				key = argv[i+1]
+				params += 1
+			}
+			else {
+				console.log({error: `You need to provide ${argv[i]} value!`})
+				process.exit()
+			}
+		}
 	}
 
-	if (params < 4){
-		console.log({error: "You need to provide 4 parameters."})
+	if (params < 5){
+		console.log({error: "You need to provide 5 parameters (--apikey ---format --provider --datefrom --dateto)."})
 		process.exit()
 	}
 
@@ -452,9 +511,19 @@ else if (scope == 'Admin'){
 						process.exit()							
 					}
 				}
+				else if ((argv[i] == '--apikey')){
+					if ((i+1) < argv.length){
+						key = argv[i+1]
+						params += 1
+					}
+					else {
+						console.log({error: `You need to provide ${argv[i]} value!`})
+						process.exit()
+					}
+				}
 			}
-			if (params < 4){
-				console.log({error: "You need to provide username, password, full name and email (--username, --passw, --fullName, --email)!"})
+			if (params < 5){
+				console.log({error: "You need to provide username, password, full name and email (--username, --passw, --fullName, --email, --apikey)!"})
 				process.exit()
 			}
 			axios({
@@ -484,6 +553,7 @@ else if (scope == 'Admin'){
 		}
 		
 		else if (argv[i] == '--users'){
+
 		
 			if ((i+1) < argv.length){
 				username = argv[i+1]
@@ -492,6 +562,24 @@ else if (scope == 'Admin'){
 				console.log({error: `You need to provide ${argv[k]} value!`})
 				process.exit()
 			}
+
+			let params = 0
+			for (var i = 0, j = argv.length; i < j; i++){
+				if ((argv[i] == '--apikey')){
+					if ((i+1) < argv.length){
+						key = argv[i+1]
+						params += 1
+					}
+					else {
+						console.log({error: `You need to provide ${argv[i]} value!`})
+						process.exit()
+					}
+				}
+				if (params < 1){
+					console.log({error : "You need to provide --apikey parameter!"})
+				}
+			}
+
 			axios({
 				"url": 'http://localhost:8765/evcharge/api/admin/users/' + username,
 				"method": "get",
@@ -520,8 +608,18 @@ else if (scope == 'Admin'){
 						process.exit()	
 					}
 				}
+				else if ((argv[i] == '--apikey')){
+					if ((i+1) < argv.length){
+						key = argv[i+1]
+						params += 1
+					}
+					else {
+						console.log({error: `You need to provide ${argv[i]} value!`})
+						process.exit()
+					}
+				}
 			}
-			if (params < 1){
+			if (params < 2){
 				console.log({error: "You need to provide source filename (--source)!"})
 				process.exit()
 			}
