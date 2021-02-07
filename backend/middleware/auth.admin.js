@@ -10,24 +10,23 @@ module.exports = (req, res, next) => {
             next(new Error());
         }
         const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-        const userId = decodedToken.userId;
-        if (req.body.userId && req.body.userId !== userId) {
+        const user = decodedToken.user;
+        if (req.body.userId && req.body.userId !== user.id) {
             res.status(401).json({
                 message: "Invalid token!"
             });
-        } else {
+        } 
+        else if (!user.isAdmin) {
+            res.status(401).json({
+                message: "This user is not an admin!"
+            });
+        }
+        else {
             next();
         }
-    } catch {
-        const token = req.headers['x-observatory-auth'];
-        let message = "Please login to continue";
-        jwt.verify(token, 'RANDOM_TOKEN_SECRET', (err) => {
-            if(err && err.name === 'TokenExpiredError') {
-                message = "Session Expired";
-            }
-        });
+    } catch(error){
         res.status(401).json({
-            message: message
+            message: "Please login to continue!"
         });
         
         next(error);
