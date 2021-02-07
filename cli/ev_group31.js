@@ -1,655 +1,250 @@
 #! /usr/bin/env node
 
-const FormData = require('form-data');
-const axios = require("axios")
-const fs = require('fs');
-const Promise = require('bluebird');
+const yargs = require('yargs');
+const axios = require("axios");
+const admin = require('./admin.js');
+const authenticate = require('./authenticate.js');
+const chargingSessions = require('./chargingsessions.js');
 
-const fileWrite = Promise.promisify(fs.writeFile);
-const fileUnlink = Promise.promisify(fs.unlink);
-
-argv = process.argv
-
-if (argv.length > 1){
-	scope = argv[2]	
-}
-
-
-if (scope == 'healthcheck'){
-	axios({
-		"url": "http://localhost:8765/evcharge/api/admin/healthcheck",
-		"method": "get"
-	}).then ((response) => {
-		console.log(response.data)
-	})
-}
-
-else if (scope == 'resetsessions'){
-	axios({
-		"url": "http://localhost:8765/evcharge/api/admin/resetsessions",
-		"method": "post"
-	}).then ((response) => {
-		console.log(response.data)
-	}).catch( (err) => {
-		console.error(err)
-	})
-}
-
-else if (scope == 'login'){
-	let params = 0
-	for (var i = 0, j = argv.length; i < j; i++){
-		if ((argv[i] == '--username')){
-			if ((i+1) < argv.length){
-				username = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		else if ((argv[i] == '--passw')){
-			if ((i+1) < argv.length){
-				password = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-	}
-	if (params < 2){
-		console.log({error: "You need to provide 2 parameters (--username, --passw)!"})
-		process.exit()
-	}
-	axios({
-		"url": "http://localhost:8765/evcharge/api/login",
-		"method": "post",
-		"data": {
-			"username": username,
-			"password": password
-		}
-	}).then ((response) => {
-		console.log(response.data.token)
-		return fileWrite("./softeng20bAPI.token", response.data.token)
-	}).catch( (err) => {
-		console.error(err)
-	})
-}
-
-else if (scope == 'logout'){
-	let params = 0
-	for (var i = 0, j = argv.length; i < j; i++){
-		if ((argv[i] == '--apikey')){
-			if ((i+1) < argv.length){
-				key = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-	}
-
-	if (params < 1){
-		console.log({error : "You need to provide --apikey parameter!"})
-	}
-
-	axios({
-		"url": "http://localhost:8765/evcharge/api/logout",
-		"method": "post",
-		"headers": {'x-observatory-auth': key}
-	}).then (() => {
-	    const filePath = './softeng20bAPI.token'; 
-	    return fileUnlink(filePath)
-	}).then(() => {
-		console.log({ message: "User logout successfully!"})
-	}).catch( (err) => {
-		console.error(err.response.data)
-	})
-}
-
-else if (scope == 'SessionsPerPoint'){
-	
-	let params = 0
-
-	for (var i = 0, j = argv.length; i < j; i++){
-		if (argv[i] == '--point'){
-			if ((i+1) < argv.length){
-				pointId = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		
-		else if (argv[i] == '--datefrom'){
-			if ((i+1) < argv.length){
-				datetimeFrom = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		
-		else if (argv[i] == '--dateto'){
-			if ((i+1) < argv.length){
-				datetimeTo = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		else if ((argv[i] == '--format')){
-			if ((i+1) < argv.length){
-				format = argv[i+1]
-				params += 1
-				if (format != 'csv' && format != 'json'){
-					console.log({error: "Please provide a valid format (json or csv)!\n"})
-					process.exit()
+const argv = yargs
+			.command({
+				command: "healthcheck", 
+				desc: "Checks if end-to-end connectivity is established between user and DB.",
+				handler: (argv) => {
+					//mhpws na ta vgalw oal auta eksw?
+					admin.healthcheck()
 				}
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		else if ((argv[i] == '--apikey')){
-			if ((i+1) < argv.length){
-				key = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-	}
-
-	if (params < 5){
-		console.log({error: "You need to provide 5 parameters (--apikey ---format --point --datefrom --dateto)."})
-		process.exit()
-	}
-
-	axios({
-		"url": 'http://localhost:8765/evcharge/api/SessionsPerPoint/' + pointId + '/' + datetimeFrom + '/' + datetimeTo + '?format=' + format,
-		"method": "get",
-		"headers": {'x-observatory-auth': key}
-	}).then ((response) => {
-		console.log(response.data)
-		process.exit()
-	}).catch( (err) => {
-		console.error(err.response.data)
-	})
-}
-
-else if (scope == 'SessionsPerEV'){
-
-	let params = 0
-
-	for (var i = 0, j = argv.length; i < j; i++){
-		if (argv[i] == '--ev'){
-			if ((i+1) < argv.length){
-				vehicleId = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		
-		else if (argv[i] == '--datefrom'){
-			if ((i+1) < argv.length){
-				datetimeFrom = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		
-		else if (argv[i] == '--dateto'){
-			if ((i+1) < argv.length){
-				datetimeTo = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		else if ((argv[i] == '--format')){
-			if ((i+1) < argv.length){
-				format = argv[i+1]
-				params += 1
-				if (format != 'csv' && format != 'json'){
-					console.log({error: "Please provide a valid format (json or csv)!\n"})
-					process.exit()
+			})
+			.command({
+				command: "resetsessions", 
+				desc: "Reset chargingSessions table and set a default admin.", 
+				handler: (argv) => {
+					admin.resetsessions()				
 				}
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		else if ((argv[i] == '--apikey')){
-			if ((i+1) < argv.length){
-				key = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-	}
-
-	if (params < 5){
-		console.log({error: "You need to provide 5 parameters (--apikey ---format --ev --datefrom --dateto)."})
-		process.exit()
-	}
-	axios({
-		"url": 'http://localhost:8765/evcharge/api/SessionsPerPoint/' + vehicleId + '/' + datetimeFrom + '/' + datetimeTo + '?format=' + format,
-		"method": "get",
-		"headers": {'x-observatory-auth': key}
-	}).then ((response) => {
-		console.log(response.data)
-		process.exit()
-	}).catch( (err) => {
-		console.error(err.response.data)
-	})
-}
-else if (scope == 'SessionsPerStation'){
-	
-	let params = 0
-
-	for (var i = 0, j = argv.length; i < j; i++){
-		if (argv[i] == '--station'){
-			if ((i+1) < argv.length){
-				stationId = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		
-		else if (argv[i] == '--datefrom'){
-			if ((i+1) < argv.length){
-				datetimeFrom = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		
-		else if (argv[i] == '--dateto'){
-			if ((i+1) < argv.length){
-				datetimeTo = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		else if ((argv[i] == '--format')){
-			if ((i+1) < argv.length){
-				format = argv[i+1]
-				params += 1
-				if (format != 'csv' && format != 'json'){
-					console.log({error: "Please provide a valid format (json or csv)!\n"})
-					process.exit()
-				}
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		else if ((argv[i] == '--apikey')){
-			if ((i+1) < argv.length){
-				key = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-	}
-
-	if (params < 5){
-		console.log({error: "You need to provide 5 parameters (--apikey ---format --station --datefrom --dateto)."})
-		process.exit()
-	}
-
-	axios({
-		"url": 'http://localhost:8765/evcharge/api/SessionsPerPoint/' + stationId + '/' + datetimeFrom + '/' + datetimeTo + '?format=' + format,
-		"method": "get",
-		"headers": {'x-observatory-auth': key}
-	}).then ((response) => {
-		console.log(response.data)
-		process.exit()
-	}).catch( (err) => {
-		console.error(err.response.data)
-	})
-}
-else if (scope == 'SessionsPerProvider'){
-	
-	let params = 0
-
-	for (var i = 0, j = argv.length; i < j; i++){
-		if (argv[i] == '--provider'){
-			if ((i+1) < argv.length){
-				providerId = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		
-		else if (argv[i] == '--datefrom'){
-			if ((i+1) < argv.length){
-				datetimeFrom = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		
-		else if (argv[i] == '--dateto'){
-			if ((i+1) < argv.length){
-				datetimeTo = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		else if ((argv[i] == '--format')){
-			if ((i+1) < argv.length){
-				format = argv[i+1]
-				params += 1
-				if (format != 'csv' && format != 'json'){
-					console.log({error: "Please provide a valid format (json or csv)!\n"})
-					process.exit()
-				}
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-		else if ((argv[i] == '--apikey')){
-			if ((i+1) < argv.length){
-				key = argv[i+1]
-				params += 1
-			}
-			else {
-				console.log({error: `You need to provide ${argv[i]} value!`})
-				process.exit()
-			}
-		}
-	}
-
-	if (params < 5){
-		console.log({error: "You need to provide 5 parameters (--apikey ---format --provider --datefrom --dateto)."})
-		process.exit()
-	}
-
-	axios({
-		"url": 'http://localhost:8765/evcharge/api/SessionsPerPoint/' + providerId + '/' + datetimeFrom + '/' + datetimeTo + '?format=' + format,
-		"method": "get",
-		"headers": {'x-observatory-auth': key}
-	}).then ((response) => {
-		console.log(response.data)
-		process.exit()
-	}).catch( (err) => {
-		console.error(err.response.data)
-	})
-}
-
-else if (scope == 'Admin'){
-
-	for (var i = 0, j = argv.length; i < j; i++){
-
-		if (argv[i] == '--usermod'){
-
-			isStationManager = false
-			isAdmin = false
-		
-			let params = 0
-			for (var k = 0, l = argv.length; k < l; k++){
-				if(argv[k] == '--username'){
-					if ((k+1) < argv.length){
-						username = argv[k+1]
-						if (!username.match(/^[0-9a-z]+$/)){
-							console.log({error: "This username is not valid!"})
-							process.exit()
-						}
-						params += 1
+			})
+			.command({
+				command: "login",
+				desc: "Login of a user.",
+				builder: {
+					username: {
+						describe: "The username of the user to login.",
+						demandOption: true
+					},
+					passw: {
+						describe: "The password of the user to login.",
+						demandOption: true
 					}
-					else {
-						console.log({error: `You need to provide ${argv[k]} value!`})
-						process.exit()							
-					}
-				}
-				else if(argv[k] == '--passw') {
-					if ((k+1) < argv.length){
-						password = argv[k+1]
-						if (password == ' '){
-							console.log({error: "Empty password is not valid!"})
-							process.exit()
-						}
-						params += 1
-					}
-					else {
-						console.log({error: `You need to provide ${argv[k]} value!`})
-						process.exit()							
-					}
-				}
-				else if(argv[k] == '--isStationManager') {
-					isStationManager = true
-				}
-				else if(argv[k] == '--isAdmin') {
-					isAdmin = true
-				}
-				else if(argv[k] == '--email') {
-					if ((k+1) < argv.length){
-						email = argv[k+1]
-						if (email == ' '){
-							console.log({error: "Empty email is not valid!"})
-							process.exit()
-						}
-						params += 1
-					}
-					else {
-						console.log({error: `You need to provide ${argv[k]} value!`})
-						process.exit()							
-					}
-				}
-				else if(argv[k] == '--fullName') {
-					if ((k+1) < argv.length){
-						fullName = argv[k+1]
-						if (fullName == ' '){
-							console.log({error: "Empty full name is not valid!"})
-							process.exit()
-						}
-						params += 1
-					}
-					else {
-						console.log({error: `You need to provide ${argv[k]} value!`})
-						process.exit()							
-					}
-				}
-				else if ((argv[k] == '--apikey')){
-					if ((k+1) < argv.length){
-						key = argv[k+1]
-						params += 1
-					}
-					else {
-						console.log({error: `You need to provide ${argv[i]} value!`})
-						process.exit()
-					}
-				}
-			}
-
-			if (params < 5){
-				console.log({error: "You need to provide username, password, full name and email (--username, --passw, --fullName, --email, --apikey)!"})
-				process.exit()
-			}
-			axios({
-				"url": 'http://localhost:8765/evcharge/api/admin/usermod/' + username + '/' + password,
-				"method": "post",
-				"data": {
-					"fullName": fullName,
-					"email": email,
-					"isAdmin": isAdmin,
-					"isStationManager": isStationManager
 				},
-				"headers": {'x-observatory-auth': key}
-			}).then (() => {
-				return axios({
-					"url": "http://localhost:8765/evcharge/api/login",
-					"method": "post",
-					"data": {
-						"username": username,
-						"password": password
-					}
-				}).then ((response) => {
-					console.log(response.data.token)
-				})
-			}).catch( (err) => {
-				console.error(err.response.data)
-			})
-		}
-		
-		else if (argv[i] == '--users'){
-
-		
-			if ((i+1) < argv.length){
-				username = argv[i+1]
-			}
-			else {
-				console.log({error: `You need to provide ${argv[k]} value!`})
-				process.exit()
-			}
-
-			let params = 0
-			for (var k = 0, j = argv.length; k < j; k++){
-				if ((argv[k] == '--apikey')){
-					if ((k+1) < argv.length){
-						key = argv[k+1]
-						params += 1
-					}
-					else {
-						console.log({error: `You need to provide ${argv[i]} value!`})
-						process.exit()
-					}
+				handler: (argv) => {
+					authenticate.login(argv.username, argv.passw)
 				}
-			}
-
-			if (params < 1){
-				console.log({error : "You need to provide --apikey parameter!"})
-			}
-
-			axios({
-				"url": 'http://localhost:8765/evcharge/api/admin/users/' + username,
-				"method": "get",
-				"headers": {'x-observatory-auth': key}
-			}).then ((response) => {
-				delete response.data.password
-				console.log(response.data)
-				process.exit()
 			})
-			.catch((err) => {
-				console.error(err.response.data)
-			})
-		}
-
-		else if (argv[i] == '--sessionsupd'){
-			
-			let params = 0
-			for (var k = 0, l = argv.length; k < l; k++){
-				if (argv[k] == '--source'){
-					if ((k+1) < argv.length){
-						source = argv[k+1]
-						params += 1
+			.command({
+				command: "logout",
+				desc: "Logout of a user.",
+				builder: {
+					apikey: {
+						describe: "The token of the user.",
+						demandOption: true
 					}
-					else {
-						console.log({error: `You need to provide ${argv[k]} value!`})
-						process.exit()	
-					}
-				}
-				else if ((argv[k] == '--apikey')){
-					if ((k+1) < argv.length){
-						key = argv[k+1]
-						params += 1
-					}
-					else {
-						console.log({error: `You need to provide ${argv[i]} value!`})
-						process.exit()
-					}
-				}
-			}
-			if (params < 2){
-				console.log({error: "You need to provide source filename (--source)!"})
-				process.exit()
-			}
-			const form_data = new FormData();
-			form_data.append("file", fs.createReadStream(source));
-			axios({
-				"url": 'http://localhost:8765/evcharge/api/admin/system/sessionsupd',
-				"method": "post",
-				"headers": {
-					'x-observatory-auth': key,
-					'Content-Type': 'multipart/form-data',
-					...form_data.getHeaders()
 				},
-				"data": form_data
-			}).then ((response) => {
-				console.log(response.data)
-				process.exit()
+				handler: (argv) => {
+					authenticate.logout(argv.apikey)
+				}
 			})
-			.catch((err) => {
-				console.error(err.response.data)
+			.command({
+				command: "SessionsPerPoint", 
+				desc: "Print the charging sessions for a given point between two certain dates.", 
+				builder: {
+					apikey: {
+						describe: "The token of the user.",
+						demandOption: true
+					},
+					format: {
+						describe: "The format of output.",
+						demandOption: true,
+						choices: ['csv', 'json']
+					},
+					datefrom: {
+						describe: "The starting date in format YYYYMMDD.",
+						demandOption: true
+					},
+					dateto: {
+						describe: "The ending date in format YYYYMMDD.",
+						demandOption: true					
+					},
+					point: {
+						describe: "The id of the point.",
+						demandOption: true
+					}
+				},
+				handler: (argv) => {
+					chargingSessions.SessionsPerPoint(argv.point, argv.datefrom, argv.dateto, argv.format, argv.apikey)
+				}
 			})
-		}
-		else if(argv[i] == '--healthcheck'){
-			axios({
-				"url": "http://localhost:8765/evcharge/api/admin/healthcheck",
-				"method": "get"
-			}).then ((response) => {
-				console.log(response.data)
+			.command({
+				command: "SessionsPerEV", 
+				desc: "Print the charging sessions for a given vehicle between two certain dates.", 
+				builder: {
+					apikey: {
+						describe: "The token of the user.",
+						demandOption: true
+					},
+					format: {
+						describe: "The format of output.",
+						demandOption: true,
+						choices: ['csv', 'json']
+					},
+					datefrom: {
+						describe: "The starting date in format YYYYMMDD.",
+						demandOption: true
+					},
+					dateto: {
+						describe: "The ending date in format YYYYMMDD.",
+						demandOption: true					
+					},
+					ev: {
+						describe: "The id of the vehicle.",
+						demandOption: true
+					}
+				},
+				handler: (argv) => {
+					chargingSessions.SessionsPerEV(argv.ev, argv.datefrom, argv.dateto, argv.format, argv.apikey)
+				}
 			})
-		}
-		
-		else if(argv[i] == '--resetsessions'){
-			axios({
-				"url": "http://localhost:8765/evcharge/api/admin/resetsessions",
-				"method": "post"
-			}).then ((response) => {
-				console.log(response.data)
+			.command({
+				command: "SessionsPerStation", 
+				desc: "Print the charging sessions for a given station between two certain dates.", 
+				builder: {
+					apikey: {
+						describe: "The token of the user.",
+						demandOption: true
+					},
+					format: {
+						describe: "The format of output.",
+						demandOption: true,
+						choices: ['csv', 'json']
+					},
+					datefrom: {
+						describe: "The starting date in format YYYYMMDD.",
+						demandOption: true
+					},
+					dateto: {
+						describe: "The ending date in format YYYYMMDD.",
+						demandOption: true					
+					},
+					station: {
+						describe: "The id of the station.",
+						demandOption: true
+					}
+				},
+				handler: (argv) => {
+					chargingSessions.SessionsPerStation(argv.station, argv.datefrom, argv.dateto, argv.format, argv.apikey)
+				}
 			})
-		}
-	}
-}
+			.command({
+				command: "SessionsPerProvider", 
+				desc: "Print the charging sessions for a given provider between two certain dates.", 
+				builder: {
+					apikey: {
+						describe: "The token of the user.",
+						demandOption: true
+					},
+					format: {
+						describe: "The format of output.",
+						demandOption: true,
+						choices: ['csv', 'json']
+					},
+					datefrom: {
+						describe: "The starting date in format YYYYMMDD.",
+						demandOption: true
+					},
+					dateto: {
+						describe: "The ending date in format YYYYMMDD.",
+						demandOption: true					
+					},
+					provider: {
+						describe: "The id of the provider.",
+						demandOption: true
+					}
+				},
+				handler: (argv) => {
+					chargingSessions.SessionsPerProvider(argv.provider, argv.datefrom, argv.dateto, argv.format, argv.apikey)
+				}
+			})
+			.command({
+				command: "Admin", 
+				desc: "Used for admin purposes.", 
+				builder: {
+					apikey: {
+						describe: "The token of the admin.",
+						demandOption: true,
+					},
+					sessionsupd: {
+						describe: "Uploads charging sessions through a given csv file.",
+						conflicts: ["users", "resetsessions", "usernmod", "healthcheck"],
+						implies: ["source"]
+					},
+					users: {
+						describe: "Returns info for the user with given username.",
+						conflicts: ["sessionsupd", "resetsessions", "usernmod", "healthcheck"]
+					},
+					usermod: {
+						describe: "Insert or change the given user.",
+						conflicts: ["users", "resetsessions", "sessionsupd", "healthcheck"],
+						implies: ["username", "passw"]
+					},
+					healthcheck: {
+						describe: "Checks if end-to-end connectivity is established between user and DB.",
+						conflicts: ["users", "sessionsupd", "usermod", "resetsessions"]
+					},
+					resetsessions: {
+						describe: "Reset chargingSessions table and set a default admin.",
+						conflicts: ["users", "sessionsupd", "usernmod", "healthcheck"]
+					},
+					username: {
+						describe: "Username of the user.",
+						conflicts: ["users", "sessionsupd", "resetsessions", "healthcheck"],
+						type: 'string'
+					},
+					passw: {
+						describe: "(New) Password for the user.",
+						conflicts: ["users", "sessionsupd", "resetsessions", "healthcheck"],
+						type: 'string'
+					},
+					isAdmin: {
+						describe: "Set if the user is admin.",
+						type: 'boolean',
+						default: false
+					},
+					isStationManager: {
+						describe: "Set if the user is manager of a station.",
+						type: 'boolean',
+						default: false
+					},
+					source: {
+						describe: "Absolute path to the csv file.",
+						conflicts: ["users", "resetsessions", "usernmod", "healthcheck"],
+						type: 'string'
+					}
+				},
+				handler: (argv) => {
+					if(argv.healthcheck){
+						admin.healthcheck()
+					}
+					else if(argv.resetsessions){
+						admin.resetsessions()
+					}
+					else if(argv.usermod){
+						admin.usermod(argv.username, argv.passw, argv.isAdmin, argv.isStationManager, argv.apikey)
+					}
+					else if(argv.sessionsupd){
+						admin.sessionsupd(argv.source, argv.apikey)
+					}
+					else if(argv.users){
+						admin.users(argv.users, argv.apikey)
+					}
+				}	
+			})
+			.help()
+			.argv
