@@ -6,12 +6,19 @@ const admin = require('./admin.js');
 const authenticate = require('./authenticate.js');
 const chargingSessions = require('./chargingsessions.js');
 
+const chalk = require('chalk');
+const clear = require('clear');
+const figlet = require('figlet');
+
+clear();
+
+console.log(chalk.blue(figlet.textSync('EVolution', 'Banner')));
+
 const argv = yargs
 			.command({
 				command: "healthcheck", 
 				desc: "Checks if end-to-end connectivity is established between user and DB.",
 				handler: (argv) => {
-					//mhpws na ta vgalw oal auta eksw?
 					admin.healthcheck()
 				}
 			})
