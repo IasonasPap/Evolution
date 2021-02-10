@@ -45,7 +45,6 @@ exports.resetSession = async (req,res) => {
     })
 }
 
-
 exports.healthCheck = (req,res) => {
      /* 
     This fuction checks the connect to the database by
@@ -72,12 +71,14 @@ exports.findOne = (req, res) => {
 			if(data){
 				res.send(data);
 			} else {
-				res.send(console.log("No user found"));
+				return res.status(400).send({
+                    message:`No user found with name "${username}"`
+                });
 			}
         })
-        .catch(err => {
-            res.status(500).send({
-                message: "Error retrieving User with id=" + id
+        .catch((err) => {
+            return res.status(500).send({
+                message: "Error retrieving User with name=" + username
             });
         });
 };
@@ -90,45 +91,58 @@ exports.createOrChange = (req, res, next) => {
 
     // Validate request 
     if (!req.params.username || !req.params.password) {
-        res.status(400).send({
+        return res.status(400).send({
             message: "You should provide a <username> and <password> for the new user!"
         });
-        return;
     }
     const {username} = req.params;
     
 	user.findOne({where: {username} } )
         .then(data => {
-            console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
-            console.log(data)
             if(data){
-                console.log(data);
                 const {id} = data;
-                
 				user.update({password: req.params.password}, {
 					where: {id: id},
 					raw: true
 					})
 					.then((result) => {
 						if (result[0] !== 1) {
-							res.send({
+							return res.status(400).send({
 								message: `Cannot update User with id=${id}. User not found!`
 							});
-						}
-					}).then(() => user.findByPk(id))
-					.then((u) => res.send(u))
-					.catch(err => {
-						res.status(500).send({
-							message: "Error updating User with id=" + id
-						});
-				});
+						} else {
+                            user.findByPk(id)
+                                .then(data => {
+                                    if (data){
+                                        res.send(data);
+                                    } else {
+                                        return res.status(400).send({
+                                            message: "Not Found User with id=" + id
+                                        });
+                                    }
+                                
+                            })
+                            .catch(err => {
+                                res.status(500).send({
+                                    message: "Error updating User with id=" + id
+                                });
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        return res.status(500).send({
+                            message: "Error updating User with id=" + id
+                        });
+                    });
+                    
+					
 			} else {
 				// Create a newUser object
 				let newUser = {
 					username: req.params.username,
 					password: req.params.password,
-					fullName: req.body.fullName || undefined,
-					email: req.body.email || undefined,
+					fullName: req.body.fullName || null,
+					email: req.body.email || null,
 					isAdmin: req.body.isAdmin || false,
 					isStationManager: req.body.isStationManager || false
 				};
@@ -136,17 +150,17 @@ exports.createOrChange = (req, res, next) => {
 				// Insert the newUser into the users table
 				user.create(newUser)
 					.then(data => {
-						res.status(200).send(data);
+						return res.status(200).send(data);
 					})
 					.catch(err => {
-						res.status(500).send(
+						return res.status(500).send(
 							{message: err.message || "Some error occurred while creating the user."}
 						);
 					});
 			}
         })
         .catch(err => {
-            res.status(500).send({
+            return res.status(500).send({
                 message: "Error retrieving User with id=" + id
             });
         });
@@ -159,7 +173,7 @@ exports.upload = async (req, res) => {
       return res.status(400).send("Please upload a CSV file!");
     }
 
-    let tutorials = [];
+    let sessions = [];
     let path = __basedir + "/" + req.file.filename;
 
     fs.createReadStream(path)
@@ -168,10 +182,10 @@ exports.upload = async (req, res) => {
         throw error.message;
       })
       .on("data", (row) => {
-        tutorials.push(row);
+        sessions.push(row);
       })
       .on("end", () => {
-        chargingSession.bulkCreate(tutorials)
+        chargingSession.bulkCreate(sessions)
           .then(() => {
             fs.unlink(path, (err) => {
                 if (err) console.log('!!!!!!!!!!!!!');
