@@ -50,9 +50,6 @@ exports.findAll = (req, res) => {
     let requestTimestamp = new Date();
     let {format} = req.query;
 
-
-
-
     if (req.params.pointId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {pointId, datetimeFrom, datetimeTo} = req.params;
         let condition = {
@@ -197,8 +194,6 @@ exports.findAll = (req, res) => {
             });
 
 
-
-
     } else if (req.params.stationId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {stationId, datetimeFrom, datetimeTo} = req.params;
 
@@ -279,8 +274,6 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the station"
                 })
             });
-
-
 
 
     } else if (req.params.providerId && req.params.datetimeTo && req.params.datetimeFrom) {

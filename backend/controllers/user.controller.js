@@ -9,8 +9,10 @@ exports.create = (req, res, next) => {
     */
 
     // Validate request 
+    
     if (!req.body.username || !req.body.password) {
         res.status(400).send({
+            //mporei na mpei kai apla send kai to mhnuma
             message: "You should provide a <username> and <password> for the new user!"
         });
         return;
@@ -20,8 +22,8 @@ exports.create = (req, res, next) => {
     let newUser = {
         username: req.body.username,
         password: req.body.password,
-        fullName: req.body.fullName || undefined,
-        email: req.body.email || undefined,
+        fullName: req.body.fullName || null,
+        email: req.body.email || null,
         isAdmin: req.body.isAdmin || false,
         isStationManager: req.body.isStationManager || false
     };
@@ -29,7 +31,7 @@ exports.create = (req, res, next) => {
     // Insert the newUser into the users table
     user.create(newUser)
         .then(data => {
-            res.status(200).send(data);
+            res.send(data);
         })
         .catch(err => {
             res.status(500).send(
@@ -61,7 +63,13 @@ exports.findOne = (req, res) => {
 
     user.findByPk(id)
         .then(data => {
-            res.send(data);
+            if (data){
+                res.send(data);
+            } else {
+                res.status(400).send({
+                    message: "Not Found User with id=" + id
+                });
+            }
         })
         .catch(err => {
             res.status(500).send({
@@ -73,21 +81,37 @@ exports.findOne = (req, res) => {
 // Update a User by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
-
     user.update(req.body, {
         where: {id: id},
         raw: true
     })
-        .then((result) => {
+    .then((result) => {
             if (result[0] !== 1) {
-                res.send({
+                return res.status(400).send({
                     message: `Cannot update User with id=${id}. User not found!`
                 });
+            } else {
+                user.findByPk(id)
+                .then(data => {
+                    if (data){
+                        res.send(data);
+                    } else {
+                        res.status(400).send({
+                            message: "Not Found User with id=" + id
+                        });
+                    }
+                })
+                .catch(err => {
+                    return res.status(500).send({
+                        message: "Error retrieving User with id=" + id
+                    });
+                });
             }
-        }).then(() => user.findByPk(id))
-        .then((u) => res.send(u))
+        })
+        //.then(() => user.findByPk(id))
+        //.then((u) => res.send(u))
         .catch(err => {
-            res.status(500).send({
+            return res.status(500).send({
                 message: "Error updating User with id=" + id
             });
         });
