@@ -222,8 +222,13 @@ describe('Adminstrators\' endpoints', () => {
     after((done) => {
         request.delete('/evcharge/api/users/' + newUserId)
                     .then(function (response) {
+                        newUserId--;
+                        request.delete('/evcharge/api/users/' + newUserId)
+                        .then(function (response) {
                             done();
+                });
             });
+        
     });
     
     describe('GET /admin/users/:username',() => {
