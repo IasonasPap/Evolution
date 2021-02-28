@@ -3,6 +3,7 @@ const supertest = require('supertest');
 const request = supertest(app);
 const chai = require('chai');
 const bcrypt = require('bcrypt');
+const { response } = require('express');
 
 //const mocha = require('mocha');
 //const chaiHttp = require("chai-http");
@@ -14,8 +15,7 @@ process.env.NODE_ENV ='test';
 
 setTimeout(function() {
     run()
-  }, 8000);
-
+  }, 7000);
 
 describe('Users\' endpoints', () => {
  
@@ -29,7 +29,6 @@ describe('Users\' endpoints', () => {
                 });
     });
     
-
     describe('POST /users', () => {
         const newUser = {
             username: "user0",
@@ -55,7 +54,6 @@ describe('Users\' endpoints', () => {
                         password:'mypassword'
                     })
                     .then(function(response) {
-                        //console.log(response);
                         response.status.should.be.equal(400);
                         response.body.should.have.property('message').equal("You should provide a <username> and <password> for the new user!");
                         done();
@@ -232,6 +230,7 @@ describe('Adminstrators\' endpoints', () => {
     });
     
     describe('GET /admin/users/:username',() => {
+        
         it('Don\'t return a user with an invalid username',(done) => {
             request.get('/evcharge/api/admin/users/invalidUsername')
                     .then((response) => {
@@ -302,6 +301,43 @@ describe('Adminstrators\' endpoints', () => {
                         response.body.should.have.property("status").equal("OK");
                         done();
                     });
+        });
+    });
+
+    describe('POST /admin/system/sessionsupd', () => {
+
+        let numberOfUsers;
+
+        before((done) => {
+            request.get('/evcharge/api/sessions')
+                    .then ((response) => {
+                        numberOfUsers = response.body.length;
+                        done();
+                    });
+        });
+        
+        it('Ask for a csv to be uploaded if it hasn\'t', (done) => {
+            request.post('/evcharge/api/admin/system/sessionsupd')
+                    .then((response) => {
+                        response.status.should.be.equal(400);
+                        response.text.should.be.equal('Please upload a CSV file!');
+                        done();
+                    })
+                    .catch(err => console.log(err));
+        });
+        
+        it.skip('Upload a csv file with Charging Sessions', (done) => {
+            request.post('/evcharge/api/admin/system/sessionsupd')
+                    .attach('file','test/uploadChargingSessions.csv')
+                    .then((response) => {
+                        response.status.should.be.equal(200);
+                        request.get('/evcharge/api/sessions')
+                                .then((response) => {
+                                    response.body.length.should.be.equal(numberOfUsers+2);
+                                    done();
+                                })                        
+                    })
+                    .catch(err => console.log(err));
         });
     });
 
@@ -391,7 +427,6 @@ describe('Authorization endpoints', () => {
 
         it('Succefully log in a user',(done) => {
             request.post('/evcharge/api/login')
-            //.set('Content-Type', 'application/x-www-form-urlencoded')
                 .set('Content-Type','application/x-www-form-urlencoded')
                 .send('username=admin')
                 .send('password=petrol4ever')
@@ -415,28 +450,151 @@ describe('Authorization endpoints', () => {
     });
 });
 
-describe.skip('Charging Sessions endpoints', () => {
-    describe('GET ', () => {
-        it('',() => {
+describe('Charging Sessions endpoints', () => {
 
+    let newSessionId;
+
+    const newChargingSession = {
+        totalCost: 20,
+        energyDelivered: 80,
+        pointsAwarded: 15,
+        startTime: "2021-01-01 21:14:08",
+        endTime: "2021-01-01 21:16:08",
+        paymentType: "Paypall",
+        electricVehicleId: 3,
+        chargingPointId: 3
+    };
+    
+    // after((done) => {
+    //     request.delete('/evcharge/api/sessions/' + newSessionId)
+    //                 .then(function (response) {
+    //                         done();
+    //             });
+    //         });
+    // });
+
+    describe.skip('POST /', () => {
+        it('Add a new charging session',(done) => {
+            request.post('/evcharge/api')
+                    .send(newChargingSession)
+                    .then((response) => {
+                        response.status.should.be.equal(200);
+                        response.body.should.have.property('id').equal(newSessionId);
+                        response.body.should.have.property('totalCost').equal(20);
+                        response.body.should.have.property('pointsAwarded').equal(15);
+                        response.body.should.have.property('startTime').equal("2021-01-01 21:14:08");
+                        response.body.should.have.property('endTime').equal("2021-01-01 21:16:08");
+                        response.body.should.have.property('paymentType').equal("Paypall");
+                        response.body.should.have.property('electricVehicleId').equal(3);
+                        response.body.should.have.property('chargingPointId').equal(3);
+                        newSessionId = response.body.id;
+                        done();
+                    });
         });
     });
 
-    describe('GET ', () => {
-        it('',() => {
-            
+    describe('GET /SessionsPerPoint/:pointID/:yyyymmdd_from/:yyyymmdd_to', () => {
+        
+        it('Retrieve the charging sessions for a specific point',(done) => {
+            request.get('/evcharge/api/SessionsPerPoint/9/20201101/20201130')
+                    .then((response) => {
+                        response.status.should.be.equal(200);
+                        response.body.should.have.property("point").equal(9);
+                        response.body.should.have.property("pointOperator");
+                        response.body.should.have.property("requestTimestamp");
+                        response.body.should.have.property("periodFrom");
+                        response.body.should.have.property("periodTo");
+                        response.body.should.have.property("numberOfChargingSessions").equal(response.body.chargingSessionsList.length);
+                        response.body.should.have.property("chargingSessionsList").be.a('array')
+                        if(response.body.numberOfChargingSessions) {
+                            response.body.chargingSessionsList[0].should.have.property("sessionIndex");
+                            response.body.chargingSessionsList[0].should.have.property("sessionId");
+                            response.body.chargingSessionsList[0].should.have.property("startedOn");
+                            response.body.chargingSessionsList[0].should.have.property("finishedOn");
+                            response.body.chargingSessionsList[0].should.have.property("protocol");
+                            response.body.chargingSessionsList[0].should.have.property("energyDelivered");
+                            response.body.chargingSessionsList[0].should.have.property("payment");
+                            response.body.chargingSessionsList[0].should.have.property("vehicleType");
+                        }
+                        done();
+                    })
         });
     });
 
-    describe('GET ', () => {
-        it('',() => {
-            
+    describe('GET /SessionsPerStation/:stationID/:yyyymmdd_from/:yyyymmdd_to', () => {
+        
+
+        it('Retrieve the charging sessions for a specific station',(done) => {
+            request.get("/evcharge/api/SessionsPerStation/9/20201101/20201130")
+                    .then((response) => {
+                        response.status.should.be.equal(200);
+                        response.body.should.have.property("stationId").equal(9);
+                        response.body.should.have.property("operator");
+                        response.body.should.have.property("requestTimestamp");
+                        response.body.should.have.property("periodFrom");
+                        response.body.should.have.property("periodTo");
+                        response.body.should.have.property("totalEnergyDelivered");
+                        response.body.should.have.property("numberOfChargingSessions");
+                        response.body.should.have.property("numberOfActivePoints").equal(response.body.sessionSummaryList.length);
+                        response.body.should.have.property("sessionSummaryList").be.a('array');
+                        if(response.body.numberOfActivePoints) {
+                            response.body.sessionSummaryList[0].should.have.property("pointId");
+                            response.body.sessionSummaryList[0].should.have.property("pointSessions");
+                            response.body.sessionSummaryList[0].should.have.property("energyDelivered");
+                        }
+                        done();
+        });
         });
     });
 
-    describe('GET ', () => {
-        it('',() => {
-            
+    describe('GET /SessionsPerEV/:vehicleID/:yyyymmdd_from/:yyyymmdd_to', () => {
+        
+        it('Retrieve the charging sessions for a specific electric vehicle',(done) => {
+            request.get("/evcharge/api/SessionsPerEV/7/20200201/20200229")
+                    .then((response) => {
+                        response.status.should.be.equal(200);
+                        response.body.should.have.property("vehicleId").equal(7);
+                        response.body.should.have.property("requestTimestamp");
+                        response.body.should.have.property("periodFrom");
+                        response.body.should.have.property("periodTo");
+                        response.body.should.have.property("totalEnergyConsumed");
+                        response.body.should.have.property("numberOfVisitedPoints");
+                        response.body.should.have.property("numberOfVehicleChargingSessions").equal(response.body.vehicleChargingSessionsList.length);
+                        response.body.should.have.property("vehicleChargingSessionsList").be.a('array');
+                        if(response.body.numberOfVehicleChargingSessions) {
+                            response.body.vehicleChargingSessionsList[0].should.have.property("sessionIndex");
+                            response.body.vehicleChargingSessionsList[0].should.have.property("sessionId");
+                            response.body.vehicleChargingSessionsList[0].should.have.property("energyProvider");
+                            response.body.vehicleChargingSessionsList[0].should.have.property("startedOn");
+                            response.body.vehicleChargingSessionsList[0].should.have.property("finishedOn");
+                            response.body.vehicleChargingSessionsList[0].should.have.property("pricePolicyRef");
+                            response.body.vehicleChargingSessionsList[0].should.have.property("costPerKwh");
+                            response.body.vehicleChargingSessionsList[0].should.have.property("sessionCost");
+                        }
+                        done();
+                    });
+        });
+    });
+
+    describe('GET /SessionsPerProvider/:providerID/:yyyymmdd_from/:yyyymmdd_to', () => {
+        
+        it('Retrieve the charging sessions for a specific provider',() => {
+            request.get("/evcharge/api/SessionsPerProvider/1/20201101/20201130")
+                    .then((response) => {
+                        response.status.should.be.equal(200);
+                        response.body.should.have.property("providerId").equal(1);
+                        response.body.should.have.property("providerName");
+                        response.body.should.have.property("stationId");
+                        response.body.should.have.property("sessionId");
+                        response.body.should.have.property("vehicleId");
+                        response.body.should.have.property("startedOn");
+                        response.body.should.have.property("finishedOn");
+                        response.body.should.have.property("energyDelivered");
+                        response.body.should.have.property("pricePolicyRef");
+                        response.body.should.have.property("costPerKWh");
+                        response.body.should.have.property("totalCost");
+                        done();
+                    })
         });
     });
 })
@@ -487,8 +645,5 @@ describe.skip('POST /admin/resetsessions',() => {
 /*
 
 response.body.should.be.a('object');
-response.should.have.status(404);
-response.text.should.be.eq(to mhnuma pou gurnaei an uparxei);
-response.should.have.status(201);
 
 */

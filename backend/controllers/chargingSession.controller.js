@@ -11,28 +11,41 @@ const charger = db.charger;
 
 const dateFormat = require('dateformat');
 
+exports.getAll = (req,res) => {
+    chargingSession.findAll()
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving users."
+            });
+        });
+};
 
 // Create and Save a new Charging Event
-exports.create = (req, res) => {
+exports.create = (req, res,next) => {
     // Validate request
-    if (req.body.electricVehicleId <= 0) {
-        res.status(400).send({
-            message: "Invalid vehicle id!"
-        })
-        return;
-    }
-
+    // if (req.body.electricVehicleId <= 0) {
+    //     res.status(400).send({
+    //         message: "Invalid vehicle id!"
+    //     })
+    //     return;
+    // }
+    console.log(req.body);
     // Create a new charging event
-    const newChargingSession = {
-        electricVehicleId: req.body.electricVehicleId,
-        chargingPointId: req.body.chargingPointId,
-        cost: (req.body.cost ? req.body.cost : null),
-        energyRequested: req.body.energyRequested,
+    let newChargingSession = {
+        totalCost: req.body.totalCost,
+        energyDelivered: req.body.energyDelivered,
         pointsAwarded: req.body.pointsAwarded,
         startTime: req.body.startTime,
-        endTime: req.body.endTime
+        endTime: req.body.endTime,
+        paymentType: req.body.paymentType,
+        electricVehicleId: req.body.electricVehicleId,
+        chargingPointId: req.body.chargingPointId
     };
-
+    console.log(newChargingSession);
     chargingSession.create(newChargingSession)
         .then(data => {
             res.send(data)

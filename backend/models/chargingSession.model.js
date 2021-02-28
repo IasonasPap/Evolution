@@ -39,7 +39,7 @@ module.exports = (sequelize, Sequelize) => {
                 isDate: true
             }
         },
-        // startTime: timestamp of the finish of the charging session
+        // endTime: timestamp of the finish of the charging session
         endTime:{
             type: Sequelize.DATE,
             allowNull: false,
