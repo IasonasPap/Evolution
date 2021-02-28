@@ -186,13 +186,17 @@ exports.upload = async (req, res) => {
       })
       .on("end", () => {
         chargingSession.bulkCreate(sessions)
-          .then(() => {
+          .then(response => {
+              const uploadedSessions = response.map(x => {
+                  return x.dataValues;
+              });
             fs.unlink(path, (err) => {
                 if (err) console.log('!!!!!!!!!!!!!');
                 else console.log("succesful delete");
             });
 
             res.status(200).send({
+                data: uploadedSessions,
               message:
                 "Uploaded the file successfully: " + req.file.originalname
             });
