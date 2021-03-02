@@ -15,6 +15,7 @@
         service.getRandomVehicle = getRandomVehicle;
         service.getSelectedChargingPoint = getSelectedChargingPoint;
         service.validateForm = validateForm;
+        service.toggleIsCharging = toggleIsCharging;
 
         init();
 
@@ -41,6 +42,10 @@
             //randomly select a vehicle to be plugged in a random compatible chargerPoint
             service.randomVehicle = service.userVehicles[Math.floor(Math.random() * service.userVehicles.length)];
             service.randomVehicle && UseCaseFactory.getRandomChargingPoint(service.randomVehicle.chargerId).then(res => service.chargingPoint = res.data);
+        }
+
+        function  toggleIsCharging() {
+            service.isCharging = !service.isCharging;
         }
 
         function getUserVehicles() {

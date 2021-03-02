@@ -13,16 +13,24 @@
 
         /// Functions
 
-        httpInterceptor.$inject = ['Auth'];
+        httpInterceptor.$inject = ['$q', '$location', 'Auth'];
 
-        function httpInterceptor(Auth) {
-            // noinspection JSUnusedGlobalSymbols
+        function httpInterceptor($q, $location, Auth) {
             return {
                 request: function (config) {
 
                     config.headers['X-OBSERVATORY-AUTH'] = Auth.getToken();
 
                     return config;
+                },
+                responseError: function (rejection) {
+                    const deferred = $q.defer();
+                    if (rejection.status === 401) {
+                        Auth.deleteToken();
+                        $location.path('login');
+                        deferred.reject(rejection);
+                    }
+                    return deferred.promise;
                 }
             };
         }

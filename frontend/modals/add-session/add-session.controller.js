@@ -35,7 +35,6 @@
             vm.batteryPercent = Math.floor(Math.random() * 66);
             vm.maxHours = Math.floor((100 - vm.batteryPercent) / (vm.data.charger.powerOutput/10 + 9));
             vm.maxMinutes = Math.floor(Math.random() * 4) * 15;
-            console.log(vm.data);
         }
 
         $scope.$watch('vm.data.duration', () => {

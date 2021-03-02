@@ -13,8 +13,15 @@ module.exports = (req, res, next) => {
             next();
         }
     } catch {
+        const token = req.headers['x-observatory-auth'];
+        let message = "Please login to continue";
+        jwt.verify(token, 'RANDOM_TOKEN_SECRET', (err) => {
+            if(err && err.name === 'TokenExpiredError') {
+                message = "Session Expired";
+            }
+        });
         res.status(401).json({
-            message: "Please login to continue"
+            message: message
         });
     }
 };

@@ -320,6 +320,8 @@ exports.findAll = (req, res) => {
             }
         })
             .then(data => {
+                datetimeFrom = datetimeFrom.substring(0, 4) + '-' + datetimeFrom.substring(4, 6) + '-' + datetimeFrom.substring(6, 8);
+                datetimeTo = datetimeTo.substring(0, 4) + '-' + datetimeTo.substring(4, 6) + '-' + datetimeTo.substring(6, 8);
                 let dataJson = data.map((item, index) => {
                         let obj = JSON.parse(JSON.stringify(item));
                         return {
