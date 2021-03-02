@@ -7,7 +7,14 @@ const fs = require('fs');
 
 const app = express();
 
-app.use(cors());
+
+global.__basedir = __dirname + '/..';
+
+const corsOptions = {
+	origin: "http://localhost:8765"
+};
+
+app.use(cors(corsOptions));
 
 // to support JSON-encoded bodies
 app.use(bodyParser.json());
@@ -33,6 +40,7 @@ const options = {
 
 // set port, listen for requests
 const PORT = 8765;
+
 // app.listen(PORT, () => {
 // 	console.log(`Server is running on port ${PORT}.`);
 // });
@@ -44,3 +52,11 @@ https.createServer(options, app)
     .listen(8765, function () {
         console.log('App listening on port 8765! Go to https://localhost:8765/')
     })
+
+if (process.env.NODE_ENV != 'test'){
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}.`);
+    });
+}
+
+module.exports = app;

@@ -13,16 +13,22 @@ const charger = db.charger;
 
 const dateFormat = require('dateformat');
 
+exports.getAll = (req,res) => {
+    chargingSession.findAll()
+        .then(data => {
+            res.send(data);
+        })
+        .catch(err => {
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while retrieving users."
+            });
+        });
+};
 
 // Create and Save a new Charging Event
-exports.create = (req, res) => {
+exports.create = (req, res,next) => {
     // Validate request
-    if (req.body.electricVehicleId <= 0) {
-        res.status(400).send({
-            message: "Invalid vehicle id!"
-        })
-        return;
-    }
 
     if (req.body.startTime > req.body.endTime) {
         res.status(400).send({
@@ -30,7 +36,7 @@ exports.create = (req, res) => {
         })
     }
 
-    // Create a new charging event
+    // Create new charging event
     const newChargingSession = {
         electricVehicleId: req.body.electricVehicleId,
         chargingPointId: req.body.chargingPointId,
@@ -42,6 +48,7 @@ exports.create = (req, res) => {
         endTime: req.body.endTime
     };
 
+    console.log(newChargingSession);
     chargingSession.create(newChargingSession)
         .then(data => {
             let dataJson = JSON.parse(JSON.stringify(data));
@@ -61,9 +68,6 @@ exports.create = (req, res) => {
 exports.findAll = (req, res) => {
     let requestTimestamp = new Date();
     let {format} = req.query;
-
-
-
 
     if (req.params.pointId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {pointId, datetimeFrom, datetimeTo} = req.params;
@@ -209,8 +213,6 @@ exports.findAll = (req, res) => {
             });
 
 
-
-
     } else if (req.params.stationId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {stationId, datetimeFrom, datetimeTo} = req.params;
 
@@ -291,8 +293,6 @@ exports.findAll = (req, res) => {
                         err.message || "Error while retrieving the charging sessions of the station"
                 })
             });
-
-
 
 
     } else if (req.params.providerId && req.params.datetimeTo && req.params.datetimeFrom) {
