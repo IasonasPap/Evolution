@@ -9,7 +9,6 @@ const station = db.station;
 const energyProvider = db.energyProvider;
 const electricVehicle = db.electricVehicle;
 const user = db.user;
-const charger = db.charger;
 
 
 const dateFormat = require('dateformat');
@@ -124,7 +123,7 @@ exports.findAll = (req, res) => {
                     delete response.ChargingSessionsList;
                     const csvFirst = parse(response, {fieldsFirst});
                     const fieldsSecond = ["SessionIndex", "SessionId", "StartedOn", "FinishedOn", "Protocol", "EnergyDelivered", "Payment", "VehicleType"];
-                    const csvSecond = parse(dataObjects, {fieldsSecond});
+                    const csvSecond = parse(dataJson, {fieldsSecond});
                     return res.type('text/csv').status(200).send(csvFirst + '\n\n' + csvSecond);
                 }
                 // otherwise, send json response

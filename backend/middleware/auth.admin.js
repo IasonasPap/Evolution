@@ -5,18 +5,19 @@ module.exports = (req, res, next) => {
         const token = req.headers['x-observatory-auth'];
         if (!token){
             res.status(401).json({
-                message: "Missiong token!"
+                message: "Missing token!"
             });
             next(new Error());
         }
         const decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-        const user = decodedToken.user;
-        if (req.body.userId && req.body.userId !== user.id) {
+        const userId = decodedToken.userId;
+        const isAdmin = decodedToken.isAdmin;
+        if (req.body.userId && req.body.userId !== userId) {
             res.status(401).json({
                 message: "Invalid token!"
             });
         } 
-        else if (!user.isAdmin) {
+        else if (!isAdmin) {
             res.status(401).json({
                 message: "This user is not an admin!"
             });

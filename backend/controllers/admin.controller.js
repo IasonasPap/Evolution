@@ -100,10 +100,6 @@ exports.createOrChange = (req, res, next) => {
     
 	user.findOne({where: {username} } )
         .then(data => {
-<<<<<<< HEAD
-=======
-            console.log(data)
->>>>>>> backend changes cli complete
             if(data){
                 const {id} = data;
 				user.update({password: req.params.password}, {
@@ -194,7 +190,7 @@ exports.upload = async (req, res) => {
                   return x.dataValues;
               });
             fs.unlink(path, (err) => {
-                if (err) console.log('!!!!!!!!!!!!!');
+                if (err) console.log('something went wrong');
                 else console.log("succesful delete");
             });
 
