@@ -114,7 +114,7 @@
             ChargingSessionFactory.getChargingSessionsPerUser($ctrl.user.id, filters).then(res => {
                 $ctrl.userSessions = res.data.sort((a,b) => a.startTime > b.startTime ? -1 : 1);
                 $ctrl.items = $ctrl.userSessions.slice($ctrl.showPage*10, $ctrl.showPage*10 + 10);
-                if($ctrl.userSessions.length) {
+                if($ctrl.userSessions.length > 10) {
                     $ctrl.pageArray = [...Array(Math.floor($ctrl.userSessions.length / 10 - 1)).keys()].map(i => i + 2);
                 } else {
                     $ctrl.pageArray = undefined;

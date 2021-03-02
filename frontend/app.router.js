@@ -10,7 +10,6 @@
             .state('login', {
                 url: '/login',
                 component: 'login'
-                //abstract: true
             })
             .state('app', {
                 url: '',

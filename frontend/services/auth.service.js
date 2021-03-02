@@ -10,6 +10,7 @@
         const service = this;
         service.getToken = getToken;
         service.setToken = setToken;
+        service.deleteToken = deleteToken;
 
         init();
 
@@ -22,6 +23,10 @@
         function setToken(token) {
             localStorage.setItem('token', token);
             service.token = token;
+        }
+
+        function deleteToken() {
+            localStorage.removeItem('token');
         }
 
         //////// Private
