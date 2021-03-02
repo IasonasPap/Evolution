@@ -45,6 +45,7 @@ exports.resetSession = async (req,res) => {
     })
 }
 
+
 exports.healthCheck = (req,res) => {
      /* 
     This fuction checks the connect to the database by
@@ -99,6 +100,10 @@ exports.createOrChange = (req, res, next) => {
     
 	user.findOne({where: {username} } )
         .then(data => {
+<<<<<<< HEAD
+=======
+            console.log(data)
+>>>>>>> backend changes cli complete
             if(data){
                 const {id} = data;
 				user.update({password: req.params.password}, {
@@ -134,8 +139,6 @@ exports.createOrChange = (req, res, next) => {
                             message: "Error updating User with id=" + id
                         });
                     });
-                    
-					
 			} else {
 				// Create a newUser object
 				let newUser = {

@@ -16,7 +16,7 @@ exports.login = (req, res) => {
                 .then((valid) => {
                     if (!valid) {
                         res.status(401).send({
-                            message: "Invalid username or password"
+                            message: "Invalid username or password!"
                         })
                     } else {
                         let user = JSON.parse(JSON.stringify(data));
@@ -40,11 +40,5 @@ exports.login = (req, res) => {
 }
 
 exports.logout = (req, res) => {
-    if (!req.headers['x-observatory-auth']) {
-        res.status(401).send({
-            message: "User is not logged in"
-        });
-        return;
-    }
     res.sendStatus(200);
 }
