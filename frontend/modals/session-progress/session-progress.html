@@ -1,0 +1,103 @@
+<div class="new-session-modal" ng-if="vm.page === 1">
+    <div class="modal-close sp-icons sp-icons-cancel" ng-click="closeThisDialog()" ng-show="!vm.isCompleted"></div>
+    <div class="modal-title">Session {{vm.isCompleted ? 'Finished' : 'Progress'}}</div>
+
+    <div class="modal-content">
+        <table class="modal-info">
+            <tr>
+                <td class="label">Vehicle:</td>
+                <td>{{vm.data.electricVehicle.licensePlate}}</td>
+            </tr>
+            <tr>
+                <td class="label">Station:</td>
+                <td>{{vm.data.station.address}}</td>
+            </tr>
+            <tr>
+                <td class="label">Charger:</td>
+                <td>{{vm.data.charger.protocol}}</td>
+            </tr>
+            <tr>
+                <td class="label">Energy requested:</td>
+                <td>{{vm.data.energyRequested}} kWh</td>
+            </tr>
+            <tr>
+                <td class="label">Energy delivered:</td>
+                <td>{{vm.data.energyDelivered}} kWh</td>
+            </tr>
+            <tr ng-if="vm.isCompleted">
+                <td class="label">Cost:</td>
+                <td>{{vm.data.cost | currency}}</td>
+            </tr>
+            <tr>
+                <td class="label">Progress:</td>
+                <td>
+                    <progress-bar class="flex-1"
+                                  cur-val="{{vm.data.progress}}"
+                                  max-val="100"
+                                  bg="#0eb059"></progress-bar>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="modal-buttons">
+        <button class="cancel" ng-click="closeThisDialog()" type="button" ng-if="!vm.isCompleted">Close</button>
+        <button class="red" ng-click="vm.stopSession()" ng-if="!vm.isCompleted">Stop Session</button>
+        <button class="blue" ng-click="vm.page = 2" ng-if="vm.isCompleted">Proceed To Payment</button>
+    </div>
+</div>
+
+<div class="payment-modal" ng-if="vm.page === 2">
+    <div class="modal-title">Enter Card Details</div>
+    <form name="vm.form" ng-submit="vm.endPayment()" novalidate>
+        <div class="modal-content">
+            <div class="row row-items-3 row-items-space-1 align-items-baseline">
+                <div class="card-type">
+                    <img src="frontend/assets/images/visa.svg"/>
+                </div>
+                <div class="card-type">
+                    <img src="frontend/assets/images/mastercard.svg"/>
+                </div>
+                <div class="card-type">
+                    <img src="frontend/assets/images/american-express.svg"/>
+                </div>
+            </div>
+            <div class="row row-items-1 row-items-space-1 align-items-baseline">
+                <div>
+                    <div class="label">Name:</div>
+                    <input type="text"
+                           ng-model="vm.name"
+                           required/>
+                </div>
+            </div>
+            <div class="row row-items-1 row-items-space-1 align-items-baseline">
+                <div>
+                    <div class="label">Card Number:</div>
+                    <input type="number"
+                           ng-model="vm.number"
+                           oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                           maxlength="16"
+                           required/>
+                </div>
+            </div>
+            <div class="row row-items-2 row-items-space-1 align-items-baseline">
+                <div>
+                    <div class="label">Expiry Date:</div>
+                    <input type="date"
+                           ng-model="vm.date"
+                           required/>
+                </div>
+                <div>
+                    <div class="label">Security Code:</div>
+                    <input type="number"
+                           ng-model="vm.code"
+                           oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                           maxlength="3"
+                           required/>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="modal-buttons">
+        <button class="blue" ng-click="vm.endPayment()" type="submit">Pay {{vm.data.cost | currency}}</button>
+    </div>
+</div>

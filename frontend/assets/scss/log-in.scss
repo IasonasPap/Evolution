@@ -1,0 +1,131 @@
+/**********************************************************************************************************************
+ * Log-in
+ */
+
+.auth.page {
+    padding: 0;
+    min-height: 100%;
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #75d28959;
+    color: $white;
+
+    .logo {
+        font-size: 9em;
+        color: $white;
+    }
+
+    h1 {
+        color: #eeeeee;
+    }
+
+    .auth-box {
+        flex: 1 0 auto;
+        padding: 1em 2em 2em;
+        font-size: 1.2rem;
+
+        .auth-title {
+            text-align: center;
+        }
+
+        @include placeholder-mixin(#cccccc, 1, 'Poppins, sans-serif;');
+
+        .input-container {
+            margin-bottom: 0.75rem;
+        }
+
+        input {
+            font-size: 1.2rem;
+            width: 100%;
+            background-color: $white;
+            border: solid 2px $white;
+            border-radius: 3px;
+            font-family: Poppins, sans-serif;
+            font-weight: 600;
+            padding: 1em;
+            height: auto;
+        }
+
+        input:hover, input:focus {
+            border-width: 2px !important;
+        }
+
+        sp-checkbox {
+            display: flex;
+            justify-content: center;
+
+            .sp-checkbox {
+                justify-content: center;
+                margin-top: 1em;
+
+                .checkbox {
+                    border-radius: 3px;
+                    border: none;
+                    padding: 0.7em;
+                    background-color: $white;
+
+                    + .label {
+                        color: $white;
+                        font-weight: 300;
+                        margin: 0 0 0 1em;
+                    }
+                }
+
+                .fa-check {
+                    color: $red;
+                }
+
+                &.sp-disabled {
+                    background-color: inherit;
+
+                    .checkbox {
+                        background-color: $light-grey;
+                        color: $grey;
+                    }
+                }
+            }
+        }
+
+        .login-btn {
+            font-family: Sansation, sans-serif;
+            font-weight: 200;
+            font-size: 1.2em;
+            padding: 1em 2em;
+            background-color: #2a7129;
+            border-radius: 3px;
+
+            &[disabled] {
+                color: inherit;
+                background-color: $light-grey;
+            }
+
+            &:not([disabled]):hover {
+                filter: brightness(90%);
+            }
+        }
+    }
+
+    .footer {
+        text-align: center;
+        padding: 1em;
+        font-size: 0.7em;
+        color: $black;
+
+        a {
+            color: $white;
+        }
+
+        .vertical-separator {
+            opacity: 0.4;
+            margin: 0 1em;
+        }
+    }
+
+    @include linear-activity(#B3E5FC, #03A9F4);
+
+    .linear-activity {
+        position: static;
+    }
+}

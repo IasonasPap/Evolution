@@ -1,0 +1,41 @@
+<div class="side-menu-container">
+    <div class="side-menu-contents">
+        <div class="user">
+            <div class="user-image">
+                <img src="frontend/assets/images/user.svg"/>
+            </div>
+            <div class="username">
+                {{$ctrl.user.username}}
+            </div>
+        </div>
+        <div class="main-menu">
+            <div class="flex-1">
+                <div class="menu-item">
+                    <a ui-sref="app.dashboard" ui-sref-active="active">
+                        <img class="menu-icon" ng-src="frontend/assets/images/dashboard-white.svg"/>
+                        Dashboard
+                    </a>
+                </div>
+                <div class="menu-item" ng-if="!$ctrl.user.isStationManager">
+                    <a ui-sref="app.chargingHistory" ui-sref-active="active">
+                        <img class="menu-icon" ng-src="frontend/assets/images/charger.svg"/>
+                        Charging History
+                    </a>
+                </div>
+                <div class="menu-item" ng-if="$ctrl.user.isStationManager">
+                    <a ui-sref="app.statistics" ui-sref-active="active">
+                        <img class="menu-icon" ng-src="frontend/assets/images/chart.svg"/>
+                        Statistics
+                    </a>
+                </div>
+            </div>
+            <new-session-button></new-session-button>
+        </div>
+        <div class="footer">
+            <a ui-sref="app.dashboard">
+                <img src="frontend/assets/images/logo.png"/>
+            </a>
+            <div class="copyright">Evolution &copy; 2021</div>
+        </div>
+    </div>
+</div>

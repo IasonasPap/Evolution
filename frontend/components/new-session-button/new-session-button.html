@@ -1,0 +1,9 @@
+<div class="new-session-button" ng-if="$ctrl.vehicle">
+    <button class="green" ng-click="$ctrl.startSession()" ng-if="!$ctrl.isCharging()">
+        <img class="space-right-1" src="frontend/assets/images/lightning.svg">
+        Start New Session
+    </button>
+    <button class="red" ng-if="$ctrl.isCharging()" ng-click="$ctrl.showSessionData()">
+        Session In Progress . . .
+    </button>
+</div>

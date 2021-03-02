@@ -1,0 +1,123 @@
+<div class="page history">
+    <page-title page-title="'Charging History'"></page-title>
+    <div class="history-content">
+        <div class="history-options">
+            <div class="options">
+                <div class="space-right-2">
+                    <div class="label">Date From:</div>
+                    <input type="date"
+                           ng-model="$ctrl.filters.dateFrom"/>
+                </div>
+                <div>
+                    <div class="label">Date To:</div>
+                    <input type="date"
+                           ng-model="$ctrl.filters.dateTo"/>
+                </div>
+            </div>
+        </div>
+        <div class="totals" ng-if="$ctrl.filters.dateFrom && $ctrl.filters.dateTo && $ctrl.userSessions.length">
+            <div class="header">
+                Totals
+            </div>
+            <div class="totals-table">
+                <table cellspacing="0">
+                    <tr>
+                        <th class="label">Vehicle</th>
+                        <th class="label">Sessions</th>
+                        <th class="label">Energy Delivered</th>
+                        <th class="label">Cost</th>
+                        <th class="label">Points</th>
+                    </tr>
+                    <tr ng-repeat="(key, val) in $ctrl.vehicleTotals">
+                        <td class="table-cell">{{key}}</td>
+                        <td class="table-cell">{{val.sessionsCount}}</td>
+                        <td class="table-cell">{{(val.totalEnergyDelivered).toFixed(2)}} kWh</td>
+                        <td class="table-cell">{{val.totalCost | currency}}</td>
+                        <td class="table-cell">{{(val.points).toFixed(2)}}</td>
+                    </tr>
+                    <tr class="totals-row">
+                        <td class="table-cell label">Total:</td>
+                        <td class="table-cell">{{$ctrl.totals.sessionsCount}}</td>
+                        <td class="table-cell">{{($ctrl.totals.totalEnergyDelivered).toFixed(2)}} kWh</td>
+                        <td class="table-cell">{{$ctrl.totals.totalCost | currency}}</td>
+                        <td class="table-cell">{{($ctrl.totals.points).toFixed(2)}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="history-list" ng-if="$ctrl.filters.dateFrom && $ctrl.filters.dateTo && $ctrl.userSessions.length">
+            <div class="session-list-description">
+                Charging Sessions
+            </div>
+            <div class="session-table">
+                <table>
+                    <thead>
+                    <tr>
+                        <th class="label border-radius-left-1">Vehicle</th>
+                        <th class="label">Session date</th>
+                        <th class="label">Duration</th>
+                        <th class="label">Energy delivered</th>
+                        <th class="label">Cost</th>
+                        <th class="label">Cost/kWh</th>
+                        <th class="label">Points</th>
+                        <th class="label border-radius-right-1">Station</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="s in $ctrl.items | limitTo: 10">
+                        <td class="table-cell">{{s.electricVehicle.licensePlate}}</td>
+                        <td class="table-cell">
+                            {{s.startTime | amParse: 'YYYY-MM-DD HH:mm' | amDateFormat: 'MM/DD/YYYY HH:mm'}}
+                        </td>
+                        <td class="table-cell">{{$ctrl.getDuration(s)}}</td>
+                        <td class="table-cell">{{s.energyDelivered}} kWh</td>
+                        <td class="table-cell">{{s.totalCost | currency}}</td>
+                        <td class="table-cell">{{s.costPerKwh}}</td>
+                        <td class="table-cell">{{s.points}}</td>
+                        <td class="table-cell">{{s.station.address}}</td>
+                    </tr>
+                    <tr ng-if="!$ctrl.userSessions.length">
+                        <td colspan="8">
+                            <div class="sp-no-results">No results</div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="table-pagination">
+                <div></div>
+                <div>Showing {{$ctrl.showPage * 10 + 1}}-{{$ctrl.showPage * 10 + $ctrl.items.length}} of
+                    {{$ctrl.userSessions.length}}
+                    entries
+                </div>
+                <div class="flex" ng-if="$ctrl.userSessions.length">
+                    <img src="frontend/assets/images/left-arrow.svg"
+                         ng-click="$ctrl.showPage > 0 && ($ctrl.showPage = $ctrl.showPage - 1)"/>
+                    <div class="space-inner-half" ng-click="$ctrl.showPage = 0"
+                         ng-class="{'active-page': $ctrl.showPage === 0}">1
+                    </div>
+                    <span class="space-inner-half" ng-if="$ctrl.showPage > 2">...</span>
+                    <div class="space-inner-half"
+                         ng-repeat="i in $ctrl.pageArray"
+                         ng-click="$ctrl.showPage = i-1"
+                         ng-class="{'active-page': $ctrl.showPage === i-1}"
+                         ng-if="($ctrl.showPage + 1 - i <= 1 && $ctrl.showPage + 1 - i >= -1) && i !== $ctrl.floor($ctrl.userSessions.length / 10) + 1">
+                        {{i}}
+                    </div>
+                    <span class="space-inner-half"
+                          ng-if="$ctrl.showPage < $ctrl.floor($ctrl.userSessions.length/10) - 2">...</span>
+                    <div class="space-inner-half"
+                         ng-click="$ctrl.showPage = $ctrl.floor($ctrl.userSessions.length/10)"
+                         ng-class="{'active-page': $ctrl.showPage === $ctrl.floor($ctrl.userSessions.length/10)}"
+                        ng-if="$ctrl.floor($ctrl.userSessions.length/10) !== 0">
+                        {{$ctrl.floor($ctrl.userSessions.length/10) + 1}}
+                    </div>
+                    <img src="frontend/assets/images/right-arrow.svg"
+                         ng-click="$ctrl.showPage < $ctrl.floor($ctrl.userSessions.length / 10) && ($ctrl.showPage = $ctrl.showPage + 1)"/>
+                </div>
+            </div>
+        </div>
+        <loader ng-if="$ctrl.filters.dateFrom && $ctrl.filters.dateTo && $ctrl.isLoading"></loader>
+        <div class="sp-no-results" ng-if="$ctrl.filters.dateFrom && $ctrl.filters.dateTo && !$ctrl.userSessions.length && !$ctrl.isLoading">No Results</div>
+    </div>
+</div>

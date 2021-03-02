@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="evolution" ng-strict-di="true">
+<head>
+    <meta charset="utf-8">
+    <base href="/">
+    <!-- "title" is set in app.run.js -->
+    <title ng-bind="(title ? title + ' | ' : '') + 'EVolution'"></title>
+
+    <meta content="" name="description">
+    <meta content="initial-scale=1.0" name="viewport">
+    <meta content="IE=Edge" http-equiv="X-UA-Compatible"/>
+
+    <link href="logo.png" rel="shortcut icon" type="image/png"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- @formatter:Off -->
+    <!-- build:css assets/css/style.css -->
+    <link href="bower_components/ng-dialog/css/ngDialog.min.css" rel="stylesheet">
+    <link href="bower_components/ng-dialog/css/ngDialog-theme-default.min.css" rel="stylesheet">
+    <!-- endbuild -->
+    <!-- @formatter:On -->
+    <link rel="stylesheet" href="frontend/assets/css/style.css">
+</head>
+<body ng-controller="appController as vm">
+
+<div ui-view></div>
+
+<!-- build:js app.js -->
+<script src="bower_components/moment/min/moment.min.js"></script>
+<script src="bower_components/angular/angular.min.js"></script>
+<script src="bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+<script src="bower_components/angular-moment/angular-moment.min.js"></script>
+<script src="bower_components/angular-ui-router/release/angular-ui-router.min.js"></script>
+<script src="bower_components/ng-dialog/js/ngDialog.min.js"></script>
+<script src="node_modules/chart.js/dist/Chart.min.js"></script>
+<script src="bower_components/angular-chart.js/dist/angular-chart.min.js"></script>
+<!-- App -->
+<script src="frontend/app.js"></script>
+<script src="frontend/app.controller.js"></script>
+<script src="frontend/app.router.js"></script>
+<script src="frontend/app.config.js"></script>
+<script src="frontend/app.run.js"></script>
+<script src="frontend/app.http-interceptor.js"></script>
+<!-- Controllers -->
+<script src="frontend/views/content/content.controller.js"></script>
+<!-- Components -->
+<script src="frontend/components/side-menu/side-menu.component.js"></script>
+<script src="frontend/components/page-title/page-title.component.js"></script>
+<script src="frontend/components/new-session-button/new-session-button.component.js"></script>
+<script src="frontend/components/progress-bar/progress-bar.component.js"></script>
+<script src="frontend/components/loader/loader.js"></script>
+<!-- Directives -->
+
+<!-- Services -->
+<script src="frontend/services/auth.service.js"></script>
+<script src="frontend/services/api.service.js"></script>
+<script src="frontend/services/utils.service.js"></script>
+<script src="frontend/services/modal.service.js"></script>
+<!-- Factories -->
+<script src="frontend/factories/auth.factory.js"></script>
+<script src="frontend/factories/user.factory.js"></script>
+<script src="frontend/factories/charging-session.factory.js"></script>
+<script src="frontend/factories/use-case.factory.js"></script>
+<!-- Views -->
+<script src="frontend/views/content/content.controller.js"></script>
+<script src="frontend/views/login/login.component.js"></script>
+<script src="frontend/views/dashboard/dashboard.component.js"></script>
+<script src="frontend/views/charging-history/charging-history.component.js"></script>
+<script src="frontend/views/statistics/statistics.component.js"></script>
+<!-- Modals -->
+<script src="frontend/modals/session-progress/session-progress.controller.js"></script>
+<script src="frontend/modals/add-session/add-session.controller.js"></script>
+<!-- endbuild -->
+
+</body>
+</html>

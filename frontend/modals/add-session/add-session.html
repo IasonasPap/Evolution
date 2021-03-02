@@ -1,0 +1,98 @@
+<div class="new-session-modal">
+    <div class="modal-close sp-icons sp-icons-cancel" ng-click="closeThisDialog()"></div>
+    <div class="modal-title">Set Session Attributes</div>
+
+    <form name="vm.form" ng-submit="vm.submit()" novalidate>
+        <div class="modal-content">
+            <table class="modal-info">
+                <tr>
+                    <td class="label">Vehicle:</td>
+                    <td>{{vm.data.electricVehicle.licensePlate}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Station:</td>
+                    <td>{{vm.data.station.address}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Charger:</td>
+                    <td>{{vm.data.charger.protocol}}</td>
+                </tr>
+                <tr>
+                    <td class="label">Battery percentage:</td>
+                    <td>{{vm.batteryPercent}}%</td>
+                </tr>
+            </table>
+            <div class="row row-items-3 row-items-space-1 align-items-baseline">
+                <div>
+                    <div class="label">Charge to 100%?</div>
+                    <div class="radio-container">
+                        <div class="radio" ng-click="vm.fullCharge = true" ng-class="{'selected': vm.fullCharge}">Yes
+                        </div>
+                        <div class="radio" ng-click="vm.fullCharge = false" ng-class="{'selected': !vm.fullCharge}">No
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-items-3 row-items-space-1 align-items-baseline">
+                <div ng-if="!vm.fullCharge">
+                    <div class="label">Charging duration:<span class="red">*</span></div>
+                    <div class="charging-duration">
+                        <div class="space-right-half text-align-center">
+                            <input type="number"
+                                   ng-model="vm.data.duration.hours"
+                                   min="0"
+                                   max="{{vm.maxHours}}"
+                                   step="1"
+                                   required/>
+                            <div class="italic">hours</div>
+                        </div>
+                        <span class="bold">:</span>
+                        <div class="space-left-half text-align-center">
+                            <input type="number"
+                                   ng-model="vm.data.duration.minutes"
+                                   min="0"
+                                   max="59"
+                                   step="1"
+                                   required/>
+                            <div class="italic">minutes</div>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="vm.fullCharge">
+                    <div class="label">Charging duration:<span class="red">*</span></div>
+                    <div class="charging-duration">
+                        <div class="space-right-half text-align-center">
+                            <input type="number"
+                                   ng-model="vm.data.duration.hours"
+                                   disabled/>
+                            <div class="italic">hours</div>
+                        </div>
+                        <span class="bold">:</span>
+                        <div class="space-left-half text-align-center">
+                            <input type="number"
+                                   ng-model="vm.data.duration.minutes"
+                                   disabled/>
+                            <div class="italic">minutes</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <div class="label">KWhs to be provided:</div>
+                    <input ng-model="vm.data.energyRequested"
+                           type="text"
+                           disabled/>
+                </div>
+                <div>
+                    <div class="label">Expected cost ($):</div>
+                    <input ng-model="vm.data.cost"
+                           type="text"
+                           disabled/>
+                </div>
+            </div>
+        </div>
+        <div class="modal-buttons">
+            <button class="cancel" ng-click="closeThisDialog()" type="button">Cancel</button>
+            <button class="green" type="submit">Start Charging</button>
+        </div>
+    </form>
+</div>

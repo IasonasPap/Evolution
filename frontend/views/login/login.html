@@ -1,0 +1,42 @@
+<div class="auth page font-lgr">
+    <div class="auth-box flex flex-direction-column justify-content-center align-items-center">
+        <img ng-src="frontend/assets/images/logo.png"/>
+        <form name="loginForm" ng-submit="$ctrl.login()" novalidate>
+            <div class="flex input-container">
+                <input class="flex-1-1-auto font-lgr"
+                       id="username"
+                       placeholder="Username"
+                       required
+                       ng-model="$ctrl.user.username"
+                       ng-maxlength="50"
+                       ng-readonly="$ctrl.waitingForReply"/>
+            </div>
+            <div class="flex input-container">
+                <input class="flex-1-1-auto font-lgr"
+                       id="password"
+                       type="password"
+                       placeholder="Password"
+                       required
+                       ng-model="$ctrl.user.password"
+                       ng-maxlength="50"
+                       ng-readonly="$ctrl.waitingForReply"/>
+            </div>
+            <div class="login-error red text-align-center space-bottom-half" ng-if="$ctrl.error">{{$ctrl.error}}</div>
+            <div class="flex">
+                <button class="login-btn button flex-1-1-auto flex justify-content-center"
+                        type="submit" ng-disabled="$ctrl.waitingForReply"><span class="flex-1 text-align-center">SIGN-IN</span>
+                </button>
+            </div>
+            <div class="linear-activity space-bottom-half" ng-if="$ctrl.waitingForReply">
+                <div class="indeterminate"></div>
+            </div>
+        </form>
+    </div>
+    <div class="footer">
+        Evolution &copy; 2021
+    </div>
+</div>
+
+
+
+

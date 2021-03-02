@@ -14,7 +14,7 @@ module.exports = (sequelize, Sequelize) => {
                 min:0
             }
         },
-        // energyDelivered: the total amount of energy transfered during a session measured in Kwh (SI)
+        // energyDelivered: the total amount of energy transferred during a session measured in Kwh (SI)
         energyDelivered: {
             type: Sequelize.FLOAT,
             allowNull: false,
@@ -45,7 +45,7 @@ module.exports = (sequelize, Sequelize) => {
             allowNull: false,
             validate: {
                 isDate: true,
-                isAfter: this.startTime
+                //isAfter: this.startTime
             }
         },
         // paymentType: the type of payment: cash, paypal, credit card
@@ -58,7 +58,7 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.INTEGER,
             allowNull: false
         },
-        // chargingPointId: the specific charging point invlovled in the charging session
+        // chargingPointId: the specific charging point involved in the charging session
         chargingPointId:{
             type: Sequelize.INTEGER,
             allowNull: false

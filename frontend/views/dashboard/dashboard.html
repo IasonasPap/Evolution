@@ -1,0 +1,116 @@
+<div class="page dashboard">
+    <page-title page-title="'Dashboard'"></page-title>
+
+    <div class="dashboard-content" ng-if="!$ctrl.user.isStationManager">
+        <div class="dashboard-section">
+            <div class="dashboard-section-icon">
+                <img src="frontend/assets/images/car-2.svg"/>
+            </div>
+            <div class="dashboard-section-count">
+                <div class="count">{{$ctrl.userVehicles.length}}</div>
+                <div>Vehicle{{$ctrl.userVehicles.length !== 1 ? 's' : ''}} Registered</div>
+            </div>
+        </div>
+        <div class="dashboard-section">
+            <div class="dashboard-section-icon">
+                <img class="space-left-1" src="frontend/assets/images/charging-session.svg"/>
+            </div>
+            <div class="dashboard-section-count">
+                <div class="count">{{$ctrl.userSessions.length}}</div>
+                <div>Charging Session{{$ctrl.userSessions.length !== 1 ? 's' : ''}}</div>
+            </div>
+        </div>
+        <div class="dashboard-section">
+            <div class="dashboard-section-icon">
+                <img src="frontend/assets/images/calendar.svg"/>
+            </div>
+            <div class="dashboard-section-count">
+                <div class="count">{{$ctrl.userSessionsThisMonth.length}}</div>
+                <div>Session{{$ctrl.userSessionsThisMonth.length !== 1 ? 's' : ''}} This Month</div>
+            </div>
+        </div>
+        <div class="dashboard-section">
+            <div class="dashboard-section-icon">
+                <img class="space-left-1" src="frontend/assets/images/charging-station.svg"/>
+            </div>
+            <div class="dashboard-section-count">
+                <div class="count">{{$ctrl.stationsVisited.length}}</div>
+                <div>Station{{$ctrl.stationsVisited.length !== 1 ? 's' : ''}} Visited</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-content" ng-if="$ctrl.user.isStationManager">
+        <div class="dashboard-section">
+            <div class="dashboard-section-icon">
+                <img src="frontend/assets/images/charging-station.svg"/>
+            </div>
+            <div class="dashboard-section-count">
+                <div class="count">{{$ctrl.userStations.length}}</div>
+                <div>Station{{$ctrl.userStations.length !== 1 ? 's' : ''}} Managed</div>
+            </div>
+        </div>
+        <div class="dashboard-section">
+            <div class="dashboard-section-icon">
+                <img class="space-left-1" src="frontend/assets/images/charger-color.svg"/>
+            </div>
+            <div class="dashboard-section-count">
+                <div class="count">{{$ctrl.chargingPoints.length}}</div>
+                <div>Charging Point{{$ctrl.chargingPoints.length !== 1 ? 's' : ''}}</div>
+            </div>
+        </div>
+        <div class="dashboard-section">
+            <div class="dashboard-section-icon">
+                <img src="frontend/assets/images/charging-session.svg"/>
+            </div>
+            <div class="dashboard-section-count">
+                <div class="count">{{$ctrl.getUsersVisited()}}</div>
+                <div>User{{$ctrl.getUsersVisited().length !== 1 ? 's' : ''}} Visited Your Station{{$ctrl.userStations.length !== 1 ? 's' : ''}}</div>
+            </div>
+        </div>
+        <div class="dashboard-section">
+            <div class="dashboard-section-icon">
+                <img class="space-left-1" src="frontend/assets/images/calendar.svg"/>
+            </div>
+            <div class="dashboard-section-count">
+                <div class="count">{{$ctrl.stationSessionsLastMonth.length}}</div>
+                <div>Session{{$ctrl.stationSessionsLastMonth.length !== 1 ? 's' : ''}} Last Month</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-session-list">
+        <div class="session-list-description">
+            Latest Sessions
+        </div>
+        <div class="session-table">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="label border-radius-left-1">Vehicle</th>
+                        <th class="label">Session date</th>
+                        <th class="label">Duration</th>
+                        <th class="label">Energy delivered</th>
+                        <th class="label">Cost</th>
+                        <th class="label">Cost/kWh</th>
+                        <th class="label border-radius-right-1">Station</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="s in ($ctrl.user.isStationManager ? $ctrl.stationSessions : $ctrl.userSessions) | orderBy:'-startTime' | limitTo: 5">
+                        <td class="table-cell">{{s.electricVehicle.licensePlate}}</td>
+                        <td class="table-cell">{{s.startTime | amParse: 'YYYY-MM-DD HH:mm' | amDateFormat: 'MM/DD/YYYY HH:mm'}}</td>
+                        <td class="table-cell">{{$ctrl.getDuration(s)}}</td>
+                        <td class="table-cell">{{s.energyDelivered}} kWh</td>
+                        <td class="table-cell">{{s.totalCost | currency}}</td>
+                        <td class="table-cell">{{s.costPerKwh}}</td>
+                        <td class="table-cell">{{s.station.address}}</td>
+                    </tr>
+                    <tr ng-if="!$ctrl.userSessions.length && !$ctrl.stationSessions.length">
+                        <td colspan="7"><div class="sp-no-results">No results</div></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

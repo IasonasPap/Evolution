@@ -1,0 +1,67 @@
+@mixin space-outer($direction, $amount) {
+    margin-#{$direction}: $amount;
+}
+
+@mixin space-inner($direction, $amount) {
+    padding-#{$direction}: $amount;
+}
+
+@each $direction in $directions {
+    .space-#{$direction}-half {
+        @include space-outer($direction, 0.5 + em);
+    }
+
+    .space-inner-#{$direction}-half {
+        @include space-inner($direction, 0.5 + em);
+    }
+    @for $i from 1 through 4 {
+        .space-#{$direction}-#{$i} {
+            @include space-outer($direction, $i + em);
+        }
+
+        .space-inner-#{$direction}-#{$i} {
+            @include space-inner($direction, $i + em);
+        }
+    }
+}
+
+.space-half {
+    margin: 0.5em
+}
+
+.space-half-1 {
+    margin: 0.5em 1em;
+}
+
+@for $i from 1 through 4 {
+    .space-#{$i} {
+        margin: $i + em
+    }
+}
+
+.space-inner-half {
+    padding: 0.5em
+}
+
+.space-inner-half-1 {
+    padding: 0.5em 1em;
+}
+
+@for $i from 1 through 4 {
+    .space-inner-#{$i} {
+        padding: $i + em
+    }
+}
+
+@for $i from 1 through 4 {
+    .space-inner-#{$i} {
+        padding: $i + em
+    }
+}
+
+@for $i from 1 through 20 {
+    $width: $i * 2.5;
+    .prm-#{$width * 10} {
+        width: $width#{'%'};
+    }
+}
