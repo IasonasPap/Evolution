@@ -50,6 +50,38 @@ Our cli supports --help to let the user know about the available commands
 
 ```npm start```
 
+## Technologies Used
+
+We worked with node.js and npm.
+
+
+Build Automation:
+
+- nodemon
+
+Testing:
+
+- mocha
+
+- chai
+
+Cli:
+
+- axios
+
+- yargs
+
+Frontend:
+
+- angular
+
+Backend:
+
+- express
+
+- sequelize
+
+
 ## Project Structure
 
 ```docs/```
@@ -60,7 +92,7 @@ This folder contains the documentation of our project. SRS and StRS documents an
 
 This folder contains the code of cli implementation.
 
-``frontend/```
+```frontend/```
 
 This folder contains the code of frontend implementation.
 
