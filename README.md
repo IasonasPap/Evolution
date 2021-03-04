@@ -4,7 +4,7 @@ A project for Software Enginnering course at NTUA, ECE, academic year 2020-2021.
 
 ## Team Members
 
-| Full Name                                                      | Email                   |
+| Full Name - Github Account                                     | Email                   |
 |----------------------------------------------------------------|-------------------------|
 | [Aris Preventis](https://github.com/arispr)                    | arisprv@gmail.com       |
 | [Fay Statha](https://github.com/FayStatha)                     | fay.statha@gmail.com    |
