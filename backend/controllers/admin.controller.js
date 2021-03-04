@@ -108,7 +108,7 @@ exports.createOrChange = (req, res, next) => {
 					})
 					.then((result) => {
 						if (result[0] !== 1) {
-							return res.status(400).send({
+							return res.status(404).send({
 								message: `Cannot update User with id=${id}. User not found!`
 							});
 						} else {
@@ -117,7 +117,7 @@ exports.createOrChange = (req, res, next) => {
                                     if (data){
                                         res.send(data);
                                     } else {
-                                        return res.status(400).send({
+                                        return res.status(404).send({
                                             message: "Not Found User with id=" + id
                                         });
                                     }

@@ -29,7 +29,7 @@
                     </a>
                 </div>
             </div>
-            <new-session-button></new-session-button>
+            <new-session-button ng-if="!$ctrl.user.isStationManager"></new-session-button>
         </div>
         <div class="footer">
             <a ui-sref="app.dashboard">

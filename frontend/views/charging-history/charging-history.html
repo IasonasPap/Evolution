@@ -3,15 +3,18 @@
     <div class="history-content">
         <div class="history-options">
             <div class="options">
-                <div class="space-right-2">
+                <div class="space-right-2" ng-class="{'red-border': $ctrl.filters.dateFrom > $ctrl.filters.dateTo}">
                     <div class="label">Date From:</div>
                     <input type="date"
                            ng-model="$ctrl.filters.dateFrom"/>
                 </div>
-                <div>
+                <div ng-class="{'red-border': $ctrl.filters.dateFrom > $ctrl.filters.dateTo}">
                     <div class="label">Date To:</div>
                     <input type="date"
                            ng-model="$ctrl.filters.dateTo"/>
+                </div>
+                <div class="red space-left-2 space-top-1" ng-if="$ctrl.filters.dateFrom > $ctrl.filters.dateTo">
+                    Invalid dates!
                 </div>
             </div>
         </div>

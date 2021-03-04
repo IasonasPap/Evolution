@@ -1219,7 +1219,7 @@ input.ng-invalid {
 
     .options {
         display: flex;
-        align-items: baseline;
+        align-items: center;
         padding: 1em;
 
         input {
@@ -1378,4 +1378,8 @@ canvas {
     background: white;
     padding: 1em;
     border-radius: .5em;
+}
+
+.red-border input{
+    border-color: $red;
 }

@@ -10,11 +10,8 @@ const app = express();
 
 global.__basedir = __dirname + '/..';
 
-const corsOptions = {
-	origin: "http://localhost:8765"
-};
 
-app.use(cors(corsOptions));
+app.use(cors());
 
 // to support JSON-encoded bodies
 app.use(bodyParser.json());
@@ -39,7 +36,7 @@ const options = {
 };
 
 // set port, listen for requests
-const PORT = 8765;
+const PORT = 8766;
 
 // app.listen(PORT, () => {
 // 	console.log(`Server is running on port ${PORT}.`);
@@ -49,7 +46,7 @@ const PORT = 8765;
 //http.createServer(app).listen(8766);
 // Create an HTTPS service identical to the HTTP service.
 https.createServer(options, app)
-    .listen(8766, function () {
+    .listen(8765, function () {
         console.log('App listening on port 8765! Go to https://localhost:8765/')
     })
 

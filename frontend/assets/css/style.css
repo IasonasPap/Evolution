@@ -4766,7 +4766,7 @@ input.ng-invalid {
 }
 .history .options {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   padding: 1em;
 }
 .history .options input {
@@ -4902,6 +4902,10 @@ canvas {
   background: white;
   padding: 1em;
   border-radius: 0.5em;
+}
+
+.red-border input {
+  border-color: #c91f34;
 }
 
 /*# sourceMappingURL=style.css.map */
