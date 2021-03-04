@@ -448,11 +448,6 @@ exports.findAll = (req, res) => {
                     }
                 })
                     .then(data => {
-                        if(!data.length) {
-                            res.status(402).send({
-                                message: 'No Data'
-                            })
-                        }
                         let dataJson = data.map((item, index) => {
                                 let obj = JSON.parse(JSON.stringify(item));
                                 return {
