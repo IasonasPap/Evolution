@@ -30,6 +30,10 @@ A project for Software Enginnering course at NTUA, ECE, academic year 2020-2021.
 
 ```npm install```
 
+### Install bower
+
+```npm install -g bower```
+
 ### Link Scripts
 
 ```npm link```
