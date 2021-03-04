@@ -5,10 +5,17 @@ const Promise = require('bluebird');
 const fileWrite = Promise.promisify(fs.writeFile);
 const fileUnlink = Promise.promisify(fs.unlink);
 
+const https = require('https');
+
+const agent = new https.Agent({  
+  rejectUnauthorized: false
+})
+
 exports.login = (username, password) => {
     axios({
-        "url": "http://localhost:8765/evcharge/api/login",
+        "url": "https://localhost:8765/evcharge/api/login",
         "method": "post",
+        httpsAgent: agent,
         "data": {
             "username": username,
             "password": password
@@ -23,8 +30,9 @@ exports.login = (username, password) => {
 
 exports.logout = (key) => {
     axios({
-        "url": "http://localhost:8765/evcharge/api/logout",
+        "url": "https://localhost:8765/evcharge/api/logout",
         "method": "post",
+        httpsAgent: agent,
         "headers": {'x-observatory-auth': key}
     }).then (() => {
         const filePath = './softeng20bAPI.token'; 

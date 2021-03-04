@@ -1,11 +1,17 @@
 const axios = require("axios");
 const FormData = require('form-data');
 const fs = require('fs');
+const https = require('https');
+
+const agent = new https.Agent({  
+  rejectUnauthorized: false
+})
 
 exports.healthcheck = () => {
     axios({
-        "url": "http://localhost:8765/evcharge/api/admin/healthcheck",
-        "method": "get"
+        "url": "https://localhost:8765/evcharge/api/admin/healthcheck",
+        "method": "get",
+        httpsAgent: agent
     }).then ((response) => {
         console.log(response.data)
     })
@@ -13,8 +19,9 @@ exports.healthcheck = () => {
 
 exports.resetsessions = () => {
 	axios({
-		"url": "http://localhost:8765/evcharge/api/admin/resetsessions",
-		"method": "post"
+		"url": "https://localhost:8765/evcharge/api/admin/resetsessions",
+		"method": "post",
+		httpsAgent: agent
 	}).then ((response) => {
 		console.log(response.data)
 	}).catch( (err) => {
@@ -24,7 +31,7 @@ exports.resetsessions = () => {
 
 exports.usermod = (username, password, isAdmin, isStationManager, key) => {
 	axios({
-		"url": 'http://localhost:8765/evcharge/api/admin/usermod/' + username + '/' + password,
+		"url": 'https://localhost:8765/evcharge/api/admin/usermod/' + username + '/' + password,
 		"method": "post",
 		"data": {
 			"isAdmin": isAdmin,
@@ -33,8 +40,9 @@ exports.usermod = (username, password, isAdmin, isStationManager, key) => {
 		"headers": {'x-observatory-auth': key}
 	}).then (() => {
 		return axios({
-			"url": "http://localhost:8765/evcharge/api/login",
+			"url": "https://localhost:8765/evcharge/api/login",
 			"method": "post",
+			httpsAgent: agent,
 			"data": {
 				"username": username,
 				"password": password
@@ -49,8 +57,9 @@ exports.usermod = (username, password, isAdmin, isStationManager, key) => {
 
 exports.users = (username, key) => {
 	axios({
-		"url": 'http://localhost:8765/evcharge/api/admin/users/' + username,
+		"url": 'https://localhost:8765/evcharge/api/admin/users/' + username,
 		"method": "get",
+		httpsAgent: agent,
 		"headers": {'x-observatory-auth': key}
 	}).then ((response) => {
 		delete response.data.password
@@ -66,8 +75,9 @@ exports.sessionsupd = (source, key) => {
 	const form_data = new FormData();
 	form_data.append("file", fs.createReadStream(source));
 	axios({
-		"url": 'http://localhost:8765/evcharge/api/admin/system/sessionsupd',
+		"url": 'https://localhost:8765/evcharge/api/admin/system/sessionsupd',
 		"method": "post",
+		httpsAgent: agent,
 		"headers": {
 			'x-observatory-auth': key,
 			'Content-Type': 'multipart/form-data',
