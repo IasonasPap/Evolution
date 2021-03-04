@@ -4,13 +4,13 @@ A project for Software Enginnering course at NTUA, ECE, academic year 2020-2021.
 
 ## Team Members
 
-[Aris Preventis](https://github.com/arispr) -- arisprv@gmail.com 
+| Full Name                                                      | Email                   |
+|----------------------------------------------------------------|-------------------------|
+| [Aris Preventis](https://github.com/arispr)                    | arisprv@gmail.com       |
+| [Fay Statha](https://github.com/FayStatha)                     | fay.statha@gmail.com    |
+| [Iason Papadimitrakopoulos](https://github.com/IasonasPap)     | jason.pap@hotmail.com   |
+| [Lefteris Kritsotakis](https://github.com/lefterisKritsotakis) | elkritsotakis@gmail.com |
 
-[Fay Statha](https://github.com/FayStatha) -- fay.statha@gmail.com
-
-[Iason Papadimitrakopoulos](https://github.com/IasonasPap) - jason.pap@hotmail.com
-
-[Lefteris Kritsotakis](https://github.com/lefterisKritsotakis) -- elkritsotakis@gmail.com
 
 ## Setup/Usage
 
