@@ -21,7 +21,7 @@ exports.getAll = (req, res) => {
         .catch(err => {
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while retrieving users."
+                    err.message || "Some error occurred while retrieving charging sessions."
             });
         });
 };
@@ -56,10 +56,17 @@ exports.create = (req, res, next) => {
             res.send(dataJson)
         })
         .catch(err => {
-            res.status(500).send({
-                message:
-                    err.message || "Some error occurred while creating the charging event."
-            });
+            if(err) {
+                res.status(400).send({
+                    message: 'Bad request'
+                })
+            }
+            else {
+                res.status(500).send({
+                    message:
+                        err.message || "Some error occurred while creating the charging event."
+                });
+            }
         });
 };
 
@@ -75,7 +82,7 @@ exports.findAll = (req, res) => {
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
         };
 
-        if (datetimeFrom > datetimeTo) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
             res.status(400).send({
                 message: 'Invalid dates'
             });
@@ -159,7 +166,7 @@ exports.findAll = (req, res) => {
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
         };
 
-        if (datetimeFrom > datetimeTo) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
             res.status(400).send({
                 message: 'invalid dates'
             });
@@ -248,7 +255,7 @@ exports.findAll = (req, res) => {
     } else if (req.params.stationId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {stationId, datetimeFrom, datetimeTo} = req.params;
 
-        if (datetimeFrom > datetimeTo) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
             res.status(400).send({
                 message: 'invalid dates'
             });
@@ -332,7 +339,7 @@ exports.findAll = (req, res) => {
     } else if (req.params.providerId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {providerId, datetimeFrom, datetimeTo} = req.params;
 
-        if (datetimeFrom > datetimeTo) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
             res.status(400).send({
                 message: 'invalid dates'
             });
@@ -416,7 +423,7 @@ exports.findAll = (req, res) => {
         let datetimeTo = moment(req.query.datetimeTo).add(1, 'day').format('YYYYMMDD');
         let datetimeFrom = req.query.datetimeFrom;
 
-        if (datetimeFrom > datetimeTo) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
             res.status(400).send({
                 message: 'invalid dates'
             });
@@ -488,6 +495,14 @@ exports.findSessionsPerMultipleStations = (req, res) => {
     let condition = {
         '$chargingPoint.stationId$': [stationId],
     };
+
+    if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
+        res.status(400).send({
+            message: 'invalid dates'
+        });
+        return;
+    }
+
     if (datetimeFrom && datetimeTo) {
         condition.startTime = {
             [Op.between]: [datetimeFrom, datetimeTo]
