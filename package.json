@@ -13,7 +13,7 @@
     "start": "angular-http-server --https --cert localhost.crt --key localhost.key --open"
   },
   "bin": {
-    "ev_group31": "./cli/ev_group31.js"
+    "ev_group31": "./cli-client/ev_group31.js"
   },
   "author": "",
   "license": "ISC",

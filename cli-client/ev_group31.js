@@ -253,5 +253,12 @@ const argv = yargs
 					}
 				}	
 			})
+			.command({
+			  	command: '*',
+    				handler() {
+					yargs.showHelp()
+				}
+			})
+			.demandCommand()
 			.help()
 			.argv
