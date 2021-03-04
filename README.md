@@ -52,30 +52,30 @@ Our cli supports --help to let the user know about the available commands
 
 ## Technologies Used
 
-We worked with node.js and npm.
+This project is Developed with node.js runtime and npm.
 
 
-Build Automation:
+###Build Automation:
 
 - nodemon
 
-Testing:
+###Testing:
 
 - mocha
 
 - chai
 
-Cli:
+###Cli:
 
 - axios
 
 - yargs
 
-Frontend:
+###Frontend:
 
 - angular
 
-Backend:
+###Backend:
 
 - express
 
