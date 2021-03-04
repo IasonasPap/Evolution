@@ -496,13 +496,6 @@ exports.findSessionsPerMultipleStations = (req, res) => {
         '$chargingPoint.stationId$': [stationId],
     };
 
-    if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
-        res.status(400).send({
-            message: 'invalid dates'
-        });
-        return;
-    }
-
     if (datetimeFrom && datetimeTo) {
         condition.startTime = {
             [Op.between]: [datetimeFrom, datetimeTo]
