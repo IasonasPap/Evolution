@@ -1,7 +1,9 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
+const dotenv = require('dotenv');
+dotenv.config();
+const routes = require('./routes/index.routes');
 const app = express();
 
 global.__basedir = __dirname + '/..';
@@ -18,6 +20,8 @@ app.use(bodyParser.json());
 // to support URL-encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use('/evcharge/api',routes);
+
 const db = require("./models");
 db.sequelize.sync()
     .then(() => {
@@ -26,11 +30,9 @@ db.sequelize.sync()
         console.error(err);
     });
 
-const routes = require('./routes/index.routes');
-app.use('/evcharge/api',routes);
-
 // set port, listen for requests
 const PORT = 8765;
+
 if (process.env.NODE_ENV != 'test'){
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}.`);

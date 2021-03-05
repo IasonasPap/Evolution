@@ -2,6 +2,7 @@ const admin = require('../controllers/admin.controller');
 var router = require("express").Router();
 const upload = require("../middleware/upload");
 console.log(upload.single('file'));
+
 // check the status of the database
 router.get("/healthcheck", admin.healthCheck);
 
