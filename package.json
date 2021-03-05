@@ -21,7 +21,7 @@
   "description": "A project for the class of software engineering 2020-2021",
   "main": "server.js",
   "scripts": {
-    "server": "nodemon ./backend/server.js",
+    "start": "nodemon ./backend/server.js",
     "test": "mocha --timeout 10000"
   },
   "author": "",

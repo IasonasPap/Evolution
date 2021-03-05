@@ -35,7 +35,7 @@ exports.create = (req, res, next) => {
         })
         .catch(err => {
             res.status(500).send(
-                {message: err.message || "Some error occurred while creating the user."}
+                {message: err.message + ": username is not available" || "Some error occurred while creating the user."}
             );
         });
 };
@@ -81,11 +81,14 @@ exports.findOne = (req, res) => {
 // Update a User by the id in the request
 exports.update = (req, res) => {
     const id = req.params.id;
+    console.log(req.body);
     user.update(req.body, {
         where: {id: id},
         raw: true
     })
-    .then((result) => {
+    .then(function (result,err) {
+            console.log(err);
+            console.log(result);
             if (result[0] !== 1) {
                 return res.status(400).send({
                     message: `Cannot update User with id=${id}. User not found!`
@@ -108,11 +111,9 @@ exports.update = (req, res) => {
                 });
             }
         })
-        //.then(() => user.findByPk(id))
-        //.then((u) => res.send(u))
         .catch(err => {
             return res.status(500).send({
-                message: "Error updating User with id=" + id
+                message: err.message + ": username is not available" || "Error updating User with id=" + id
             });
         });
 };

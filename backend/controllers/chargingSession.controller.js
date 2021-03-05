@@ -35,17 +35,28 @@ exports.create = (req, res,next) => {
     // }
     console.log(req.body);
     // Create a new charging event
+    // let newChargingSession = {
+    //     totalCost: req.body.totalCost,
+    //     energyDelivered: req.body.energyDelivered,
+    //     pointsAwarded: req.body.pointsAwarded,
+    //     startTime: req.body.startTime,
+    //     endTime: req.body.endTime,
+    //     paymentType: req.body.paymentType,
+    //     electricVehicleId: req.body.electricVehicleId,
+    //     chargingPointId: req.body.chargingPointId
+    // };
+
     let newChargingSession = {
-        totalCost: req.body.totalCost,
-        energyDelivered: req.body.energyDelivered,
-        pointsAwarded: req.body.pointsAwarded,
-        startTime: req.body.startTime,
-        endTime: req.body.endTime,
-        paymentType: req.body.paymentType,
         electricVehicleId: req.body.electricVehicleId,
-        chargingPointId: req.body.chargingPointId
+        chargingPointId: req.body.chargingPointId,
+        totalCost: (req.body.cost ? req.body.cost : null),
+        paymentType: 'Credit card',
+        energyDelivered: req.body.energyRequested,
+        pointsAwarded: (Math.floor(req.body.cost) * 0.1).toFixed(2),
+        startTime: req.body.startTime,
+        endTime: req.body.endTime
     };
-    console.log(newChargingSession);
+
     chargingSession.create(newChargingSession)
         .then(data => {
             res.send(data)
@@ -230,21 +241,6 @@ exports.findAll = (req, res) => {
             ]
 
         })
-            /* ***Alternative way of expressing the query in raw SQL***
-
-            db.sequelize.query(
-            "SELECT * FROM chargingSession e NATURAL JOIN chargingPoint p " +
-            "WHERE (p.stationId = :stationId) AND (e.startTime > :datetimeFrom) " +
-            "AND (e.startTime < :datetimeTo)",
-            {
-                type: db.sequelize.QueryTypes.SELECT
-            ,
-                replacements: {
-                    stationId: stationId,
-                    datetimeFrom: datetimeFrom,
-                    datetimeTo: datetimeTo
-            }})
-            */
             .then(data => {
                 datetimeFrom = datetimeFrom.substring(0, 4) + '-' + datetimeFrom.substring(4, 6) + '-' + datetimeFrom.substring(6, 8);
                 datetimeTo = datetimeTo.substring(0, 4) + '-' + datetimeTo.substring(4, 6) + '-' + datetimeTo.substring(6, 8);
