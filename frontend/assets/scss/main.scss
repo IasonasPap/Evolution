@@ -817,7 +817,7 @@ login {
 side-menu {
 
     display: flex;
-    width: 17em;
+    width: 18em;
 
     .side-menu-container {
         flex: 1;
@@ -1197,6 +1197,10 @@ input.ng-invalid {
 }
 
 .payment-modal {
+
+    .modal-content {
+        width: 28em;
+    }
 
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,

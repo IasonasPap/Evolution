@@ -41,7 +41,7 @@
     </div>
     <div class="modal-buttons">
         <button class="cancel" ng-click="closeThisDialog()" type="button" ng-if="!vm.isCompleted">Close</button>
-        <button class="red" ng-click="vm.stopSession()" ng-if="!vm.isCompleted">Stop Session</button>
+        <button class="red" ng-click="vm.stopSession()" ng-if="!vm.isCompleted">End Session</button>
         <button class="blue" ng-click="vm.page = 2" ng-if="vm.isCompleted">Proceed To Payment</button>
     </div>
 </div>
@@ -82,7 +82,7 @@
             <div class="row row-items-2 row-items-space-1 align-items-baseline">
                 <div>
                     <div class="label">Expiry Date:</div>
-                    <input type="date"
+                    <input type="month"
                            ng-model="vm.date"
                            required/>
                 </div>

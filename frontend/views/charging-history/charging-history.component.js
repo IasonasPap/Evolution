@@ -78,6 +78,10 @@
 
         $scope.$watch('$ctrl.filters', (newVal, oldVal) => {
             if(newVal && newVal.dateFrom && newVal.dateTo) {
+                if(newVal.dateFrom > newVal.dateTo) {
+                    $ctrl.userSessions = [];
+                    return;
+                }
                 $ctrl.isLoading = true;
                 let filters = {
                     dateFrom: moment(newVal.dateFrom).format('YYYYMMDD'),
