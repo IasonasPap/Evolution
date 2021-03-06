@@ -6,7 +6,7 @@
         </div>
         <span ng-repeat="s in $ctrl.userStations">{{s.address + ($index < $ctrl.userStations.length - 1 ? ', ' : '')}}</span>
     </div>
-    <div class="statistics-content">
+    <div class="statistics-content" ng-if="$ctrl.stationSessions.length">
         <!--<div class="statistics-options">
             <div class="options">
                 <div class="space-right-2">
@@ -89,7 +89,7 @@
         </div>
     </div>
 
-    <div class="charts">
+    <div class="charts" ng-if="$ctrl.stationSessions.length">
         <div class="chart-header">
             Charger stats
         </div>
@@ -151,5 +151,8 @@
                         chart-options="$ctrl.chartOptions(3, 'Sessions per date')"></canvas>
             </div>
         </div>
+    </div>
+    <div class="sp-no-results" ng-if="!$ctrl.stationSessions.length">
+        No Sessions
     </div>
 </div>
