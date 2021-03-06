@@ -3096,6 +3096,10 @@ input.ng-invalid {
   border: 1px solid red;
 }
 
+input[disabled] {
+  cursor: not-allowed;
+}
+
 .sp-no-results.red {
   color: #c91f34;
   font-size: 1.4em;
