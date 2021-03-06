@@ -2116,6 +2116,14 @@ h1, h2 {
   display: none !important;
 }
 
+.grid {
+  display: grid;
+}
+
+.grid-template-columns-2-auto {
+  grid-template-columns: auto auto;
+}
+
 .cursor-help {
   color: #aaaaaa;
   cursor: help;
@@ -3126,12 +3134,17 @@ input.ng-invalid {
   width: 2.5em;
 }
 
+.card-date input {
+  width: 50%;
+  margin-right: 0.2em;
+}
+
 .payment-modal {
   /* Chrome, Safari, Edge, Opera */
   /* Firefox */
 }
 .payment-modal .modal-content {
-  width: 28em;
+  width: 23em;
 }
 .payment-modal input::-webkit-outer-spin-button,
 .payment-modal input::-webkit-inner-spin-button {

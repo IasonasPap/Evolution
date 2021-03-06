@@ -67,6 +67,14 @@ h1, h2 {
     display: none !important;
 }
 
+.grid {
+    display: grid;
+}
+
+.grid-template-columns-2-auto {
+    grid-template-columns: auto auto;
+}
+
 .cursor-help {
     color: $light-grey;
     cursor: help;
@@ -1196,10 +1204,15 @@ input.ng-invalid {
     }
 }
 
+.card-date input {
+    width: 50%;
+    margin-right: .2em;
+}
+
 .payment-modal {
 
     .modal-content {
-        width: 28em;
+        width: 23em;
     }
 
     /* Chrome, Safari, Edge, Opera */

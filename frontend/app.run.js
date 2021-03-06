@@ -21,7 +21,6 @@
         $transitions.onStart({to: 'login'}, function (transition) {
             if (Auth.getToken()) {
                 console.log('DENY : Redirecting to Dashboard');
-                $rootScope.title = transition.to().config.title;
                 return transition.router.stateService.target('app.dashboard');
             } else {
                 $rootScope.title = 'Login';

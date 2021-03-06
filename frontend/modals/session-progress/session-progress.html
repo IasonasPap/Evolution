@@ -42,7 +42,7 @@
     <div class="modal-buttons">
         <button class="cancel" ng-click="closeThisDialog()" type="button" ng-if="!vm.isCompleted">Close</button>
         <button class="red" ng-click="vm.stopSession()" ng-if="!vm.isCompleted">End Session</button>
-        <button class="blue" ng-click="vm.page = 2" ng-if="vm.isCompleted">Proceed To Payment</button>
+        <button class="blue" type="button" ng-click="vm.page = 2" ng-if="vm.isCompleted">Proceed To Payment</button>
     </div>
 </div>
 
@@ -62,7 +62,7 @@
                 </div>
             </div>
             <div class="row row-items-1 row-items-space-1 align-items-baseline">
-                <div>
+                <div class="grid">
                     <div class="label">Name:</div>
                     <input type="text"
                            ng-model="vm.name"
@@ -70,7 +70,7 @@
                 </div>
             </div>
             <div class="row row-items-1 row-items-space-1 align-items-baseline">
-                <div>
+                <div class="grid">
                     <div class="label">Card Number:</div>
                     <input type="number"
                            ng-model="vm.number"
@@ -79,12 +79,23 @@
                            required/>
                 </div>
             </div>
-            <div class="row row-items-2 row-items-space-1 align-items-baseline">
-                <div>
+            <div class="grid grid-template-columns-2-auto">
+                <div class="space-right-3">
                     <div class="label">Expiry Date:</div>
-                    <input type="month"
-                           ng-model="vm.date"
-                           required/>
+                    <div class="flex card-date">
+                        <input type="number"
+                               ng-model="vm.month"
+                               placeholder="MM"
+                               oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                               maxlength="2"
+                               required/>
+                        <input type="number"
+                               ng-model="vm.year"
+                               placeholder="YY"
+                               oninput="if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+                               maxlength="2"
+                               required/>
+                    </div>
                 </div>
                 <div>
                     <div class="label">Security Code:</div>
