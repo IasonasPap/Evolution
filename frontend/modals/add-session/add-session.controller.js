@@ -23,6 +23,8 @@
             vm.data.chargingPointId = vm.data.chargingPoint.id;
             vm.data.startTime = moment().format('YYYY-MM-DD HH:mm:ss');
             vm.data.endTime = moment(vm.data.startTime).add(vm.data.duration.hours, 'hours').add(vm.data.duration.minutes, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+            vm.data.totalCost = vm.data.cost;
+            vm.data.energyDelivered = vm.data.energyRequested;
 
             $scope.closeThisDialog(vm.data);
         }

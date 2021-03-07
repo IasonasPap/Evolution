@@ -29,9 +29,11 @@
                 .diff(moment(vm.session.startTime)) * (vm.data.progress / 100)),'milliseconds')
                 .format('YYYY-MM-DD HH:mm:ss');
             vm.session.energyRequested = vm.data.energyDelivered;
+            vm.session.energyDelivered = vm.data.energyDelivered;
             vm.session.sessionStopped = true;
             vm.session.cost = (vm.data.progress / 100) * vm.session.cost;
-            vm.data.cost = vm.session.cost;
+            vm.session.totalCost = vm.session.cost;
+            vm.data.cost = vm.session.totalCost;
             vm.isCompleted = true;
             ChargingSessionFactory.create(vm.session).then(() => {
                 $rootScope.$broadcast('reload-sessions');
