@@ -16,7 +16,6 @@ exports.create = (req, res, next) => {
     
     if (!req.body.username || !req.body.password) {
         res.status(400).send({
-            //mporei na mpei kai apla send kai to mhnuma
             message: "You should provide a <username> and <password> for the new user!"
         });
         return;
@@ -39,7 +38,7 @@ exports.create = (req, res, next) => {
         })
         .catch(err => {
             res.status(500).send(
-                {message: err.message || "Some error occurred while creating the user."}
+                {message: err.parent.sqlMessage || "Some error occurred while creating the user."}
             );
         });
 };
@@ -65,25 +64,36 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
     const id = req.params.id;
 
-
     if (isFinite(id)) {
         user.findByPk(id, {attributes: {exclude: ['password']}})
             .then(data => {
-                res.send(data);
+                if (data){
+                    res.send(data);
+                } else {
+                    res.status(400).send({
+                        message: "Not Found User with id=" + id
+                    });
+                }
             })
             .catch(err => {
                 res.status(402).send({
-                    message: "User with id " + id + " not found"
+                    message: "Error retrieving User with id=" + id
                 });
             });
     } else {
-        user.findOne({where: {username: id}}, {attributes: {exclude: ['password']}})
+        user.findOne({where: {username: id}, attributes: {exclude: ['password']}})
             .then(data => {
-                res.send(data);
+                if (data){
+                    res.send(data);
+                } else {
+                    res.status(400).send({
+                        message: "Not Found User with name=" + id
+                    });
+                }
             })
             .catch(err => {
                 res.status(402).send({
-                    message: "User with id " + id + " not found"
+                    message: "Error retrieving User with name=" + id
                 });
             });
     }
@@ -119,11 +129,9 @@ exports.update = (req, res) => {
                 });
             }
         })
-        //.then(() => user.findByPk(id))
-        //.then((u) => res.send(u))
         .catch(err => {
             return res.status(500).send({
-                message: "Error updating User with id=" + id
+                message: err.parent.sqlMessage || "Some error occurred while creating the user."
             });
         });
 };
@@ -177,6 +185,9 @@ exports.findVehicles = (req, res) => {
         where: {userId: id}
     })
         .then(data => {
+            if (data.length === 0) {
+                return res.status(402).send(data);
+            }
             res.send(data);
         })
         .catch(err => {
@@ -194,6 +205,9 @@ exports.findStations = (req, res) => {
         include: [{model:station, required: true,  where: {userId: id}}, charger]
     })
         .then( data => {
+            if (data.length === 0) {
+                return res.status(402).send(data);
+            }
             let dataJson = JSON.parse(JSON.stringify(data));
             let response = new Map();
             dataJson.map(cp => {

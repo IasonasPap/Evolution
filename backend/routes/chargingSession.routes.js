@@ -6,6 +6,9 @@ var router = require("express").Router();
 //create a new charging Session
 router.post("/", chargingSession.create);
 
+//delete a charging Session
+router.delete("/sessions/:id", chargingSession.delete);
+
 //retrieve the charging Session of a single point in a period of time
 
 router.get("/SessionsPerPoint/:pointId/:datetimeFrom/:datetimeTo", auth, chargingSession.findAll);

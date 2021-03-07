@@ -1,6 +1,8 @@
 const db = require('../models');
 const fs = require("fs");
 const csv = require("fast-csv");
+const moment = require('moment');
+const dateFormat = require('dateformat');
 const {user, chargingSession, sequelize} = db;
 
 exports.resetSession = async (req,res) => {
@@ -44,7 +46,6 @@ exports.resetSession = async (req,res) => {
         return res.send({status: "failed"});
     })
 }
-
 
 exports.healthCheck = (req,res) => {
      /* 
@@ -173,6 +174,7 @@ exports.upload = async (req, res) => {
     }
 
     let sessions = [];
+    let sessionsInFile=0;
     let path = __basedir + "/" + req.file.filename;
 
     fs.createReadStream(path)
@@ -181,7 +183,15 @@ exports.upload = async (req, res) => {
         throw error.message;
       })
       .on("data", (row) => {
-        sessions.push(row);
+
+            sessionsInFile++;
+            if (!isNaN(row.totalCost) && !isNaN(row.energyDelivered) && !isNaN(row.pointsAwarded) &&
+            !isNaN(row.electricVehicleId) && !isNaN(row.chargingPointId) && typeof row.paymentType == 'string' &&
+                moment(row.startTime,'YYYY-MM-DD hh:mm:ss').isValid() && moment(row.endTime,'YYYY-MM-DD hh:mm:ss').isValid()
+                )
+            {
+                sessions.push(row);
+            }      
       })
       .on("end", () => {
         chargingSession.bulkCreate(sessions)
@@ -194,16 +204,19 @@ exports.upload = async (req, res) => {
                 else console.log("succesful delete");
             });
 
-            res.status(200).send({
-                data: uploadedSessions,
-              message:
-                "Uploaded the file successfully: " + req.file.originalname
-            });
+            chargingSession.findAll()
+                .then(data => {
+                    res.status(200).send({
+                        sessionsImported: uploadedSessions.length,
+                        sessionsInUploadedFile: sessionsInFile,
+                        totalSessionsInDatabase: data.length
+                    });
+                })            
           })
           .catch((error) => {
             res.status(500).send({
               message: "Fail to import data into database!",
-              error: error.message,
+              error: error,
             });
           });
       });

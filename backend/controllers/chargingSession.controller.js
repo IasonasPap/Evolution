@@ -29,9 +29,10 @@ exports.getAll = (req, res) => {
 // Create and Save a new Charging Event
 exports.create = (req, res, next) => {
     // Validate request
+    if(!req.body.startTime) req.body.startTime=moment().format('YYYY-MM-DD hh:mm:ss');
 
     if (req.body.startTime > req.body.endTime) {
-        res.status(400).send({
+        return res.status(400).send({
             message: "Session end time should be after session start time!"
         })
     }
@@ -39,11 +40,11 @@ exports.create = (req, res, next) => {
     // Create new charging event
     const newChargingSession = {
         electricVehicleId: req.body.electricVehicleId,
-        chargingPointId: req.body.chargingPointId,
-        totalCost: (req.body.cost ? req.body.cost : null),
-        paymentType: 'Credit card',
-        energyDelivered: req.body.energyRequested,
-        pointsAwarded: (Math.floor(req.body.cost) * 0.1).toFixed(2),
+        chargingPointId: req.body.chargingPointId ,
+        totalCost: (req.body.totalCost ? req.body.totalCost : null),
+        energyDelivered: req.body.energyDelivered,
+        paymentType: req.body.paymentType || 'Credit card',
+        pointsAwarded: (Math.floor(req.body.totalCost) * 0.1).toFixed(2),
         startTime: req.body.startTime,
         endTime: req.body.endTime
     };
@@ -58,7 +59,7 @@ exports.create = (req, res, next) => {
         .catch(err => {
             if(err) {
                 res.status(400).send({
-                    message: 'Bad request'
+                    message: err.message
                 })
             }
             else {
@@ -111,6 +112,9 @@ exports.findAll = (req, res) => {
                     ]
                 })
                     .then(data => {
+                        if (!data.length) {
+                            return res.status(402).send({message: "No charging sessions for this time period"})
+                        }
                         datetimeFrom = datetimeFrom.substring(0, 4) + '-' + datetimeFrom.substring(4, 6) + '-' + datetimeFrom.substring(6, 8);
                         datetimeTo = datetimeTo.substring(0, 4) + '-' + datetimeTo.substring(4, 6) + '-' + datetimeTo.substring(6, 8);
                         let dataJson = data.map((item, index) => {
@@ -195,6 +199,9 @@ exports.findAll = (req, res) => {
                     electricVehicle
                 })
                     .then(data => {
+                        if (!data.length) {
+                            return res.status(402).send({message: "No charging sessions for this time period"})
+                        }
                         datetimeFrom = datetimeFrom.substring(0, 4) + '-' + datetimeFrom.substring(4, 6) + '-' + datetimeFrom.substring(6, 8);
                         datetimeTo = datetimeTo.substring(0, 4) + '-' + datetimeTo.substring(4, 6) + '-' + datetimeTo.substring(6, 8);
                         let totalEnergyConsumed = 0;
@@ -288,6 +295,9 @@ exports.findAll = (req, res) => {
                     ]
                 })
                     .then(data => {
+                        if (!data.length) {
+                            return res.status(402).send({message: "No charging sessions for this time period"})
+                        }
                         datetimeFrom = datetimeFrom.substring(0, 4) + '-' + datetimeFrom.substring(4, 6) + '-' + datetimeFrom.substring(6, 8);
                         datetimeTo = datetimeTo.substring(0, 4) + '-' + datetimeTo.substring(4, 6) + '-' + datetimeTo.substring(6, 8);
                         let dataJson = JSON.parse(JSON.stringify(data));
@@ -376,9 +386,7 @@ exports.findAll = (req, res) => {
                 })
                     .then(data => {
                         if (!data.length) {
-                            res.status(402).send({
-                                message: 'No Data'
-                            })
+                            return res.status(402).send({message: "No charging sessions for this time period"})
                         }
                         datetimeFrom = datetimeFrom.substring(0, 4) + '-' + datetimeFrom.substring(4, 6) + '-' + datetimeFrom.substring(6, 8);
                         datetimeTo = datetimeTo.substring(0, 4) + '-' + datetimeTo.substring(4, 6) + '-' + datetimeTo.substring(6, 8);
@@ -529,6 +537,30 @@ exports.findSessionsPerMultipleStations = (req, res) => {
         });
 }
 
+// Delete a charging session with the specified id in the request
+exports.delete = (req, res) => {
+    const id = req.params.id;
+
+    chargingSession.destroy({
+        where: {id: id}
+    })
+        .then(num => {
+            if (num === 1) {
+                res.send({
+                    message: "Charging session was deleted successfully!"
+                });
+            } else {
+                res.status(400).send({
+                    message: `Cannot delete charging session with id=${id}. Session not found!`
+                });
+            }
+        })
+        .catch(err => {
+            res.status(500).send({
+                message: "Could not delete charging session with id=" + id
+            });
+        });
+};
 
 exports.reset = (req, res, next) => {
     chargingSession.destroy({

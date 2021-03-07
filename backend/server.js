@@ -38,22 +38,19 @@ const options = {
 // set port, listen for requests
 const PORT = 8766;
 
-// app.listen(PORT, () => {
-// 	console.log(`Server is running on port ${PORT}.`);
-// });
-
 // Create an HTTP service.
 //http.createServer(app).listen(8766);
 // Create an HTTPS service identical to the HTTP service.
-https.createServer(options, app)
-    .listen(8765, function () {
-        console.log('App listening on port 8765! Go to https://localhost:8765/')
-    })
-
 if (process.env.NODE_ENV != 'test'){
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}.`);
-    });
+    https.createServer(options, app)
+        .listen(8765, function () {
+            console.log('App listening on port 8765! Go to https://localhost:8765/')
+        })
 }
+// if (process.env.NODE_ENV != 'test'){
+//     app.listen(PORT, () => {
+//         console.log(`Server is running on port ${PORT}.`);
+//     });
+// }
 
 module.exports = app;

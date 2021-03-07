@@ -5,7 +5,7 @@ module.exports = (req, res, next) => {
         const token = req.headers['x-observatory-auth'];
         if (!token){
             res.status(401).json({
-                message: "Missiong token!"
+                message: "Missing token!"
             });
             next(new Error());
         }

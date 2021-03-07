@@ -10,7 +10,8 @@
   "scripts": {
     "server": "nodemon ./backend/server.js",
     "postinstall": "bower install",
-    "start": "angular-http-server --https --cert localhost.crt --key localhost.key --open"
+    "start": "angular-http-server --https --cert localhost.crt --key localhost.key --open",
+    "test": "mocha --timeout 10000 --delay --exit"
   },
   "bin": {
     "ev_group31": "./cli-client/ev_group31.js"
