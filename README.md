@@ -56,12 +56,15 @@ Our cli supports --help to let the user know about the available commands
 
 ## Technologies Used
 
-This project is Developed with node.js runtime and npm.
-
+This project is developed with node.js runtime.
 
 ### Build Automation:
 
 - nodemon
+
+- npm
+
+- bower
 
 ### Testing:
 
