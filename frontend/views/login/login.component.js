@@ -34,9 +34,10 @@
 
             }).catch(res => {
                 $ctrl.error = res.data.message;
+                $ctrl.waitingForReply = false;
             })
             .finally(() => {
-                $ctrl.waitingForReply = false;
+
             });
         }
 

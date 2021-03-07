@@ -18,6 +18,10 @@
                     <td>{{vm.data.charger.protocol}}</td>
                 </tr>
                 <tr>
+                    <td class="label">Price per KWh:</td>
+                    <td>{{vm.data.provider.costPerKwh | currency : '$' : 3}}</td>
+                </tr>
+                <tr>
                     <td class="label">Battery percentage:</td>
                     <td>{{vm.batteryPercent}}%</td>
                 </tr>
@@ -40,6 +44,7 @@
                         <div class="space-right-half text-align-center">
                             <input type="number"
                                    ng-model="vm.data.duration.hours"
+                                   oninput="if (!this.value) this.value = 0;"
                                    min="0"
                                    max="{{vm.maxHours}}"
                                    step="1"
@@ -50,6 +55,7 @@
                         <div class="space-left-half text-align-center">
                             <input type="number"
                                    ng-model="vm.data.duration.minutes"
+                                   oninput="if (!this.value) this.value = 0;"
                                    min="0"
                                    max="59"
                                    step="1"

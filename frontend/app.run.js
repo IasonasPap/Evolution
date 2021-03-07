@@ -10,9 +10,11 @@
         $transitions.onStart({to: 'app.*'}, function (transition) {
             if (!Auth.getToken()) {
                 console.log('DENY : Redirecting to Login');
+                $rootScope.title = 'Login';
                 return transition.router.stateService.target('login');
             } else {
                 console.log('ALLOW');
+                $rootScope.title = transition.to().config.title;
             }
         });
 
@@ -21,6 +23,7 @@
                 console.log('DENY : Redirecting to Dashboard');
                 return transition.router.stateService.target('app.dashboard');
             } else {
+                $rootScope.title = 'Login';
                 console.log('ALLOW');
             }
         });

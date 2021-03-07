@@ -67,6 +67,14 @@ h1, h2 {
     display: none !important;
 }
 
+.grid {
+    display: grid;
+}
+
+.grid-template-columns-2-auto {
+    grid-template-columns: auto auto;
+}
+
 .cursor-help {
     color: $light-grey;
     cursor: help;
@@ -817,7 +825,7 @@ login {
 side-menu {
 
     display: flex;
-    width: 17em;
+    width: 18em;
 
     .side-menu-container {
         flex: 1;
@@ -1157,6 +1165,10 @@ input.ng-invalid {
     border: 1px solid red;
 }
 
+input[disabled] {
+    cursor: not-allowed;
+}
+
 .sp-no-results.red {
     color: $red;
     font-size: 1.4em;
@@ -1196,7 +1208,16 @@ input.ng-invalid {
     }
 }
 
+.card-date input {
+    width: 50%;
+    margin-right: .2em;
+}
+
 .payment-modal {
+
+    .modal-content {
+        width: 23em;
+    }
 
     /* Chrome, Safari, Edge, Opera */
     input::-webkit-outer-spin-button,
