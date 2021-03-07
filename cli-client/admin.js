@@ -85,7 +85,7 @@ exports.sessionsupd = (source, key) => {
 		},
 		"data": form_data
 	}).then ((response) => {
-		console.log({message : response.data.message})
+		console.log({message : response.data})
 		process.exit()
 	})
 	.catch((err) => {
