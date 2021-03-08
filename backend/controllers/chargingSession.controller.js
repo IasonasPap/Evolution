@@ -21,30 +21,29 @@ exports.getAll = (req, res) => {
 
     chargingSession.findAll()
         .then(data => {
-            if(data.length) {
+            if (data.length) {
                 if (format === 'csv') {
                     const jsonData = JSON.parse(JSON.stringify(data));
                     //TRY-CATCH
                     const ws = fs.createWriteStream("chargingSessions.csv");
 
                     fastcsv
-                    .write(jsonData, { headers: ["totalCost","energyDelivered","pointsAwarded","startTime","endTime","paymentType","electricVehicleId","chargingPointId"] })
-                    .on("finish", function() {
-                        console.log("Write to bezkoder_chargingSessions.csv successfully!");
-                    })
-                    .pipe(ws);
-                    
+                        .write(jsonData, {headers: ["totalCost", "energyDelivered", "pointsAwarded", "startTime", "endTime", "paymentType", "electricVehicleId", "chargingPointId"]})
+                        .on("finish", function () {
+                            console.log("Write to bezkoder_chargingSessions.csv successfully!");
+                        })
+                        .pipe(ws);
                     //If i want to just return a response with text/csv format
                     // const fields = ["totalCost","energyDelivered","pointsAwarded","startTime","endTime","paymentType","electricVehicleId","chargingPointId"];
                     // const csv = parse(data, {fields});
                     // return res.type('text/csv').status(200).send(csv);
-                    return res.status(200).send({message:"File bezkoder_chargingSessions.csv created successfully"});
+                    return res.status(200).send({message: "File bezkoder_chargingSessions.csv created successfully"});
                 }
 
                 return res.send(data);
             } else {
-                return res.status(404).send({message:"There are no charging sessions"});
-            } 
+                return res.status(404).send({message: "There are no charging sessions"});
+            }
         })
         .catch(err => {
             res.status(500).send({
@@ -57,7 +56,7 @@ exports.getAll = (req, res) => {
 // Create and Save a new Charging Event
 exports.create = (req, res, next) => {
     // Validate request
-    if(!req.body.startTime) req.body.startTime=moment().format('YYYY-MM-DD hh:mm:ss');
+    if (!req.body.startTime) req.body.startTime = moment().format('YYYY-MM-DD hh:mm:ss');
 
     if (req.body.startTime > req.body.endTime) {
         return res.status(400).send({
@@ -68,7 +67,7 @@ exports.create = (req, res, next) => {
     // Create new charging event
     const newChargingSession = {
         electricVehicleId: req.body.electricVehicleId,
-        chargingPointId: req.body.chargingPointId ,
+        chargingPointId: req.body.chargingPointId,
         totalCost: (req.body.totalCost ? req.body.totalCost : null),
         energyDelivered: req.body.energyDelivered,
         paymentType: req.body.paymentType || 'Credit card',
@@ -85,12 +84,11 @@ exports.create = (req, res, next) => {
             res.send(dataJson)
         })
         .catch(err => {
-            if(err) {
+            if (err) {
                 res.status(400).send({
                     message: err.message
                 })
-            }
-            else {
+            } else {
                 res.status(500).send({
                     message:
                         err.message || "Some error occurred while creating the charging event."
@@ -158,7 +156,7 @@ exports.findAll = (req, res) => {
                                     vehicleType: obj.electricVehicle.vehicleType
                                 }
                             }
-                        ).sort(function(a, b) {
+                        ).sort(function (a, b) {
                             return moment(a.startedOn) - moment(b.startedOn) || moment(a.finishedOn) - moment(b.finishedOn);
                         });
                         let response = {
@@ -215,7 +213,7 @@ exports.findAll = (req, res) => {
             } else {
                 chargingSession.findAll({
                     where: condition,
-                    include: {
+                    include: [{
                         model: chargingPoint, include: [
                             {
                                 model: station,
@@ -226,7 +224,8 @@ exports.findAll = (req, res) => {
                             }
                         ]
                     },
-                    electricVehicle
+                        {model: electricVehicle}
+                    ]
                 })
                     .then(data => {
                         if (!data.length) {
@@ -234,6 +233,7 @@ exports.findAll = (req, res) => {
                         }
                         datetimeFrom = datetimeFrom.substring(0, 4) + '-' + datetimeFrom.substring(4, 6) + '-' + datetimeFrom.substring(6, 8);
                         datetimeTo = datetimeTo.substring(0, 4) + '-' + datetimeTo.substring(4, 6) + '-' + datetimeTo.substring(6, 8);
+                        let licensePlate = data[0].electricVehicle.licensePlate;
                         let totalEnergyConsumed = 0;
                         let pointsVisited = [];
                         let dataJson = data.map((item, index) => {
@@ -255,11 +255,12 @@ exports.findAll = (req, res) => {
                                     sessionCost: obj.totalCost
                                 }
                             }
-                        ).sort(function(a, b) {
+                        ).sort(function (a, b) {
                             return moment(a.startedOn) - moment(b.startedOn) || moment(a.finishedOn) - moment(b.finishedOn);
                         });
                         let response = {
                             vehicleId: parseInt(req.params.vehicleId),
+                            licensePlate: licensePlate,
                             requestTimestamp: dateFormat(requestTimestamp, "yyyy-mm-dd HH:MM:ss"),
                             periodFrom: dateFormat(datetimeFrom, "yyyy-mm-dd HH:MM:ss"),
                             periodTo: dateFormat(datetimeTo, "yyyy-mm-dd HH:MM:ss"),
@@ -524,7 +525,7 @@ exports.findAll = (req, res) => {
 }
 
 exports.findSessionsPerMultipleStations = (req, res) => {
-    if(!req.query.stationId) {
+    if (!req.query.stationId) {
         return res.status(400).send({message: "Give one or more station ids"});
     }
     let stationId = req.query.stationId.split(',');
