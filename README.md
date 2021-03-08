@@ -6,7 +6,7 @@ A project for Software Enginnering course at NTUA, ECE, academic year 2020-2021.
 
 | Full Name - Github Account                                     | Email                   |
 |----------------------------------------------------------------|-------------------------|
-| [Aris Preventis](https://github.com/arispr)                    | arisprv@gmail.com       |
+| [Aris Preventis](https://github.com/arisprv)                   | arisprv@gmail.com       |
 | [Fay Statha](https://github.com/FayStatha)                     | fay.statha@gmail.com    |
 | [Iason Papadimitrakopoulos](https://github.com/IasonasPap)     | jason.pap@hotmail.com   |
 | [Lefteris Kritsotakis](https://github.com/lefterisKritsotakis) | elkritsotakis@gmail.com |
