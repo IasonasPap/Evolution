@@ -33,6 +33,7 @@ exports.usermod = (username, password, isAdmin, isStationManager, key) => {
 	axios({
 		"url": 'https://localhost:8765/evcharge/api/admin/usermod/' + username + '/' + password,
 		"method": "post",
+		httpsAgent: agent,
 		"data": {
 			"isAdmin": isAdmin,
 			"isStationManager": isStationManager
@@ -51,7 +52,7 @@ exports.usermod = (username, password, isAdmin, isStationManager, key) => {
 			console.log(response.data.token)
 		})
 	}).catch( (err) => {
-		console.error(err.response.data)
+		console.error(err)//.response.data)
 	})
 }
 
