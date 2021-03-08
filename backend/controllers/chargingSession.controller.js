@@ -111,7 +111,7 @@ exports.findAll = (req, res) => {
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
         };
 
-        if (datetimeFrom > datetimeTo || !moment(datetimeFrom,'YYYYMMDD',true).isValid() || !moment(datetimeTo, 'YYYYMMDD',true).isValid()) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD', true).isValid() || !moment(datetimeTo, 'YYYYMMDD', true).isValid()) {
             res.status(400).send({
                 message: 'invalid dates'
             });
@@ -158,7 +158,9 @@ exports.findAll = (req, res) => {
                                     vehicleType: obj.electricVehicle.vehicleType
                                 }
                             }
-                        );
+                        ).sort(function(a, b) {
+                            return moment(a.startedOn) - moment(b.startedOn) || moment(a.finishedOn) - moment(b.finishedOn);
+                        });
                         let response = {
                             point: parseInt(req.params.pointId),
                             pointOperator: JSON.parse(JSON.stringify(data))[0].chargingPoint.station.user.fullName,
@@ -198,7 +200,7 @@ exports.findAll = (req, res) => {
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
         };
 
-        if (datetimeFrom > datetimeTo || !moment(datetimeFrom,'YYYYMMDD',true).isValid() || !moment(datetimeTo, 'YYYYMMDD',true).isValid()) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD', true).isValid() || !moment(datetimeTo, 'YYYYMMDD', true).isValid()) {
             res.status(400).send({
                 message: 'invalid dates'
             });
@@ -253,7 +255,9 @@ exports.findAll = (req, res) => {
                                     sessionCost: obj.totalCost
                                 }
                             }
-                        );
+                        ).sort(function(a, b) {
+                            return moment(a.startedOn) - moment(b.startedOn) || moment(a.finishedOn) - moment(b.finishedOn);
+                        });
                         let response = {
                             vehicleId: parseInt(req.params.vehicleId),
                             requestTimestamp: dateFormat(requestTimestamp, "yyyy-mm-dd HH:MM:ss"),
@@ -290,7 +294,7 @@ exports.findAll = (req, res) => {
     } else if (req.params.stationId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {stationId, datetimeFrom, datetimeTo} = req.params;
 
-        if (datetimeFrom > datetimeTo || !moment(datetimeFrom,'YYYYMMDD',true).isValid() || !moment(datetimeTo, 'YYYYMMDD',true).isValid()) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD', true).isValid() || !moment(datetimeTo, 'YYYYMMDD', true).isValid()) {
             res.status(400).send({
                 message: 'invalid dates'
             });
@@ -377,7 +381,7 @@ exports.findAll = (req, res) => {
     } else if (req.params.providerId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {providerId, datetimeFrom, datetimeTo} = req.params;
 
-        if (datetimeFrom > datetimeTo || !moment(datetimeFrom,'YYYYMMDD',true).isValid() || !moment(datetimeTo, 'YYYYMMDD',true).isValid()) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD', true).isValid() || !moment(datetimeTo, 'YYYYMMDD', true).isValid()) {
             res.status(400).send({
                 message: 'invalid dates'
             });
