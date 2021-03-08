@@ -1,5 +1,15 @@
 # Evolution
 
+Evolution is an innovative project that aspires to propel the transition to
+clean energy resources in transportation. It does that, through an easy-to-use
+and flexible interface that facilitates Electric Vehicle (EV) charging via an
+online platform. It provides a seamless and smooth experience for customers
+that need to find the best available spot for charging, to access the charging
+fees of the  stations, to browse offers and many more. Thus, it integrates the
+whole procedure of charging into a playful and enjoyable experience on your
+device, while abstracting away all the details. You can install the prototype
+of the project following the instructions below.`
+
 A project for Software Enginnering course at NTUA, ECE, academic year 2020-2021.
 
 ## Team Members
