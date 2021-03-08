@@ -63,7 +63,7 @@ describe('Charging Sessions endpoints', () => {
 
     describe('POST /', () => {
 
-        it('Don\'t create a charging session if any of the fields is undefined',(done) => {
+        it('Don\'t create a charging session if any of the necessary fields is undefined',(done) => {
             
             let {totalCost, ...withoutTotalCost} = newChargingSession;
             request.post('/evcharge/api')
@@ -104,6 +104,25 @@ describe('Charging Sessions endpoints', () => {
                     .end(function(error,response) {
                         response.status.should.be.equal(400);
                         response.body.should.have.property('message').equal("notNull Violation: chargingSession.endTime cannot be null");
+                        done();
+                    });
+        });
+
+        it('Don\'t create a charging session if startTime is after endTime',(done) => {
+            request.post('/evcharge/api')
+                    .send({
+                        totalCost: 25,
+                        energyDelivered: 85,
+                        pointsAwarded: 20,
+                        startTime: "2021-02-03 21:14:08",
+                        endTime: "2021-01-02 21:16:08",
+                        paymentType: "Paypall",
+                        electricVehicleId: 4,
+                        chargingPointId: 4
+                    })
+                    .end(function(error,response) {
+                        response.status.should.be.equal(400);
+                        response.body.should.have.property('message').equal("Session end time should be after session start time!");
                         done();
                     });
         });
@@ -167,6 +186,32 @@ describe('Charging Sessions endpoints', () => {
                         response.body.should.have.property('message').equal('Missing token!');
                         done();
                     });
+        });
+
+        it('Don\'t return response if startTime is after endTime',(done) => {
+            request.get('/evcharge/api/SessionsPerPoint/9/2021201/20201030')
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(400);
+                        response.body.should.have.property('message').equal('invalid dates');
+                        done();
+                    })
+        });
+
+        it("Don\'t return response if startTime or endTime is not in right format ('YYYYMMDD')",(done) => {
+            request.get('/evcharge/api/SessionsPerPoint/9/2021201/20201030')
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(400);
+                        response.body.should.have.property('message').equal('invalid dates');
+                        request.get('/evcharge/api/SessionsPerPoint/9/20211001/255530')
+                                .set('x-observatory-auth',userToken)
+                                .end(function(error,response) {
+                                    response.status.should.be.equal(400);
+                                    response.body.should.have.property('message').equal('invalid dates');
+                                    done();
+                        })                        
+                    })
         });
 
         it('Return suitable message if chargin point\'s id provided is invalid',(done) => {
@@ -258,6 +303,32 @@ describe('Charging Sessions endpoints', () => {
                     });
         });
 
+        it('Don\'t return response if startTime is after endTime',(done) => {
+            request.get('/evcharge/api/SessionsPerStation/9/20201105/20201102')
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(400);
+                        response.body.should.have.property('message').equal('invalid dates');
+                        done();
+                    })
+        });
+
+        it("Don\'t return response if startTime or endTime is not in right format ('YYYYMMDD')",(done) => {
+            request.get('/evcharge/api/SessionsPerStation/9/20201/20201130')
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(400);
+                        response.body.should.have.property('message').equal('invalid dates');
+                        request.get('/evcharge/api/SessionsPerStation/9/20211001/2')
+                                .set('x-observatory-auth',userToken)
+                                .end(function(error,response) {
+                                    response.status.should.be.equal(400);
+                                    response.body.should.have.property('message').equal('invalid dates');
+                                    done();
+                        })                        
+                    })
+        });
+
         it('Return suitable message if chargin station\'s id provided is invalid',(done) => {
             request.get('/evcharge/api/SessionsPerStation/-2/20201101/20201130')
                     .set('x-observatory-auth',userToken)
@@ -342,6 +413,32 @@ describe('Charging Sessions endpoints', () => {
                         response.body.should.have.property('message').equal('Missing token!');
                         done();
                     });
+        });
+
+        it('Don\'t return response if startTime is after endTime',(done) => {
+            request.get('/evcharge/api/SessionsPerEV/7/20200328/20200327')
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(400);
+                        response.body.should.have.property('message').equal('invalid dates');
+                        done();
+                    })
+        });
+
+        it("Don\'t return response if startTime or endTime is invalid or not in right format ('YYYYMMDD')",(done) => {
+            request.get('/evcharge/api/SessionsPerEV/7/20200201/sdfg')
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(400);
+                        response.body.should.have.property('message').equal('invalid dates');
+                        request.get('/evcharge/api/SessionsPerEV/7/202f001/20055530')
+                                .set('x-observatory-auth',userToken)
+                                .end(function(error,response) {
+                                    response.status.should.be.equal(400);
+                                    response.body.should.have.property('message').equal('invalid dates');
+                                    done();
+                        })                        
+                    })
         });
 
         it('Return suitable message if chargin electric vehicle\'s id provided is invalid',(done) => {
@@ -434,6 +531,32 @@ describe('Charging Sessions endpoints', () => {
                     });
         });
 
+        it('Don\'t return response if startTime is after endTime',(done) => {
+            request.get('/evcharge/api/SessionsPerProvider/1/20220205/20211030')
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(400);
+                        response.body.should.have.property('message').equal('invalid dates');
+                        done();
+                    })
+        });
+
+        it("Don\'t return response if startTime or endTime is not in right format ('YYYYMMDD')",(done) => {
+            request.get('/evcharge/api/SessionsPerProvider/1/00/20201030')
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(400);
+                        response.body.should.have.property('message').equal('invalid dates');
+                        request.get('/evcharge/api/SessionsPerProvider/1/20211001/abcdefgh')
+                                .set('x-observatory-auth',userToken)
+                                .end(function(error,response) {
+                                    response.status.should.be.equal(400);
+                                    response.body.should.have.property('message').equal('invalid dates');
+                                    done();
+                        })                        
+                    })
+        });
+
         it('Return suitable message if chargin provider\'s id provided is invalid',(done) => {
             request.get('/evcharge/api/SessionsPerProvider/-2/20221101/20221130')
                     .set('x-observatory-auth',userToken)
@@ -491,6 +614,149 @@ describe('Charging Sessions endpoints', () => {
                     .end(function(error,response) {
                         response.status.should.be.equal(200);
                         response.headers['content-type'].should.equal('text/csv; charset=utf-8');
+                        done();
+                    })
+        });
+    });
+
+    describe('GET /SessionsPerUser/:userId', () => {
+
+        it('Don\'t return response if the user is not logged in',(done) => {
+            request.get('/evcharge/api/SessionsPerUser/1')
+                    .set('x-observatory-auth',invalidUserToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(401);
+                        response.body.should.have.property('message').equal('Please login to continue');
+                        done();
+                    });
+        });
+
+        it('Don\'t return response if token is missing',(done) => {
+            request.get('/evcharge/api/SessionsPerUser/1')
+                    .end(function(error,response) {
+                        response.status.should.be.equal(401);
+                        response.body.should.have.property('message').equal('Missing token!');
+                        done();
+                    });
+        });
+
+        it('Retrieve the charging sessions for a specific user',(done) => {
+            request.get("/evcharge/api/SessionsPerUser/5")
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(200);
+                        res = response.body[0];
+                        res.should.have.property("userId").equal(5);
+                        res.should.have.property("station").be.an('object');
+                        res.should.have.property("charger").be.an('object');
+                        res.should.have.property("sessionId");
+                        res.should.have.property("electricVehicle").be.an('object');
+                        res.should.have.property("startTime");
+                        res.should.have.property("endTime");
+                        res.should.have.property("energyDelivered");
+                        res.should.have.property("points");
+                        res.should.have.property("costPerKwh");
+                        res.should.have.property("totalCost");
+                        done();
+                    })
+        });
+
+        it('Retrieve the charging sessions for a specific user for a time period (using query parameters)',(done) => {
+
+            request.get("/evcharge/api/SessionsPerUser/1?datetimeFrom=20201201&datetimeTo=20201230")
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(200);
+                        res = response.body[0];
+                        res.should.have.property("userId").equal(1);
+                        res.should.have.property("station").be.an('object');
+                        res.should.have.property("charger").be.an('object');
+                        res.should.have.property("sessionId");
+                        res.should.have.property("electricVehicle").be.an('object');
+                        res.should.have.property("startTime");
+                        res.should.have.property("endTime");
+                        res.should.have.property("energyDelivered");
+                        res.should.have.property("points");
+                        res.should.have.property("costPerKwh");
+                        res.should.have.property("totalCost");
+                        done();
+                    })
+        });
+
+        it('Return an empty array if user has no charging sessions for this time period',(done) => {
+
+            request.get("/evcharge/api/SessionsPerUser/1?datetimeFrom=20200301&datetimeTo=20200330")
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(200);
+                        response.body.should.be.an('array');
+                        response.body.length.should.be.equal(0);
+                        done();
+                    })
+        });
+    });
+
+    describe('GET /SessionsPerMultipleStations', () => {
+
+        it('Don\'t return response if the user is not logged in',(done) => {
+            request.get('/evcharge/api/SessionsPerMultipleStations')
+                    .set('x-observatory-auth',invalidUserToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(401);
+                        response.body.should.have.property('message').equal('Please login to continue');
+                        done();
+                    });
+        });
+
+        it('Don\'t return response if token is missing',(done) => {
+            request.get('/evcharge/api/SessionsPerMultipleStations')
+                    .end(function(error,response) {
+                        response.status.should.be.equal(401);
+                        response.body.should.have.property('message').equal('Missing token!');
+                        done();
+                    });
+        });
+
+        it('Don\'t return response if stationId parameter is missing',(done) => {
+            request.get("/evcharge/api/SessionsPerMultipleStations")
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(400);
+                        response.body.should.have.property("message").equal("Give one or more station ids");
+                        done();
+                    })
+        });
+
+        it('Return an empty array if station id is not valid',(done) => {
+            request.get("/evcharge/api/SessionsPerMultipleStations?stationId=-1")
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(200);
+                        response.body.should.be.an('array');
+                        response.body.length.should.be.equal(0);
+                        done();
+                    })
+        });
+
+        it('Retrieve the charging sessions for multiple stations (using query parameters)',(done) => {
+            request.get("/evcharge/api/SessionsPerMultipleStations?stationId=1,2")
+                    .set('x-observatory-auth',userToken)
+                    .end(function(error,response) {
+                        response.status.should.be.equal(200);
+                        res = response.body[0];
+                        res.station.should.have.property("id").oneOf([1, 2]);
+                        res.should.have.property("station").be.an('object');
+                        res.should.have.property("electricVehicle").be.an('object');
+                        res.should.have.property("startTime");
+                        res.should.have.property("electricVehicleId");
+                        res.should.have.property("chargingPointId");
+                        res.should.have.property("chargingPoint").be.an('object');
+                        res.should.have.property("endTime");
+                        res.should.have.property("energyDelivered");
+                        res.should.have.property("pointsAwarded");
+                        res.should.have.property("paymentType");
+                        res.should.have.property("costPerKwh");
+                        res.should.have.property("totalCost");
                         done();
                     })
         });

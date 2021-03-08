@@ -18,7 +18,7 @@ module.exports = (req, res, next) => {
         } else {
             next();
         }
-    } catch {
+    } catch (error) {
         const token = req.headers['x-observatory-auth'];
         let message = "Please login to continue";
         jwt.verify(token, 'RANDOM_TOKEN_SECRET', (err) => {

@@ -186,12 +186,12 @@ exports.upload = async (req, res) => {
 
             sessionsInFile++;
             if (!isNaN(row.totalCost) && !isNaN(row.energyDelivered) && !isNaN(row.pointsAwarded) &&
-            !isNaN(row.electricVehicleId) && !isNaN(row.chargingPointId) && typeof row.paymentType == 'string' &&
-                moment(row.startTime,'YYYY-MM-DD hh:mm:ss').isValid() && moment(row.endTime,'YYYY-MM-DD hh:mm:ss').isValid()
-                )
+            !isNaN(row.electricVehicleId) && !isNaN(row.chargingPointId) && typeof row.paymentType == 'string' 
+            && moment(row.startTime,moment.ISO_8601,true).isValid() && moment(row.endTime,moment.ISO_8601,true).isValid()
+            )
             {
                 sessions.push(row);
-            }      
+            }
       })
       .on("end", () => {
         chargingSession.bulkCreate(sessions)
@@ -227,4 +227,3 @@ exports.upload = async (req, res) => {
     });
   }
 };
-

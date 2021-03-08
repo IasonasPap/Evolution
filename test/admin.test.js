@@ -4,9 +4,9 @@ const app = require('../backend/server'); // Link to your server file
 const supertest = require('supertest');
 const request = supertest(app);
 const chai = require('chai');
-const bcrypt = require('bcrypt');
-const { response } = require('express');
-const { should } = require('chai');
+// const bcrypt = require('bcrypt');
+// const { response } = require('express');
+// const { should } = require('chai');
 
 chai.should();
 
@@ -35,26 +35,21 @@ describe('Adminstrators\' endpoints', () => {
                 .send('username=user0')
                 .send('password=11223344556677')
                 .end(function(error,response) {
+                    response.status.should.be.equal(200);
                     newUserToken = response.body.token;
-                });
-
-        request.post('/evcharge/api/login')
-                .set('Content-Type','application/x-www-form-urlencoded')
-                .send('username=admin')
-                .send('password=petrol4ever')
-                .end(function(error,response) {
-                    adminToken = response.body.token;
-                    done();
+                    request.post('/evcharge/api/login')
+                            .set('Content-Type','application/x-www-form-urlencoded')
+                            .send('username=admin')
+                            .send('password=petrol4ever')
+                            .end(function(error,response) {
+                                adminToken = response.body.token;
+                                done();
+                            });
                 });
         
     });
 
     after((done) => {
-        request.post('/evcharge/api/logout')
-                    .set('x-observatory-auth',newUserToken)
-                    .end(function(error,response) {
-                        response.status.should.be.equal(200);
-                    });
         request.delete('/evcharge/api/users/' + newUserId)
                 .end(function(error,response) {
                         newUserId--;
@@ -223,37 +218,58 @@ describe('Adminstrators\' endpoints', () => {
     });
 
     describe.skip('POST /admin/resetsessions',() => {
-        it('Reset all charging sessions and Initialize administrator user',(done) => {
+
+        before((done) => {
+            request.get('/evcharge/api/sessions?format=csv')
+                    .end(function(e,re) {
+                    re.status.should.be.equal(200);
+                    re.body.should.have.property('message').equal('File bezkoder_chargingSessions.csv created successfully');
+                    done();                      
+                });
+        });
+
+        // after((done) => {
+        //     request.post('/evcharge/api/admin/system/sessionsupd')
+        //             .set('x-observatory-auth',adminToken)
+        //             .attach('file','chargingSessions.csv')
+        //             .end(function(x,respo) {
+        //                 console.log(x);
+        //                 respo.status.should.be.equal(200);
+        //                 done();
+        //             })
+        // });
+
+        it.skip('Reset all charging sessions and Initialize administrator user',(done) => {
             request.post('/evcharge/api/admin/resetsessions')
                     .end(function(error,response) {
                         response.status.should.be.equal(200);
                         response.body.should.have.property("status").equal("OK");
-                        request.get('/evcharge/api/admin/users/admin')
-                                .then((res) => {
-                                res.status.should.be.equal(200);
-                                res.body.should.have.property('id');
-                                res.body.should.have.property('username').equal("admin");
-                                //bcrypt.compare(req.body.password, data.password)
-                                //const hash = bcrypt.hashSync(value, 10);
-                                //this.setDataValue('password', hash);
-                                res.body.should.not.have.property('password');
-                                //bcrypt.compare('petrol4ever', res.body.password).should.be.equal(true);
-                                res.body.should.have.property('fullName').equal("test");
-                                res.body.should.have.property('email').equal("test@evolution.com");
-                                res.body.should.have.property('isAdmin').equal(true);
-                                res.body.should.have.property('isStationManager').equal(false);
-                                done();                        
-                        });
-
-                        request.get('/evcharge/api/chargingSessions')
-                                .end(function(error,res) {
-                                res.status.should.be.equal(200);
-                                res.body.length.should.be.equal(0);
-                                done();                        
-                        });
+                        request.get('/evcharge/api/sessions')
+                                .end(function(err,res) {
+                                res.status.should.be.equal(404);
+                                res.body.should.have.property('message').equal('There are no charging sessions'); 
+                            
+                            request.get('/evcharge/api/admin/users/admin')
+                                    .set('x-observatory-auth',adminToken)
+                                    .end(function (er,resp) {
+                                        console.log(6);
+                                        resp.status.should.be.equal(200);
+                                        resp.body.should.have.property('id');
+                                        resp.body.should.have.property('username').equal("admin");
+                                        //bcrypt.compare(req.body.password, data.password)
+                                        //const hash = bcrypt.hashSync(value, 10);
+                                        //this.setDataValue('password', hash);
+                                        //res.body.should.not.have.property('password');
+                                        //bcrypt.compare('petrol4ever', res.body.password).should.be.equal(true);
+                                        resp.body.should.have.property('fullName').equal("test");
+                                        resp.body.should.have.property('email').equal("test@evolution.com");
+                                        resp.body.should.have.property('isAdmin').equal(true);
+                                        resp.body.should.have.property('isStationManager').equal(false);
+                                        done();                  
+                                    });
+                            });
                     });
+            });
             
         });
     });
-
-});

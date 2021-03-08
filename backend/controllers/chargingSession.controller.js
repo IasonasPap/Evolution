@@ -10,13 +10,41 @@ const energyProvider = db.energyProvider;
 const electricVehicle = db.electricVehicle;
 const user = db.user;
 
+const fastcsv = require("fast-csv");
+const fs = require("fs");
 
 const dateFormat = require('dateformat');
 
+//Get all charging sessions
 exports.getAll = (req, res) => {
+    let {format} = req.query;
+
     chargingSession.findAll()
         .then(data => {
-            res.send(data);
+            if(data.length) {
+                if (format === 'csv') {
+                    const jsonData = JSON.parse(JSON.stringify(data));
+                    //TRY-CATCH
+                    const ws = fs.createWriteStream("chargingSessions.csv");
+
+                    fastcsv
+                    .write(jsonData, { headers: ["totalCost","energyDelivered","pointsAwarded","startTime","endTime","paymentType","electricVehicleId","chargingPointId"] })
+                    .on("finish", function() {
+                        console.log("Write to bezkoder_chargingSessions.csv successfully!");
+                    })
+                    .pipe(ws);
+                    
+                    //If i want to just return a response with text/csv format
+                    // const fields = ["totalCost","energyDelivered","pointsAwarded","startTime","endTime","paymentType","electricVehicleId","chargingPointId"];
+                    // const csv = parse(data, {fields});
+                    // return res.type('text/csv').status(200).send(csv);
+                    return res.status(200).send({message:"File bezkoder_chargingSessions.csv created successfully"});
+                }
+
+                return res.send(data);
+            } else {
+                return res.status(404).send({message:"There are no charging sessions"});
+            } 
         })
         .catch(err => {
             res.status(500).send({
@@ -83,9 +111,9 @@ exports.findAll = (req, res) => {
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
         };
 
-        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom,'YYYYMMDD',true).isValid() || !moment(datetimeTo, 'YYYYMMDD',true).isValid()) {
             res.status(400).send({
-                message: 'Invalid dates'
+                message: 'invalid dates'
             });
             return;
         }
@@ -170,7 +198,7 @@ exports.findAll = (req, res) => {
             startTime: {[Op.between]: [datetimeFrom, datetimeTo]}
         };
 
-        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom,'YYYYMMDD',true).isValid() || !moment(datetimeTo, 'YYYYMMDD',true).isValid()) {
             res.status(400).send({
                 message: 'invalid dates'
             });
@@ -262,7 +290,7 @@ exports.findAll = (req, res) => {
     } else if (req.params.stationId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {stationId, datetimeFrom, datetimeTo} = req.params;
 
-        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom,'YYYYMMDD',true).isValid() || !moment(datetimeTo, 'YYYYMMDD',true).isValid()) {
             res.status(400).send({
                 message: 'invalid dates'
             });
@@ -349,7 +377,7 @@ exports.findAll = (req, res) => {
     } else if (req.params.providerId && req.params.datetimeTo && req.params.datetimeFrom) {
         let {providerId, datetimeFrom, datetimeTo} = req.params;
 
-        if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
+        if (datetimeFrom > datetimeTo || !moment(datetimeFrom,'YYYYMMDD',true).isValid() || !moment(datetimeTo, 'YYYYMMDD',true).isValid()) {
             res.status(400).send({
                 message: 'invalid dates'
             });
@@ -492,6 +520,9 @@ exports.findAll = (req, res) => {
 }
 
 exports.findSessionsPerMultipleStations = (req, res) => {
+    if(!req.query.stationId) {
+        return res.status(400).send({message: "Give one or more station ids"});
+    }
     let stationId = req.query.stationId.split(',');
     let datetimeFrom = req.query.datetimeFrom;
     let datetimeTo = moment(req.query.datetimeTo).add(1, 'day').format('YYYYMMDD');
