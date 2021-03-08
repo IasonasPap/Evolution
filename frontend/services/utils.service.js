@@ -25,7 +25,10 @@
             if(service.user) {
                 deferred.resolve(service.user)
             } else {
-                UserFactory.getOne(localStorage.getItem('userId')).then(res => deferred.resolve(res.data));
+                UserFactory.getOne(localStorage.getItem('userId')).then(res => {
+                    service.user = res.data;
+                    deferred.resolve(res.data);
+                });
             }
             return deferred.promise;
         }

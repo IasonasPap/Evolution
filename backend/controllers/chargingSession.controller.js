@@ -429,7 +429,7 @@ exports.findAll = (req, res) => {
     } else if (req.params.userId) {
         let {userId} = req.params;
         let datetimeTo = moment(req.query.datetimeTo).add(1, 'day').format('YYYYMMDD');
-        let datetimeFrom = req.query.datetimeFrom;
+        let datetimeFrom = req.query.datetimeFrom && moment(req.query.datetimeFrom).format('YYYYMMDD');
 
         if (datetimeFrom > datetimeTo || !moment(datetimeFrom, 'YYYYMMDD') || !moment(datetimeTo, 'YYYYMMDD')) {
             res.status(400).send({
