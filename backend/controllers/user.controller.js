@@ -205,6 +205,7 @@ exports.findStations = (req, res) => {
         include: [{model:station, required: true,  where: {userId: id}}, charger]
     })
         .then( data => {
+            if (!data.length) return res.status(402).send(data);
             let dataJson = JSON.parse(JSON.stringify(data));
             let response = new Map();
             dataJson.map(cp => {

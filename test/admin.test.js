@@ -4,6 +4,9 @@ const app = require('../backend/server'); // Link to your server file
 const supertest = require('supertest');
 const request = supertest(app);
 const chai = require('chai');
+const fs = require("fs");
+
+let path = __basedir + "/chargingSessions.csv";
 // const bcrypt = require('bcrypt');
 // const { response } = require('express');
 // const { should } = require('chai');
@@ -28,22 +31,21 @@ describe('Adminstrators\' endpoints', () => {
                         newUserPassword = response.body.password;
                         newUserId = response.body.id;
                     }
-                });
-
-        request.post('/evcharge/api/login')
-                .set('Content-Type','application/x-www-form-urlencoded')
-                .send('username=user0')
-                .send('password=11223344556677')
-                .end(function(error,response) {
-                    response.status.should.be.equal(200);
-                    newUserToken = response.body.token;
                     request.post('/evcharge/api/login')
                             .set('Content-Type','application/x-www-form-urlencoded')
-                            .send('username=admin')
-                            .send('password=petrol4ever')
+                            .send('username=user0')
+                            .send('password=11223344556677')
                             .end(function(error,response) {
-                                adminToken = response.body.token;
-                                done();
+                                response.status.should.be.equal(200);
+                                newUserToken = response.body.token;
+                                request.post('/evcharge/api/login')
+                                        .set('Content-Type','application/x-www-form-urlencoded')
+                                        .send('username=admin')
+                                        .send('password=petrol4ever')
+                                        .end(function(error,response) {
+                                            adminToken = response.body.token;
+                                            done();
+                                        });
                             });
                 });
         
@@ -54,7 +56,7 @@ describe('Adminstrators\' endpoints', () => {
                 .end(function(error,response) {
                         newUserId--;
                         request.delete('/evcharge/api/users/' + newUserId)
-                            .then(function (response) {
+                            .end(function (erro,resp) {
                                 done();
                         });
             });
@@ -196,9 +198,9 @@ describe('Adminstrators\' endpoints', () => {
                     .attach('file','test/withInvalidChargingSessions.csv')
                     .end(function(error,response) {
                         response.status.should.be.equal(200);                        
-                        response.body.should.have.property("sessionsImported").equal(2);
-                        response.body.should.have.property("sessionsInUploadedFile").equal(4);
-                        response.body.should.have.property("totalSessionsInDatabase").equal(numberOfSessions+2);
+                        response.body.should.have.property("sessionsImported").equal(3);
+                        response.body.should.have.property("sessionsInUploadedFile").equal(5);
+                        response.body.should.have.property("totalSessionsInDatabase").equal(numberOfSessions+3);
                         done();                      
                     });
         });
@@ -211,35 +213,39 @@ describe('Adminstrators\' endpoints', () => {
                         response.status.should.be.equal(200);
                         response.body.should.have.property("sessionsImported").equal(2);
                         response.body.should.have.property("sessionsInUploadedFile").equal(2);
-                        response.body.should.have.property("totalSessionsInDatabase").equal(numberOfSessions+4);
+                        response.body.should.have.property("totalSessionsInDatabase").equal(numberOfSessions+5);
                         done();                     
                     });
         });
     });
 
-    describe.skip('POST /admin/resetsessions',() => {
+    describe('POST /admin/resetsessions', () => {
 
-        before((done) => {
+        before(function (done) {
             request.get('/evcharge/api/sessions?format=csv')
-                    .end(function(e,re) {
+                    .then(function(re) {
                     re.status.should.be.equal(200);
                     re.body.should.have.property('message').equal('File bezkoder_chargingSessions.csv created successfully');
-                    done();                      
+                    done();
+                                          
                 });
         });
 
-        // after((done) => {
-        //     request.post('/evcharge/api/admin/system/sessionsupd')
-        //             .set('x-observatory-auth',adminToken)
-        //             .attach('file','chargingSessions.csv')
-        //             .end(function(x,respo) {
-        //                 console.log(x);
-        //                 respo.status.should.be.equal(200);
-        //                 done();
-        //             })
-        // });
+        after(function (done) {
+            request.post('/evcharge/api/admin/system/sessionsupd')
+                        .set('x-observatory-auth',adminToken)
+                        .attach('file','chargingSessions.csv')
+                        .then(function(respo){
+                            respo.status.should.be.equal(200);
+                            fs.unlink(path, (err) => {
+                                if (err) console.log('something went wrong');
+                                else console.log("Succesfully deleted chargingSessions.csv");
+                                done();                                
+                            })                            
+                        });
+        });
 
-        it.skip('Reset all charging sessions and Initialize administrator user',(done) => {
+        it('Reset all charging sessions and Initialize administrator user',(done) => {
             request.post('/evcharge/api/admin/resetsessions')
                     .end(function(error,response) {
                         response.status.should.be.equal(200);
@@ -252,7 +258,6 @@ describe('Adminstrators\' endpoints', () => {
                             request.get('/evcharge/api/admin/users/admin')
                                     .set('x-observatory-auth',adminToken)
                                     .end(function (er,resp) {
-                                        console.log(6);
                                         resp.status.should.be.equal(200);
                                         resp.body.should.have.property('id');
                                         resp.body.should.have.property('username').equal("admin");

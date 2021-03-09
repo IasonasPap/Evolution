@@ -201,7 +201,7 @@ exports.upload = async (req, res) => {
               });
             fs.unlink(path, (err) => {
                 if (err) console.log('something went wrong');
-                else console.log("succesful delete");
+                else console.log("Succesfully deleted " + req.file.filename);
             });
 
             chargingSession.findAll()
