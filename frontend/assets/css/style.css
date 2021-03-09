@@ -3060,6 +3060,10 @@ page-title .page-title .logout img {
   padding: 1em 2em;
 }
 
+.upload-button img {
+  width: 1.5em;
+}
+
 button {
   padding: 1em 2em;
 }
@@ -3304,6 +3308,21 @@ canvas {
 
 .red-border input {
   border-color: #c91f34;
+}
+
+.hidden-input {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+input[type=file]::-webkit-file-upload-button {
+  /* chromes and blink button */
+  cursor: pointer;
 }
 
 /*# sourceMappingURL=style.css.map */

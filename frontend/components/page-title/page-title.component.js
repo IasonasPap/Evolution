@@ -12,9 +12,9 @@
     angular.module('evolution')
         .component('pageTitle', component);
 
-    controller.$inject = ['$state', 'Utils', 'AuthFactory'];
+    controller.$inject = ['$scope', '$rootScope', '$state', 'Utils', 'AuthFactory', 'AdminFactory'];
 
-    function controller($state, Utils, AuthFactory) {
+    function controller($scope, $rootScope, $state, Utils, AuthFactory, AdminFactory) {
         const $ctrl = this;
         $ctrl.logout = logout;
 
@@ -33,5 +33,11 @@
         function onInit() {
             Utils.getUser().then(res => $ctrl.user = res);
         }
+
+        $scope.$watch('$ctrl.file', (newVal) => {
+            if(newVal) {
+                AdminFactory.uploadSessions(newVal).then(res => $rootScope.$broadcast('reload-sessions'));
+            }
+        });
     }
 })();

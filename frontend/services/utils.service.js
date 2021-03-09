@@ -4,9 +4,9 @@
     angular.module('evolution')
         .service('Utils', controller);
 
-    controller.$inject = ['$q', 'UserFactory', 'UseCaseFactory'];
+    controller.$inject = ['$http', '$q', 'UserFactory', 'UseCaseFactory'];
 
-    function controller($q, UserFactory, UseCaseFactory) {
+    function controller($http, $q, UserFactory, UseCaseFactory) {
         const service = this;
         service.getUser = getUser;
         service.setUser = setUser;
@@ -16,6 +16,7 @@
         service.getSelectedChargingPoint = getSelectedChargingPoint;
         service.validateForm = validateForm;
         service.toggleIsCharging = toggleIsCharging;
+        service.postFormData = postFormData;
 
         init();
 
@@ -83,6 +84,17 @@
                     angular.forEach(field.$error.required, setDirty);
                 }
             }
+        }
+
+        function postFormData(api, file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            return $http.post(api, formData, {
+                    transformRequest: angular.identity,
+                    headers: {'Content-Type': undefined}
+                }
+            );
         }
 
         //////// Private

@@ -1,7 +1,8 @@
 <div class="page dashboard">
     <page-title page-title="'Dashboard'"></page-title>
 
-    <div class="dashboard-content" ng-if="!$ctrl.user.isStationManager">
+    <loader ng-if="$ctrl.isLoading"></loader>
+    <div class="dashboard-content" ng-if="!$ctrl.user.isStationManager && !$ctrl.isLoading">
         <div class="dashboard-section">
             <div class="dashboard-section-icon">
                 <img src="frontend/assets/images/car-2.svg"/>
@@ -40,7 +41,7 @@
         </div>
     </div>
 
-    <div class="dashboard-content" ng-if="$ctrl.user.isStationManager">
+    <div class="dashboard-content" ng-if="$ctrl.user.isStationManager && !$ctrl.isLoading">
         <div class="dashboard-section">
             <div class="dashboard-section-icon">
                 <img src="frontend/assets/images/charging-station.svg"/>
@@ -79,7 +80,7 @@
         </div>
     </div>
 
-    <div class="dashboard-session-list">
+    <div class="dashboard-session-list" ng-if="!$ctrl.isLoading">
         <div class="session-list-description">
             Latest Sessions
         </div>

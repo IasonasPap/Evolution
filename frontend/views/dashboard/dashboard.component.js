@@ -5,7 +5,7 @@
         templateUrl: 'frontend/views/dashboard/dashboard.html',
         controller: controller,
         bindings: {
-            userSessions: '<',
+            //userSessions: '<',
             userVehicles: '<',
             userStations: '<',
             stationSessions: '<',
@@ -45,32 +45,36 @@
         //////// Private
 
         function onInit() {
-            $ctrl.isStationManager = $ctrl.user.isStationManager;
-            if(!$ctrl.isStationManager) {
-                $ctrl.stationsVisited = [];
-                $ctrl.userSessionsThisMonth = $ctrl.userSessions.filter(s => {
-                    return moment(s.startTime).isSame(moment().format('YYYY-MM-DD'), 'month');
-                });
-                $ctrl.userSessions.map(s => {
-                    if (!$ctrl.stationsVisited.find(st => st.id === s.station.id)) {
-                        $ctrl.stationsVisited.push(s.station);
-                    }
-                });
-            } else {
-                $ctrl.chargingPoints = [];
-                $ctrl.userStations.map(s => $ctrl.chargingPoints = $ctrl.chargingPoints.concat(s.chargingPoints));
-                $ctrl.stationSessionsLastMonth = $ctrl.stationSessions.filter(s =>
-                    moment(s.startTime).format('YYYY-MM-DD') > moment().subtract(30, 'days').format('YYYY-MM-DD'));
-            }
-
+            reloadSessions();
         }
 
-        $scope.$on('reload-sessions', () => {
+        function reloadSessions() {
+            $ctrl.isLoading = true;
             ChargingSessionFactory.getChargingSessionsPerUser($ctrl.user.id)
                 .then(res => {
                     $ctrl.userSessions = res.data;
-                    onInit();
-                });
+                    $ctrl.isStationManager = $ctrl.user.isStationManager;
+                    if(!$ctrl.isStationManager) {
+                        $ctrl.stationsVisited = [];
+                        $ctrl.userSessionsThisMonth = $ctrl.userSessions.filter(s => {
+                            return moment(s.startTime).isSame(moment().format('YYYY-MM-DD'), 'month');
+                        });
+                        $ctrl.userSessions.map(s => {
+                            if (!$ctrl.stationsVisited.find(st => st.id === s.station.id)) {
+                                $ctrl.stationsVisited.push(s.station);
+                            }
+                        });
+                    } else {
+                        $ctrl.chargingPoints = [];
+                        $ctrl.userStations.map(s => $ctrl.chargingPoints = $ctrl.chargingPoints.concat(s.chargingPoints));
+                        $ctrl.stationSessionsLastMonth = $ctrl.stationSessions.filter(s =>
+                            moment(s.startTime).format('YYYY-MM-DD') > moment().subtract(30, 'days').format('YYYY-MM-DD'));
+                    }
+                }).finally(() => $ctrl.isLoading = false);
+        }
+
+        $scope.$on('reload-sessions', () => {
+            reloadSessions();
         });
     }
 })();

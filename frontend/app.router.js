@@ -36,11 +36,21 @@
                         return user.isStationManager && UserFactory.getStations(user.id)
                             .then(res => {
                                 return res.data;
+                            }).catch( err => {
+                                console.log(err);
+                                if(err.status === 402) {
+                                    return [];
+                                }
                             });
                     }],
                     stationSessions: ['userStations', 'ChargingSessionFactory', 'user', function (userStations, ChargingSessionFactory, user) {
                         let stationIds = userStations && userStations.reduce((ids, s, index) => ids + s.id + (index < userStations.length - 1 ? ',' : ''), '');
-                        return user.isStationManager && ChargingSessionFactory.getChargingSessionsPerStations({stationId: stationIds}).then(res => res.data);
+                        return user.isStationManager && ChargingSessionFactory.getChargingSessionsPerStations({stationId: stationIds}).then(res => res.data)
+                            .catch(res => {
+                                if (res.message === "Give one or more station ids") {
+                                    return [];
+                                }
+                            });
                     }]
                 }
             })
