@@ -52,7 +52,7 @@ exports.usermod = (username, password, isAdmin, isStationManager, key) => {
 			console.log(response.data.token)
 		})
 	}).catch( (err) => {
-		console.error(err)
+		console.error(err.response.data)
 	})
 }
 
