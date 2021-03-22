@@ -8,7 +8,7 @@ that need to find the best available spot for charging, to access the charging
 fees of the  stations, to browse offers and many more. Thus, it integrates the
 whole procedure of charging into a playful and enjoyable experience on your
 device, while abstracting away all the details. You can install the prototype
-of the project following the instructions below.`
+of the project following the instructions below.
 
 A project for Software Enginnering course at NTUA, ECE, academic year 2020-2021.
 
